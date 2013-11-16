@@ -16,7 +16,7 @@ lines, rectangles, circles, advanced timer, motorcontrollers ...
 
 Actual state
 
-Most of the classes are working fine but i am busy to rewrite everything because i always get new ideas.
+Most of the classes are working fine but i am busy to rewrite everything because I always get new ideas.
 For example separate NWidget into a widget class and a shape class. Then make show, erease, invert virtual...
 
 I have much ideas for new classes. :)
