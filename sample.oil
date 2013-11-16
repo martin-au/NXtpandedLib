@@ -1,0 +1,76 @@
+#include "implementation.oil"
+
+CPU ATMEL_AT91SAM7S256
+{
+  OS LEJOS_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = FALSE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = FALSE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  /* Definition of application mode */
+  APPMODE appmode1{}; 
+  
+  EVENT EventSleep
+  {
+    MASK = AUTO;
+  };
+  
+  EVENT EventSleepI2C
+  {
+    MASK = AUTO;
+  };
+  
+
+  
+	RESOURCE  ostreamRes
+	{
+   		RESOURCEPROPERTY = STANDARD;
+	};
+
+  /* Definition of TaskMain */
+  TASK TaskMain
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = ostreamRes;
+    STACKSIZE = 512;
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+  };
+  
+  TASK FlushConsole
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1;
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = ostreamRes;
+    STACKSIZE = 512; /* Stack size */
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+  };
+  
+  COUNTER SysTimerCnt
+  {
+    MINCYCLE = 1;
+    MAXALLOWEDVALUE = 10000;
+    TICKSPERBASE = 1; /* One tick is equal to 1msec */
+  };  
+};
+
