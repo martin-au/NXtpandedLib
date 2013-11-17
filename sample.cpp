@@ -61,15 +61,62 @@ void user_1ms_isr_type2(void){
 
 #include "C:/cygwin/GNUARM/include/c++/4.0.2/cstdlib"
 
+// make pure virtual function work with nxtOSEK
+extern "C" int __cxa_pure_virtual(){return 0;}
 
 class NShape : public NWidget {
+protected:
+	// at the moment protected for my comfort
+	mutable NLcd *lcd;
 public:
-	//NShape() {}
+	NShape(NLcd &nlcd) : lcd(&nlcd) {}
+	NShape() : lcd(0) {}
 	virtual ~NShape() {}
 
-	virtual void show(bool update = false) const = 0;
-	virtual void erase(bool update = false) const  = 0;
-	virtual void invert(bool update = false) const = 0;
+	bool setLcd(NLcd &nlcd) const {
+		lcd = &nlcd;
+		if(lcd->noError()) {
+			return true;
+		} else {
+			lcd = 0;
+			return false;
+		}
+	}
+
+
+
+	void show(bool update = false) const {
+		if(lcd == 0) return;
+		if (!inLcd()) return;
+		showImpl(update);
+		visible = true;
+		if (update) {
+			display_update();
+		}
+	}
+	void erase(bool update = false) const {
+		if(lcd == 0) return;
+		if (!inLcd()) return;
+		showImpl(update);
+		visible = false;
+		if (update) {
+			display_update();
+		}
+	}
+	void invert(bool update = false) const {
+		if(lcd == 0) return;
+		if (!inLcd()) return;
+		showImpl(update);
+		visible = !visible;
+		if (update) {
+			display_update();
+		}
+	}
+
+private:
+	virtual void showImpl(bool update) const = 0;
+	virtual void eraseImpl(bool update) const = 0;
+	virtual void invertImpl(bool update) const = 0;
 };
 
 
@@ -78,7 +125,6 @@ public:
 class NLine : public NShape {
 private:
 	S8 endX, endY;
-	mutable NLcd *lcd;
 	// 0 off, 1 on, -1 invert
 	inline void pixelOperation(const S8 op, const S8 xx, const S8 yy) const;
 
@@ -90,11 +136,12 @@ public:
 	explicit NLine(NLcd &nlcd, const S8 x0, const S8 y0, const S8 x1, const S8 y1);
 	NLine();
 	~NLine() {}
-	bool setLcd(NLcd &nlcd) const;
 	void setPosition(const S8 x0 = keep, const S8 y0 = keep, const S8 x1 = keep, const S8 y1 = keep);
-	void show(bool update = false) const;
-	void erase(bool update = false) const;
-	void invert(bool update = false) const;
+
+private:
+	void showImpl(bool update) const;
+	void eraseImpl(bool update) const;
+	void invertImpl(bool update) const;
 };
 
 
@@ -129,27 +176,18 @@ t1 = timer.now();
 
 
 NLine::NLine(NLcd &nlcd, const S8 x0, const S8 y0, const S8 x1, const S8 y1)
- : lcd(&nlcd)
+ : NShape(nlcd)
 {
 	setPosition(x0, y0, x1, y1);
 	visible = false;
 }
 
 NLine::NLine()
-	: endX(0), endY(0), lcd(0)
+	: endX(0), endY(0)
 {
 	visible = false;
 }
 
-bool NLine::setLcd(NLcd &nlcd) const {
-	lcd = &nlcd;
-	if(lcd->noError()) {
-		return true;
-	} else {
-		lcd = 0;
-		return false;
-	}
-}
 
 
 void NLine::setPosition(const S8 x0, const S8 y0, const S8 x1, const S8 y1) {
@@ -232,33 +270,17 @@ void NLine::straight(S8 op) const {
 
 
 
-void NLine::show(bool update) const {
-	if(lcd == 0) return;
-
-	// i think user should be able to enter x,y in lcd
-	// otherwise nothing will happen
-	// intime pixel checking is not efficient!
-	if (!LCD::pixelInLcd(x, y) && !LCD::pixelInLcd(endX, endY))
-		return;
+void NLine::showImpl(bool update) const {
 	if ((x == endX) || (y == endY)) {
 		//straight(&NLcd::pixelOn);
 		straight(1);
 	} else {
 		bresenham(1);
 	}
-	visible = true;
-	if (update) {
-		display_update();
-	}
 }
 
 
-void NLine::erase(bool update) const {
-	if(lcd == 0) return;
-	// i think user should be able to enter x,y in lcd
-	// otherwise nothing will happen
-	if( !LCD::pixelInLcd(x, y) && !LCD::pixelInLcd(endX, endY) )
-		return;
+void NLine::eraseImpl(bool update) const {
 
 	if ((x == endX) || (y == endY)) {
 		//straight(&NLcd::pixelOff);
@@ -266,29 +288,15 @@ void NLine::erase(bool update) const {
 	} else {
 		bresenham(0);
 	}
-	visible = false;
-	if (update) {
-		display_update();
-	}
 }
 
 
-void NLine::invert(bool update) const {
-	if(lcd == 0) return;
-	// i think user should be able to enter x,y in lcd
-	// otherwise nothing will happen
-	if( !LCD::pixelInLcd(x, y) && !LCD::pixelInLcd(endX, endY) )
-		return;
-
+void NLine::invertImpl(bool update) const {
 	if ((x == endX) || (y == endY)) {
 		//straight(&NLcd::invertPixel);
 		straight(2);
 	} else {
 		bresenham(2);
-	}
-	visible = !visible;
-	if (update) {
-		display_update();
 	}
 }
 
@@ -312,15 +320,13 @@ public:
 
 
 	void setPosition(const S8 x0 = keep, const S8 y0 = keep, const S8 w = keep, const S8 h = keep);
-	void show(bool update = false)   const;
-	void erase(bool update = false)  const;
-	void invert(bool update = false) const;
 	void fill() 	 const;
 	void fillErase() const;
 	void fillInvert() const;
 
-	//void erase(bool update = false);
-	//void invert(bool update = false);
+	void show(bool update = false)   const;
+	void erase(bool update = false)  const;
+	void invert(bool update = false) const;
 };
 
 NRectangle::NRectangle(NLcd &nlcd, const S8 x0, const S8 y0, const S8 w, const S8 h)
@@ -496,7 +502,7 @@ void NRectangle::fillInvert() const {
 
 
 
-class NCircle : public NWidget {
+class NCircle : public NShape {
 private:
 	mutable NLcd *lcd;
 	S8 r;
@@ -695,12 +701,12 @@ void NCircle::fillInvert() const {
 }
 
 
+#include "NVector.hpp"
 
 extern "C" {
 
 TASK(TaskMain)
 {
-
 	NNumIndicator<U32> dtIndic(static_cast<S8>(9), 6);
 	NLabel dtLabel("time: ", &dtIndic);
 	dtIndic.alignBuddy(NAlignment::top());
@@ -746,6 +752,7 @@ TASK(TaskMain)
 	// 36 ms
 	*/
 
+	/*
 	// biggest circle
 	NCircle circle(lcd, 40, 32, 25);
 	NCircle circleI(lcd, 40, 32, 10);
@@ -754,6 +761,29 @@ TASK(TaskMain)
 	circleI.show();
 	circle.fill();
     circleI.fillInvert();
+	t1 = timer.now();
+	*/
+
+
+
+	// dirty virtual test
+	/*
+	NCircle circle(lcd, 50, 32, 25);
+	NLine line(lcd, circle.getX(), circle.getY(), circle.getX() + circle.getWidth(), circle.getY() + circle.getHeight());
+	NRectangle rect(lcd, circle.getX(), circle.getY(), circle.getWidth(), circle.getHeight());
+
+	NShape *obj[] = {&circle, &line, &rect};
+	t0 = timer.now();
+	for (S32 i=0; i<3; ++i) {
+		obj[i]->show();
+	}
+	t1 = timer.now();
+	*/
+
+	NLine line(lcd, 0 , 0, 50, 50);
+
+	t0 = timer.now();
+	line.show();
 	t1 = timer.now();
 
 
@@ -766,6 +796,5 @@ TASK(TaskMain)
 	display_update();
 	TerminateTask();
 }
-
 
 }

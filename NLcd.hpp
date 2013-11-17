@@ -114,4 +114,4 @@ struct PixelInvert {
 };
 
 
-#endif /* NLCD_HPP_ */
+#endif /* __NLCD_HPP_ */
