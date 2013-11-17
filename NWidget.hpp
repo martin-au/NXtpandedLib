@@ -8,6 +8,10 @@
 #ifndef __NWIDGET_HPP_
 #define __NWIDGET_HPP_
 
+
+// for static const
+#include "NLcd.hpp"
+
 /*
  * TODO: Introduce polymorph with virtual ..?
  * TODO Higher encapsulation (no protected data)
@@ -32,8 +36,8 @@ public:
 	inline S8 get() const { return val; }
 };
 
-// NWidget is only a virtual object, its designed as a base class which provides
-// space managing functions
+// NWidget is designed as a base class which provides space managing functions
+// TODO: make all protected private
 class NWidget {
 protected:
 	// in Pixels
@@ -46,16 +50,6 @@ protected:
 	mutable bool visible; // change allowed during show() const!
 
 public:
-
-	static const S8 LCD_WIDTH = 100;
-	static const S8 LCD_HEIGHT = 64;
-	// Max cursor position in X(horizontal) axis.
-	static const S8 LCD_TEXT_WIDTH = 16;
-	// Max cursor position in Y(vertical) axis.
-	static const S8 LCD_ROWS = 8;
-
-	static const S8 CHAR_WIDTH = 6;
-	static const S8 LCD_DEPTH = 8;
 
 
 	S8 getX() const {
@@ -92,10 +86,10 @@ public:
 		rows = nrows;
 		textWidth = charWidth;
 		// to pixel
-		x = 1 + (rowX * CHAR_WIDTH);
-		y = rowY * LCD_DEPTH;
-		width = textWidth * CHAR_WIDTH;
-		height = rows * LCD_DEPTH;
+		x = 1 + (rowX * LCD::CHAR_WIDTH);
+		y = rowY * LCD::DEPTH;
+		width = textWidth * LCD::CHAR_WIDTH;
+		height = rows * LCD::DEPTH;
 	}
 
 	void setPixelField(const S8 X, const S8 Y, const S8 Width, const S8 Height) {
@@ -105,29 +99,8 @@ public:
 		width = Width;
 		height = Height;
 	}
-
-	static inline S8 pixelToLine(S8 y) {
-		return y/LCD_DEPTH;
-	}
-
-	static bool pixelInLcd(S8 X, S8 Y) {
-		return ((X >= 0) && (X < LCD_WIDTH) && (Y >= 0) && (Y < LCD_HEIGHT));
-	}
-	static bool cursorInLcd(S8 indent, S8 row) {
-		return ((indent >= 0) && (indent < LCD_TEXT_WIDTH) && (row >= 0)
-				&& (row < LCD_ROWS));
-	}
-	static bool fieldInLcd(S8 indent, S8 row, S8 rows, S8 charWidth) {
-		return cursorInLcd(indent, row) && cursorInLcd(indent + charWidth, row)
-				&& cursorInLcd(indent, row + (rows - 1))
-				&& cursorInLcd(indent + charWidth, row + (rows - 1));
-	}
-	static bool objectInLcd(S8 X, S8 Y, S8 Height, S8 Width) {
-		return pixelInLcd(X, Y) && pixelInLcd(X + Width, Y)
-				&& pixelInLcd(X, Y + Height) && pixelInLcd(X + Width, Y + Width);
-	}
 	bool inLcd() const {
-		return objectInLcd(this->x, this->y, this->height, this->width);
+		return LCD::objectInLcd(this->x, this->y, this->height, this->width);
 	}
 };
 
