@@ -26,7 +26,6 @@ extern "C" {
 
 
 DeclareResource(ostreamRes);
-DeclareTask(FlushConsole);
 DeclareTask(TaskMain);
 DeclareEvent(EventSleep);
 DeclareEvent(EventSleepI2C);
@@ -51,7 +50,7 @@ void user_1ms_isr_type2(void){
 
 
 } // extern C
-ostream cout(ostreamRes);
+// ostream cout(ostreamRes);
 
 #include "NWidget.hpp"
 #include "NNumIndicator.hpp"
@@ -105,6 +104,13 @@ public:
 	// res  = 0100 1000
 
 	inline void pixelOn(const U8 X, const U8 Y) {
+		/* Test for pixel write fails!
+		if(!pixelInLcd(X, Y)) {
+			cout << "fail" << endl;
+			timer.wait(2000);
+			return;
+		}
+		*/
 		*(disp + ((Y / LCD_DEPTH) * LCD_WIDTH + X)) |= (1 << (Y % LCD_DEPTH));
 	}
 
@@ -176,12 +182,9 @@ private:
 	S8 endX, endY;
 	mutable NLcd *lcd;
 	// 0 off, 1 on, -1 invert
-	void bresenham(void (NLcd::*fpPixelState)(const U8, const U8)) const;
+	inline void pixelOperation(const S8 op, const S8 xx, const S8 yy) const;
 
-	/*
-	template <typename PixelOperation>
-	void straight(PixelOperation pixelOperation) const;
-	*/
+	void bresenham(S8 op) const;  //
 	void straight(S8 op) const;
 public:
 	static const S8 keep = -1;
@@ -195,6 +198,36 @@ public:
 	void erase(bool update = false) const;
 	void invert(bool update = false) const;
 };
+
+
+// set pixels in for loop ..
+// I use switch -> see NLine::pixelOperation
+/*
+NLine line(lcd, 0, 0, 99, 0);
+t0 = timer.now();
+for(S8 i=0; i<NLcd::LCD_HEIGHT; ++i) {
+	// x0, y0, xend, yend
+	line.setPosition(NLine::keep, i, NLine::keep, i);
+	line.show();
+	line.erase();
+	line.invert();
+}
+t1 = timer.now();
+// call only straight not the bigger bresenham function
+// function pointer
+// 26384 flash memory
+// at 51 ms with function pointer
+
+// function objects
+// 26592 flash memory
+// 27 ms
+
+// switch in for loop
+// 26416
+// 36 ms
+*/
+
+
 
 
 NLine::NLine(NLcd &nlcd, const S8 x0, const S8 y0, const S8 x1, const S8 y1)
@@ -220,8 +253,9 @@ bool NLine::setLcd(NLcd &nlcd) const {
 	}
 }
 
-//TODO: setPosition erease last position?
+
 void NLine::setPosition(const S8 x0, const S8 y0, const S8 x1, const S8 y1) {
+	erase();
 	if (x0 != keep)
 		this->x = x0;
 	if (y0 != keep)
@@ -235,9 +269,25 @@ void NLine::setPosition(const S8 x0, const S8 y0, const S8 x1, const S8 y1) {
 }
 
 
+/**
+ *
+ */
+void NLine::pixelOperation(const S8 op, const S8 xx, const S8 yy) const {
+	switch (op) {
+	case 1:
+		lcd->pixelOn(static_cast<U8>(xx), static_cast<U8>(yy));
+		break;
+	case 0:
+		lcd->pixelOff(static_cast<U8>(xx), static_cast<U8>(yy));
+		break;
+	case 2:
+		lcd->invertPixel(static_cast<U8>(xx), static_cast<U8>(yy));
+		break;
+	}
+}
 
-void NLine::bresenham(void (NLcd::*fpPixelState)(const U8, const U8)) const {
-	// predetermine function to avoid ifs during calculation!
+
+void NLine::bresenham(S8 op) const {   // void (NLcd::*fpPixelState)(const U8, const U8)
 	// low level pixel functions use U8!
 	S8 ix = x;
 	S8 iy = y;
@@ -246,8 +296,8 @@ void NLine::bresenham(void (NLcd::*fpPixelState)(const U8, const U8)) const {
 	S16 err = width + (-height), e2;
 
 	for (;;) {
-		// how to get the compiler to inline this (template?)!
-		(lcd->*fpPixelState)(static_cast<U8>(ix), static_cast<U8>(iy));
+		//(lcd->*fpPixelState)(static_cast<U8>(ix), static_cast<U8>(iy));
+		pixelOperation(op, ix, iy);
 		if (ix == endX && iy == endY)
 			break;
 		e2 = 2 * err;
@@ -265,44 +315,19 @@ void NLine::bresenham(void (NLcd::*fpPixelState)(const U8, const U8)) const {
 //template <typename PixelOperation>
 //void NLine::straight(PixelOperation pixelOperation) const {
 void NLine::straight(S8 op) const {
-	// predetermine function to avoid ifs during calculation!
-
-
-	// test
 	S8 sx = x < endX ? 1 : -1;
 	S8 sy = y < endY ? 1 : -1;
-
 
 	if(y == endY) {
 		for(S8 ix=x; ; ix+=sx) {
 			//lcd->pixelOn(pixelOperation, static_cast<U8>(ix), static_cast<U8>(y));
-			switch(op) {
-			case 1:
-				lcd->pixelOn(static_cast<U8>(ix), static_cast<U8>(y));
-				break;
-			case 0:
-				lcd->pixelOff(static_cast<U8>(ix), static_cast<U8>(y));
-				break;
-			case 2:
-				lcd->invertPixel(static_cast<U8>(ix), static_cast<U8>(y));
-				break;
-			}
+			pixelOperation(op, ix, y);
 			if(ix == endX) break;
 		}
 	} else if(x == endX) {
 		for(S8 iy=y; ; iy+=sy) {
 			//lcd->pixelOn(pixelOperation, static_cast<U8>(x), static_cast<U8>(iy));
-			switch(op) {
-			case 1:
-				lcd->pixelOn(static_cast<U8>(x), static_cast<U8>(iy));
-				break;
-			case 0:
-				lcd->pixelOff(static_cast<U8>(x), static_cast<U8>(iy));
-				break;
-			case 2:
-				lcd->invertPixel(static_cast<U8>(x), static_cast<U8>(iy));
-				break;
-			}
+			pixelOperation(op, x, iy);
 			if(iy == endY) break;
 		}
 	}
@@ -322,7 +347,7 @@ void NLine::show(bool update) const {
 		//straight(&NLcd::pixelOn);
 		straight(1);
 	} else {
-		bresenham(&NLcd::pixelOn);
+		bresenham(1);
 	}
 	visible = true;
 	if (update) {
@@ -335,7 +360,6 @@ void NLine::erase(bool update) const {
 	if(lcd == 0) return;
 	// i think user should be able to enter x,y in lcd
 	// otherwise nothing will happen
-	// intime pixel checking is not efficient!
 	if( !NLcd::pixelInLcd(x, y) && !NLcd::pixelInLcd(endX, endY) )
 		return;
 
@@ -343,7 +367,7 @@ void NLine::erase(bool update) const {
 		//straight(&NLcd::pixelOff);
 		straight(0);
 	} else {
-		bresenham(&NLcd::pixelOn);
+		bresenham(0);
 	}
 	visible = false;
 	if (update) {
@@ -356,7 +380,6 @@ void NLine::invert(bool update) const {
 	if(lcd == 0) return;
 	// i think user should be able to enter x,y in lcd
 	// otherwise nothing will happen
-	// intime pixel checking is not efficient!
 	if( !NLcd::pixelInLcd(x, y) && !NLcd::pixelInLcd(endX, endY) )
 		return;
 
@@ -364,7 +387,7 @@ void NLine::invert(bool update) const {
 		//straight(&NLcd::invertPixel);
 		straight(2);
 	} else {
-		bresenham(&NLcd::pixelOn);
+		bresenham(2);
 	}
 	visible = !visible;
 	if (update) {
@@ -582,6 +605,7 @@ private:
 	S8 r;
 
 	void rasterCircle(void (NLcd::*fpPixelState)(const U8, const U8)) const;
+	void rasterCircleFill(void (NLcd::*fpPixelState)(const U8, const U8)) const;
 public:
 	static const S8 keep = -1;
 
@@ -597,6 +621,10 @@ public:
 	~NCircle() {}
 	bool setLcd(NLcd &nlcd) const;
 
+	void setRadius(S8 radius) {
+		if(radius <= NLcd::LCD_WIDTH/2 && radius <= NLcd::LCD_HEIGHT/2 && r > 0)
+			r = radius;
+	}
 
 	void setPosition(const S8 x0 = keep, const S8 y0 = keep, const S8 radius = keep);
 	void show(bool update = false)   const;
@@ -616,6 +644,7 @@ NCircle::NCircle(NLcd &nlcd, const S8 x0, const S8 y0, const S8 radius)
 
 
 void NCircle::setPosition(const S8 x0, const S8 y0, const S8 radius) {
+	//erase();
 	if (x0 != keep)
 		this->x = x0 - radius;
 	if (y0 != keep)
@@ -654,6 +683,12 @@ void NCircle::rasterCircle(void (NLcd::*fpPixelState)(const U8, const U8)) const
 	(lcd->*fpPixelState)(cX, cY - r);
 	(lcd->*fpPixelState)(cX + r, cY);
 	(lcd->*fpPixelState)(cX - r, cY);
+	/*
+	lcd->pixelOn(cX, cY + r);
+	lcd->pixelOn(cX, cY - r);
+	lcd->pixelOn(cX + r, cY);
+	lcd->pixelOn(cX - r, cY);
+	*/
 
 	while (x < y) {
 		if (f >= 0) {
@@ -673,9 +708,36 @@ void NCircle::rasterCircle(void (NLcd::*fpPixelState)(const U8, const U8)) const
 		(lcd->*fpPixelState)(cX - y, cY + x);
 		(lcd->*fpPixelState)(cX + y, cY - x);
 		(lcd->*fpPixelState)(cX - y, cY - x);
+
+		/*
+		lcd->pixelOn(cX + x, cY + y);
+		lcd->pixelOn(cX - x, cY + y);
+		lcd->pixelOn(cX + x, cY - y);
+		lcd->pixelOn(cX - x, cY - y);
+		lcd->pixelOn(cX + y, cY + x);
+		lcd->pixelOn(cX - y, cY + x);
+		lcd->pixelOn(cX + y, cY - x);
+		lcd->pixelOn(cX - y, cY - x);
+		*/
 	}
 }
 
+
+void NCircle::rasterCircleFill(void (NLcd::*fpPixelState)(const U8, const U8)) const {
+	S8 cX = centerX();
+	S8 cY = centerY();
+
+	for(int y=-r; y<=r; y++) {
+	    for(int x=-r; x<=r; x++) {
+	        if(x*x+y*y <= r*r)
+	            (lcd->*fpPixelState)(cX+x, cY+y);
+	    }
+	}
+	// brute force algo may overwrite outer circle
+	if(visible) {
+		rasterCircle(&NLcd::pixelOn);
+	}
+}
 
 void NCircle::show(bool update) const {
 	if(lcd == 0) {
@@ -712,6 +774,28 @@ void NCircle::invert(bool update) const {
 }
 
 
+void NCircle::fill() const {
+	if(lcd == 0) {
+		return;
+	}
+	rasterCircleFill(&NLcd::pixelOn);
+}
+
+
+void NCircle::fillErase() const {
+	if(lcd == 0) {
+		return;
+	}
+	rasterCircleFill(&NLcd::pixelOff);
+}
+
+
+void NCircle::fillInvert() const {
+	if(lcd == 0) {
+		return;
+	}
+	rasterCircleFill(&NLcd::invertPixel);
+}
 
 
 
@@ -719,10 +803,12 @@ extern "C" {
 
 TASK(TaskMain)
 {
+
 	NNumIndicator<U32> dtIndic(static_cast<S8>(9), 6);
 	NLabel dtLabel("time: ", &dtIndic);
 	dtIndic.alignBuddy(NAlignment::top());
 	U32 t0, t1; t0 = t1 = 0;
+
 
 	NLcd lcd;
 
@@ -764,37 +850,25 @@ TASK(TaskMain)
 	*/
 
 	// biggest circle
-	NCircle circle(lcd, 50, 32, 31);
+	NCircle circle(lcd, 40, 32, 25);
+	NCircle circleI(lcd, 40, 32, 10);
 	t0 = timer.now();
 	circle.show();
+	circleI.show();
+	circle.fill();
+    circleI.fillInvert();
 	t1 = timer.now();
-	// all inline
-	// mem: 26160
-	// RT: 0
 
-	// func pointer
-	// mem: 26048
-	// RT: 0
 
 	dtIndic.setNumber(t1-t0);
 
 	dtIndic.show();
 	dtIndic.getBuddy()->show(true);
 
+
+	display_update();
 	TerminateTask();
 }
 
-
-
-
-
-
-
-
-
-TASK(FlushConsole)
-{
-	TerminateTask();
-}
 
 }

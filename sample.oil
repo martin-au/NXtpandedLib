@@ -51,21 +51,6 @@ CPU ATMEL_AT91SAM7S256
     EVENT = EventSleepI2C;
   };
   
-  TASK FlushConsole
-  {
-    AUTOSTART = TRUE
-    {
-      APPMODE = appmode1;
-    };
-    PRIORITY = 1;
-    ACTIVATION = 1;
-    SCHEDULE = FULL;
-    RESOURCE = ostreamRes;
-    STACKSIZE = 512; /* Stack size */
-    EVENT = EventSleep;
-    EVENT = EventSleepI2C;
-  };
-  
   COUNTER SysTimerCnt
   {
     MINCYCLE = 1;
