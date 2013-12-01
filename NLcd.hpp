@@ -28,9 +28,17 @@ private:
 	U8 *disp;
 public:
 
+	// use standard lcd of nxt
 	NLcd() {
 		disp = display_get_buffer();
 	}
+	// or write in disp bitmap
+	/*
+	NLcd(const U8 const *bitmap) : disp(bitmap) {
+		// TODO do size checking?
+	}
+	*/
+
 	~NLcd() {
 		disp = 0;
 	}
@@ -61,6 +69,7 @@ public:
 		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) |= (1 << (Y % LCD::DEPTH));
 	}
 
+
 	// disp = 0100 0000
 	//        AND NOT
 	// set  = 0000 1000
@@ -80,16 +89,15 @@ public:
 		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) ^= (1 << (Y % LCD::DEPTH));
 	}
 
-
-
-	template <typename PixelOp>
-	inline void setPixel(PixelOp op, const U8 X, const U8 Y) {
-		op(*this, X, Y);
-	}
-
 	inline bool getPixel(const U8 X, const U8 Y) const {
 		U8 k = Y % LCD::DEPTH;
 		return ((*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X))) & (1 << k)) >> k;
+	}
+
+	// is this useful? put outside of lcd class?
+	template <typename PixelOp>
+	inline void setPixel(PixelOp op, const U8 X, const U8 Y) {
+		op(*this, X, Y);
 	}
 };
 

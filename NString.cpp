@@ -3,26 +3,23 @@
 
 
 NString::NString()
-: decplaces(2)
+: string(0), length(0), bufferlength(0), decplaces(2)
 {
-	// Set every thing to zeros
-	this->string = 0;
-	this->length = 0;
-	this->bufferlength = 0;
 }
 
 NString::NString(S32 inBufferlength)
-: decplaces(2)
+: length(0), decplaces(2)
 {
 	if (inBufferlength > 0) {                  // buffer size > 0
 		this->string = new char[inBufferlength];              // allocate buffer
+		this->bufferlength = inBufferlength;
 		this->string[0] = '\0';                   // set first char \0
 	} else {
 		this->string = 0;                     // else NULL
+		this->bufferlength = 0;
 	}
-
-	this->bufferlength = inBufferlength;                   // Copy buffer length
-	this->length = 0;                     // str length = 0
+	// this->bufferlength = inBufferlength;         // Copy buffer length
+	//this->length = 0;                     		// str length = 0
 }
 
 
@@ -51,7 +48,7 @@ NString::NString(S32 inBufferlength)
 		this->length = inlength;
 		this->bufferlength = inlength + 1;
 		this->string = new char[bufferlength];        //allocate buffer
-		copy(inString, string);                        // copy and save size
+		NString::copy(inString, string);                        // copy and save size
 	} else {
 		this->string = 0;                                 // set to zeros
 		this->length = 0;                                 //

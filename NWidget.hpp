@@ -23,11 +23,11 @@ private:
 public:
 	explicit NAlignment(S8 align) : val(align) {};
 
-	inline static NAlignment none()    	{ return NAlignment(0); }
-	inline static NAlignment right() 	{ return NAlignment(1); }
-	inline static NAlignment left() 	{ return NAlignment(-1); }
-	inline static NAlignment top() 		{ return NAlignment(-2); }
-	inline static NAlignment bottom() 	{ return NAlignment(2); }
+	static NAlignment none()    { return NAlignment(0); }
+	static NAlignment right() 	{ return NAlignment(1); }
+	static NAlignment left() 	{ return NAlignment(-1); }
+	static NAlignment top() 	{ return NAlignment(-2); }
+	static NAlignment bottom() 	{ return NAlignment(2); }
 
 	bool operator==(const NAlignment& rhs) const {
 		return (val == rhs.val);
@@ -51,6 +51,7 @@ protected:
 
 public:
 
+	NWidget() : x(0), y(0), height(0), width(0), rowX(0), rowY(0), rows(0), textWidth(0), visible(0) {}
 
 	S8 getX() const {
 		return x;

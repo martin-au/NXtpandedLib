@@ -35,7 +35,7 @@ namespace LCD {
 	}
 	bool objectInLcd(const S16 x, const S16 y, const S16 height, const S16 width) {
 		return pixelInLcd(x, y) && pixelInLcd(x + width, y)
-				&& pixelInLcd(x, y + height) && pixelInLcd(x + width, y + width);
+				&& pixelInLcd(x, y + height) && pixelInLcd(x + width, y + height);
 	}
 }
 

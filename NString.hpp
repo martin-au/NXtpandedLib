@@ -104,15 +104,18 @@ public:
 	 * @param in_index the char position
 	 * @return the char or BCharMax if index too large
 	 */
-	char at(const S32 in_index) const {
+	const char at(const S32 in_index) const {
 		return operator[](in_index);
 	}
 
 	// saver than a operator implementation!
-	void assign(const S32 in_index, char c) {
+	// we do not give away handle to internal data with at!
+	bool assign(const S32 in_index, char c) {
 		if(in_index >= 0 && in_index < this->length) {
 			this->string[in_index] = c;
+			return true;
 		}
+		return false;
 	}
 
 	NString substr(S32 pos = 0, S32 len = npos) const;
