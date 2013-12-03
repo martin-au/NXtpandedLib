@@ -52,7 +52,6 @@ NLine::NLine()
 
 
 void NLine::setPosition(const S8 x0, const S8 y0, const S8 x1, const S8 y1) {
-	// TODO erase(); not possible?
 	if(isVisible()) {
 		this->erase();
 	}

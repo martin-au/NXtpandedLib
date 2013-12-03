@@ -11,6 +11,9 @@
 #include "Uncopyable.hpp"
 
 #include "LcdConstants.hpp"
+//#include <algorithm>
+
+
 
 // functors for setPixel function
 struct PixelOn;
@@ -29,29 +32,39 @@ private:
 public:
 
 	// use standard lcd of nxt
-	NLcd() {
-		disp = display_get_buffer();
+	NLcd() : disp(display_get_buffer()) {
 	}
-	// or write in disp bitmap
-	/*
-	NLcd(const U8 const *bitmap) : disp(bitmap) {
-		// TODO do size checking?
-	}
-	*/
+
 
 	~NLcd() {
-		disp = 0;
 	}
 
 	bool noError() {
 		return (disp != 0);
 	}
 
+
 	/// fastest way to update pixel fields!
 	// for example a horizontal line   *******  <- mask is same for every one
 	inline void pixelMask(const U8 X, const U8 line, U8 const mask) {
-		*(disp + (line * LCD::WIDTH + X)) |= mask;
+		*(disp + (line * LCD::WIDTH + X)) = mask; // overlay! change to xor for no overlay?
 	}
+
+	void copyBitmap(const U8 *data, U32 width, U32 depth, U32 x, U32 y) {
+		if (!LCD::objectInLcd(x, y, LCD::lineToPixel(depth), width)) {
+			return;
+		}
+		// copy full bitmap to display
+		U32 iy; // in y
+		U32 jx; // in x
+
+		for (iy = y; iy < depth; iy++) {
+			for (jx = x; jx < width; jx++) {
+				pixelMask(jx, iy, data[iy * LCD::WIDTH + jx]);
+			}
+		}
+	}
+
 
 	// disp = 0100 0000
 	//        OR
@@ -66,6 +79,7 @@ public:
 			return;
 		}
 		*/
+		//*(disp + (LCD::pixelToLine(Y) * LCD::WIDTH + X)) |= (1 << (Y % LCD::DEPTH));
 		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) |= (1 << (Y % LCD::DEPTH));
 	}
 

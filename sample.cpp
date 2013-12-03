@@ -15,7 +15,7 @@
 #include "ostream.hpp"
 
 using namespace ecrobot;
-Clock timer;
+//Clock timer;
 
 extern "C" {
 
@@ -49,7 +49,7 @@ void user_1ms_isr_type2(void){
 
 
 } // extern C
-// ostream cout(ostreamRes);
+//  ostream cout(ostreamRes);
 
 //#include "NWidget.hpp"
 #include "NNumIndicator.hpp"
@@ -65,15 +65,19 @@ void user_1ms_isr_type2(void){
 #include "NRectangle.hpp"
 #include "NCircle.hpp"
 
+#include "NTimer.hpp"
+NTimer timer;
+
 extern "C" {
 
 
 TASK(TaskMain)
 {
+
+
 	NNumIndicator<U32> dtIndic(static_cast<S8>(9), 6);
 	NLabel dtLabel("time: ", &dtIndic);
 	dtIndic.alignBuddy(NAlignment::top());
-	U32 t0, t1; t0 = t1 = 0;
 
 
 	NLcd lcd;
@@ -90,16 +94,15 @@ TASK(TaskMain)
 	display_update();
 
 
-	/*
 	NLine line(&lcd, 0, 0, 99, 0);
-	t0 = timer.now();
+	timer.start();
 	for(S8 i=0; i<LCD::HEIGHT; ++i) {
 		line.setPosition(NLine::keep, i, NLine::keep, i);
 		line.show();
 		line.erase();
 		line.invert();
 	}
-	t1 = timer.now();
+	timer.stop();
 
 	// drawer not inline
 	// 54 ms / 26160
@@ -107,7 +110,7 @@ TASK(TaskMain)
 	// drawer inline
 	// 46 ms / 26368
 
-*/
+
 
 	// biggest rect
 	/*
@@ -118,21 +121,33 @@ TASK(TaskMain)
 	t1 = timer.now();
 	*/
 
-
-	/*
+/*
 	// biggest circle
-	NCircle circle(&lcd, 40, 32, 25);
+	NCircle circle(&lcd, 40, 32, 20);
 	NCircle circleI(&lcd, 40, 32, 10);
-	t0 = timer.now();
-	circle.show();
-	circleI.show();
-	circle.fill();
-    circleI.fillInvert();
-	t1 = timer.now();
-	*/
+	NLine line(&lcd2, circle.getX(), circle.getY(), circle.centerX(), circle.centerY());
+
+	//t0 = timer.now();
+	circle.show(true);
+	//circle.fill();
+    //circleI.fillInvert();
+	timer.sleep(1000);
+	circleI.show(true);
+
+	line.show();
+	NLcd::swapLcd(lcd, lcd2);
+
+*/
+
+	//line.show();
+	//NLcd::swapLcd(lcd2, lcd);
+	display_update();
+	//t1 = timer.now();
+
 
 
 	// dirty virtual test
+
 
 	/*
 	NCircle circle(&lcd, 50, 32, 25);
@@ -145,13 +160,16 @@ TASK(TaskMain)
 		obj[i]->show();
 	}
 	t1 = timer.now();
+	// 27312
+
 	*/
 
 
-	dtIndic.setNumber(t1-t0);
+	dtIndic.setNumber(timer.getLast());
 
 	dtIndic.show();
 	dtIndic.getBuddy()->show(true);
+
 
 	TerminateTask();
 }

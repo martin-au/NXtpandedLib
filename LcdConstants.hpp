@@ -20,6 +20,10 @@ namespace LCD {
 		return y/LCD::DEPTH;
 	}
 
+	inline S8 lineToPixel(const S8 line) {
+		return line*LCD::DEPTH;
+	}
+
 	bool pixelInLcd(const S16 x, const S16 y) {
 		return ((x >= 0) && (x < LCD::WIDTH) && (y >= 0) && (y < LCD::HEIGHT));
 	}
