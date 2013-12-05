@@ -73,14 +73,23 @@ extern "C" {
 
 TASK(TaskMain)
 {
-
-
-	NNumIndicator<U32> dtIndic(static_cast<S8>(9), 6);
+	/*
+	NNumIndicator<U32> dtIndic(static_cast<S8>(9), 7);
 	NLabel dtLabel("time: ", &dtIndic);
 	dtIndic.alignBuddy(NAlignment::top());
-
+	*/
 
 	NLcd lcd;
+
+	NNumIndicator<U32> sizeIndic(static_cast<S8>(5), 2);
+	NLabel sizeLabel("size: ", &sizeIndic); // 24 bytes 20 bytes new
+	sizeLabel.show();
+
+    // rxe 25136
+	// rxe new 25504
+	// rxe new 25184
+	sizeIndic.setNumber(sizeof(sizeLabel));
+	sizeIndic.show(true);
 
 	// show raster lines
 	/*
@@ -90,9 +99,8 @@ TASK(TaskMain)
 		}
 	}
 	*/
-
+/*
 	display_update();
-
 
 	NLine line(&lcd, 0, 0, 99, 0);
 	timer.start();
@@ -109,7 +117,7 @@ TASK(TaskMain)
 
 	// drawer inline
 	// 46 ms / 26368
-
+*/
 
 
 	// biggest rect
@@ -164,12 +172,12 @@ TASK(TaskMain)
 
 	*/
 
-
-	dtIndic.setNumber(timer.getLast());
+	/*
+	dtIndic.setNumber(sizeof(NRectangle));
 
 	dtIndic.show();
 	dtIndic.getBuddy()->show(true);
-
+	*/
 
 	TerminateTask();
 }

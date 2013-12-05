@@ -9,7 +9,6 @@
 
 NLabel::NLabel(const S8 indent, const S8 row, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
-	visible = false;
 	setField(indent, row, 1, charWidth);
 	label = new NString(charWidth);
 }
@@ -17,7 +16,6 @@ NLabel::NLabel(const S8 indent, const S8 row, S8 charWidth) :
 
 NLabel::NLabel(const NString &text, const S8 indent, const S8 row, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
-	visible = false;
 	label = new NString(text);
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
@@ -27,7 +25,6 @@ NLabel::NLabel(const NString &text, const S8 indent, const S8 row, S8 charWidth)
 
 NLabel::NLabel(const char *text, const S8 indent, const S8 row, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
-	visible = false;
 	if (text) {
 		label = new NString(text);
 	} else {
@@ -46,9 +43,8 @@ NLabel::NLabel(const char *text, const S8 indent, const S8 row, S8 charWidth) :
 
 NLabel::NLabel(NLabel * const buddyOf, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
-	visible = false;
 	label = new NString(charWidth);
-	textWidth = charWidth; //!
+	this->fieldWidth(charWidth);
 	if (buddyOf) {
 		buddyOf->setBuddy(this);
 	}
@@ -57,12 +53,11 @@ NLabel::NLabel(NLabel * const buddyOf, S8 charWidth) :
 
 NLabel::NLabel(const NString &text, NLabel * const buddyOf, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
-	visible = false;
 	label = new NString(text);
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
 	}
-	textWidth = charWidth; //!
+	this->fieldWidth(charWidth);
 	if (buddyOf) {
 		buddyOf->setBuddy(this);
 	}
@@ -70,7 +65,6 @@ NLabel::NLabel(const NString &text, NLabel * const buddyOf, S8 charWidth) :
 
 NLabel::NLabel(const char *text, NLabel * const buddyOf, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
-	visible = false;
 	if (text) {
 		label = new NString(text);
 	} else {
@@ -83,7 +77,7 @@ NLabel::NLabel(const char *text, NLabel * const buddyOf, S8 charWidth) :
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
 	}
-	textWidth = charWidth; //!
+	this->fieldWidth(charWidth);
 	if (buddyOf) {
 		buddyOf->setBuddy(this);
 	}
@@ -122,7 +116,7 @@ void NLabel::clear() {
 bool NLabel::setPosition(const S8 indent, const S8 row) {
 	erase();
 
-	setField(indent, row, 1, textWidth);
+	setField(indent, row, 1, this->fieldWidth());
 	if (buddy)
 		buddy->alignBuddy(buddyAlignment);
 	return inLcd();
@@ -140,14 +134,14 @@ void NLabel::alignBuddy(const NAlignment &align) const {
 	S8 adjustment = 0;
 	if (align == NAlignment::right() || align == NAlignment::left()) {
 		if (align == NAlignment::right())
-			adjustment = align.get() + textWidth - 1; //!
+			adjustment = align.get() + this->fieldWidth() - 1; //!
 		else {
-			adjustment = align.get() - buddy->getFieldWidth() - 1;
+			adjustment = align.get() - buddy->fieldWidth() - 1;
 		}
-		buddy->setPosition(this->rowX + adjustment, this->rowY);
+		buddy->setPosition(this->indent() + adjustment, this->row());
 	} else if (align == NAlignment::top() || align == NAlignment::bottom()) {
 		adjustment = (align.get() > 0) ? (1) : (-1);
-		buddy->setPosition(this->rowX, this->rowY + adjustment);
+		buddy->setPosition(this->indent(), this->row() + adjustment);
 	}
 }
 
@@ -158,28 +152,28 @@ void NLabel::alignBuddy(const NAlignment &align) const {
 // problem : getString will maby not return the true length of the string!
 // solve to this: cut string during construction!
 void NLabel::show(bool update) const {
-	display_goto_xy(rowX, rowY);
+	display_goto_xy(this->indent(), this->row());
 	S8 labelLen = static_cast<S8>(label->size());
 
 	// we have to change label here because the width of the label
 	// can change between setText and show
-	if (textWidth == labelLen) {
+	if (this->fieldWidth() == labelLen) {
 		display_string(label->data());
-	} else if (textWidth < labelLen) {
+	} else if (this->fieldWidth() < labelLen) {
 		// NString dispStr = label->substr(0, textWidth);
 		//dispStr.assign((textWidth), '\0'); // !const
-		display_string(label->substr(0, textWidth).data());
+		display_string(label->substr(0, this->fieldWidth()).data());
 		//dispStr.assign((textWidth), tmp);  // !const
-	} else if (textWidth > labelLen) {
+	} else if (this->fieldWidth() > labelLen) {
 		// label->addBuffer(textWidth - labelLen); // !const
 		/*
 		for (S8 i = 0; i < (textWidth - labelLen); ++i) {
 			label->append(' ');    // !const
 		}
 		*/
-		NString dispStr(textWidth);
+		NString dispStr(this->fieldWidth());
 		dispStr = *label;
-		for (S8 i = 0; i < (textWidth - labelLen); ++i) {
+		for (S8 i = 0; i < (this->fieldWidth() - labelLen); ++i) {
 			dispStr.append(' ');
 		}
 
@@ -188,22 +182,22 @@ void NLabel::show(bool update) const {
 	if (update) {
 		display_update();
 	}
-	visible = true;
+	setVisibility(true);
 }
 
 
 void NLabel::erase(bool update) const {
 	// clean up (but save string)
-	char clear[textWidth + 1];
-	for (S8 i = 0; i < textWidth; ++i)
+	char clear[this->fieldWidth() + 1];
+	for (S8 i = 0; i < this->fieldWidth(); ++i)
 		clear[i] = ' ';
-	clear[textWidth] = '\0';
-	display_goto_xy(rowX, rowY);
+	clear[this->fieldWidth()] = '\0';
+	display_goto_xy(this->indent(), this->row());
 	display_string(clear);
 	if (update) {
 		display_update();
 	}
-	visible = false;
+	setVisibility(false);
 }
 
 

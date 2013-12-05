@@ -40,14 +40,14 @@ public:
 
 	void wait(U32 waitTime, bool pause = false) {
 		clk.wait(waitTime);
-		if(pause) {
+		if(pause && started) {
 			tpause += waitTime;
 		}
 	}
 
 	void sleep(U32 sleepTime, bool pause = false) {
 		clk.sleep(sleepTime);
-		if(pause) {
+		if(pause && started) {
 			tpause += sleepTime;
 		}
 	}

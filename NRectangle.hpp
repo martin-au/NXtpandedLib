@@ -45,29 +45,29 @@ void NRectangle::setPosition(const S8 x0, const S8 y0, const S8 w, const S8 h) {
 		this->erase();
 	}
 	if (x0 != keep)
-		this->x = x0;
+		x(x0);
 	if (y0 != keep)
-		this->y = y0;
-	if (getWidth() != keep)
-		this->width = w;
-	if (getHeight() != keep)
-		this->height = h;
+		y(y0);
+	if (width() != keep)
+		width(w);
+	if (height() != keep)
+		height(h);
 }
 
 
 
 
 void NRectangle::showImpl(bool update) const {
-	Drawer::drawRectangle(*lcd, x, y, width, height, DrawOpt::draw());
+	Drawer::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::draw());
 }
 
 void NRectangle::eraseImpl(bool update) const {
-	Drawer::drawRectangle(*lcd, x, y, width, height, DrawOpt::clear());
+	Drawer::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::clear());
 }
 
 
 void NRectangle::invertImpl(bool update) const {
-	Drawer::drawRectangle(*lcd, x, y, width, height, DrawOpt::invert());
+	Drawer::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::invert());
 }
 
 void NRectangle::fill() const {
@@ -75,14 +75,14 @@ void NRectangle::fill() const {
 		return;
 	}
 	// TODO Try if -height/width works!
-	Drawer::drawRectangleFilled(*lcd, x, y, width, height, DrawOpt::draw());
+	Drawer::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::draw());
 }
 
 void NRectangle::fillErase() const {
 	if(lcd == 0) {
 		return;
 	}
-	Drawer::drawRectangleFilled(*lcd, x, y, width, height, DrawOpt::clear());
+	Drawer::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::clear());
 }
 
 
@@ -90,7 +90,7 @@ void NRectangle::fillInvert() const {
 	if(lcd == 0) {
 		return;
 	}
-	Drawer::drawRectangleFilled(*lcd, x, y, width, height, DrawOpt::invert());
+	Drawer::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::invert());
 }
 
 

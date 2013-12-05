@@ -18,7 +18,6 @@ protected:
 	// at the moment protected for my comfort
 	mutable NLcd *lcd;
 public:
-	static const S8 keep = -1;
 
 	NShape(NLcd *nlcd) : lcd(nlcd) {}
 	NShape() : lcd(0) {}
@@ -38,7 +37,7 @@ public:
 		if(lcd == 0) return;
 		if (!inLcd()) return;
 		showImpl(update);
-		visible = true;
+		setVisibility(true);
 		if (update) {
 			display_update();
 		}
@@ -48,7 +47,7 @@ public:
 		if(lcd == 0) return;
 		if (!inLcd()) return;
 		eraseImpl(update);
-		visible = false;
+		setVisibility(false);
 		if (update) {
 			display_update();
 		}
@@ -58,7 +57,7 @@ public:
 		if(lcd == 0) return;
 		if (!inLcd()) return;
 		invertImpl(update);
-		visible = !visible;
+		setVisibility(!isVisible());
 		if (update) {
 			display_update();
 		}

@@ -50,9 +50,9 @@ void NNumIndicator<T>::setNumber(const T number) {
 	label->clear();
 	label->append(num);
 	// not optimized but good indicator if somethings wrong!
-	if (static_cast<S8>(label->size()) > textWidth) {
+	if (static_cast<S8>(label->size()) > this->fieldWidth()) {
 		label->clear();
-		for (S8 i = 0; i < textWidth; ++i)
+		for (S8 i = 0; i < this->fieldWidth(); ++i)
 			label->append('#');
 	}
 }

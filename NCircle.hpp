@@ -24,10 +24,10 @@ public:
 	~NCircle() {}
 
 	S8 centerX() const {
-		return x + r;
+		return x() + r;
 	}
 	S8 centerY() const {
-		return y + r;
+		return y() + r;
 	}
 
 	void setRadius(S8 radius) {
@@ -61,13 +61,13 @@ void NCircle::setPosition(const S8 centerX, const S8 centerY, const S8 radius) {
 		this->erase();
 	}
 	if (centerX != keep)
-		this->x = centerX - radius;
+		x(centerX - radius);
 	if (centerY != keep)
-		this->y = centerY - radius;
-	if (getWidth() != keep)
-		this->width = 2*radius;
-	if (getHeight() != keep)
-		this->height = this->width;
+		y(centerY - radius);
+	if (width() != keep)
+		width(2*radius);
+	if (height() != keep)
+		height(width());
 }
 
 
