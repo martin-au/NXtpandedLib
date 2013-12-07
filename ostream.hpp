@@ -84,12 +84,13 @@ public:
 	friend ostream& endl(ostream& stream);
 
 	ostream& operator<<(const char* str);
-	ostream& operator<<(const char str);
-	ostream& operator<<(const S32 num);
-	ostream& operator<<(const U32 num);
-	ostream& operator<<(const float num);
+	ostream& operator<<(char str);
+	ostream& operator<<(S32 num);
+	ostream& operator<<(U32 num);
+	ostream& operator<<(float num);
 
 
+	/*
 	template<typename T>
 	ostream& operator<<(T num) {
 		if (num < 0)
@@ -97,6 +98,7 @@ public:
 		else
 			return operator<<(static_cast<U32>(num));
 	}
+	*/
 
 
 	ostream& operator<<(ostream& stream) {return *this;}

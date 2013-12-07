@@ -13,6 +13,7 @@ extern "C" {
 #include "convert.hpp"
 #include "ostream.hpp"
 
+/// TODO Fix converter functions duplication, no converter for S8?!
 
 ///******************************************************************************
 // string!
@@ -256,7 +257,7 @@ public:
 		return *this;
 	}
 
-	friend ostream & operator<<(ostream &os, const NString& str) {
+	friend ostream& operator<<(ostream &os, const NString& str) {
 		os << str.data();
 		return os;
 	}
@@ -323,7 +324,7 @@ public:
 		if (in_value < 0.0000001 && in_value > -0.0000001)
 			append("0.0");
 		else {
-			addBuffer(BFloatMaxlength); // Inefficient with NNumIndicator!
+			addBuffer(BFloatMaxlength); // TODO Inefficient with NNumIndicator!
 			length += numToStr(in_value, this->string + length, decplaces);
 		}
 		return *this;

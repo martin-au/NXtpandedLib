@@ -11,6 +11,7 @@
 /*
  TODO Test copy construcotrs!
  TODO Align buddy and const?
+ TODO Take the buddy system out in own class?
  */
 
 #include "NString.hpp"

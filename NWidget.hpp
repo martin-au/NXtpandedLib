@@ -14,7 +14,6 @@
 
 /*
  * TODO: Introduce polymorph with virtual ..?
- * TODO Higher encapsulation (no protected data)
  */
 
 class NAlignment {
@@ -37,7 +36,9 @@ public:
 };
 
 // NWidget is designed as a base class which provides space managing functions
-// TODO: make all protected private
+// Be aware: All coordinates are converted into pixel coordinates (100x64)
+// but never in other direction! If you set for example x, height then the functions indent, lines will return 0!
+// You can convert Text-Coordinates into pixel coordinates with data loss: see LcdConstants.hpp
 class NWidget {
 
 private:

@@ -10,24 +10,29 @@
 
 #include "NLabel.hpp"
 
-template<typename T = S32>
+// deleted template class implementation because code bloat is extreme!
+
+// TODO Test efficiency for floats to string, second impl with S32/U32??
+
+
 class NNumIndicator: public NLabel {
 private:
-	T num;
+	// float datatype is a good compromise for template template impl
+	float num;
 	S8 precision;
 public:
 	// jump to next line with \n is possible but multiline labels are not supported, use the console.
-	NNumIndicator(const S8 indent = 0, const S8 row = 0, S8 numWidth = 5);
-	NNumIndicator(const T num = 0, const S8 indent = 0, const S8 row = 0, S8 numWidth = 5);
+	NNumIndicator(S8 indent, S8 row, S8 numWidth = 5);
+	//NNumIndicator(const T num, const S8 indent, const S8 row, S8 numWidth = 5);
 
 	explicit NNumIndicator(NLabel * const buddyOf, S8 numWidth = 5);
-	explicit NNumIndicator(const T num = 0, NLabel * const buddyOf, S8 numWidth = 5);
+	//explicit NNumIndicator(const T num = 0, NLabel * const buddyOf, S8 numWidth = 5);
 
 	~NNumIndicator();
 
-	T getNumber() const;
-	void setNumber(const T number);
-	NNumIndicator& operator=(const T number) {
+	float getNumber() const;
+	void setNumber(const float number);
+	NNumIndicator& operator=(const float number) {
 		setNumber(number);
 		return *this;
 	}

@@ -16,11 +16,21 @@ namespace LCD {
 	const S8 CHAR_WIDTH = 6;
 	const S8 CHAR_HEIGHT = 8;
 
-	inline S8 pixelToLine(const S8 y) {
+
+	S8 pixelToIndent(S8 x) {
+		return (x - 1) / LCD::CHAR_WIDTH;
+	}
+
+	S8 pixelToLine(S8 y) {
 		return y/LCD::DEPTH;
 	}
 
-	inline S8 lineToPixel(const S8 line) {
+	S8 pixelToTextWidth(S8 width) {
+		return width/LCD::CHAR_WIDTH;
+	}
+
+
+	S8 lineToPixel(const S8 line) {
 		return line*LCD::DEPTH;
 	}
 

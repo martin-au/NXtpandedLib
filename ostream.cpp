@@ -156,7 +156,7 @@ ostream& ostream::operator<<(const char* str) {
 	return *this;
 }
 
-ostream& ostream::operator<<(const char str) {
+ostream& ostream::operator<<(char str) {
 	char tmp[2];
 	tmp[0] = str;
 	tmp[1] = '\0';
@@ -164,7 +164,7 @@ ostream& ostream::operator<<(const char str) {
 	return *this;
 }
 
-ostream& ostream::operator<<(const S32 num) {
+ostream& ostream::operator<<(S32 num) {
 	if (!nextHex) {
 		char str[12];
 		numToStr(num, str);
@@ -178,7 +178,7 @@ ostream& ostream::operator<<(const S32 num) {
 	return *this;
 }
 
-ostream& ostream::operator<<(const U32 num) {
+ostream& ostream::operator<<(U32 num) {
 	if (!nextHex) {
 		char str[11];
 		numToStr(num, str);
@@ -192,7 +192,7 @@ ostream& ostream::operator<<(const U32 num) {
 	return *this;
 }
 
-ostream& ostream::operator<<(const float num) {
+ostream& ostream::operator<<(float num) {
 	//putf("f", num);
 	char str[12];
 	numToStr(num, str, floatplaces);

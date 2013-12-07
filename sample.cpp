@@ -49,11 +49,12 @@ void user_1ms_isr_type2(void){
 
 
 } // extern C
-//  ostream cout(ostreamRes);
+
+#include "ostream.hpp"
+ostream cout(ostreamRes);
 
 //#include "NWidget.hpp"
 #include "NNumIndicator.hpp"
-#include "LcdConstants.hpp"
 
 // pixel set functions
 #include "NLcd.hpp"
@@ -61,35 +62,39 @@ void user_1ms_isr_type2(void){
 #include "C:/cygwin/GNUARM/include/c++/4.0.2/cstdlib"
 
 
-#include "NLine.hpp"
-#include "NRectangle.hpp"
-#include "NCircle.hpp"
-
 #include "NTimer.hpp"
-NTimer timer;
+
+
+
+
 
 extern "C" {
 
 
 TASK(TaskMain)
 {
-	/*
-	NNumIndicator<U32> dtIndic(static_cast<S8>(9), 7);
-	NLabel dtLabel("time: ", &dtIndic);
-	dtIndic.alignBuddy(NAlignment::top());
-	*/
+	NTimer timer;
 
-	NLcd lcd;
+	//NNumIndicator indic(1, 1);
 
-	NNumIndicator<U32> sizeIndic(static_cast<S8>(5), 2);
-	NLabel sizeLabel("size: ", &sizeIndic); // 24 bytes 20 bytes new
-	sizeLabel.show();
+	char dest[15];
+	float testfloat = -123.4567;
+	S8 len = 0;
+	cout << "GO!" << endl;
 
-    // rxe 25136
-	// rxe new 25504
-	// rxe new 25184
-	sizeIndic.setNumber(sizeof(sizeLabel));
-	sizeIndic.show(true);
+	timer.start();
+	for(U32 i=0; i<1000; ++i) {
+		//numToStr1(testfloat, dest, 2); // 29760, 104 ms, 104us
+		//dest = ftoa(testfloat); // 25907, 38 ms, 38us
+		len = numToStr(testfloat, dest);
+	}
+	timer.stop();
+	//indic.setNumber(111);
+
+	cout << "R: " << dest << endl;
+	cout << "T: " << timer.getLast() << endl;
+	cout << "L: " << static_cast<S32>(len) << endl;
+
 
 	// show raster lines
 	/*
@@ -149,7 +154,6 @@ TASK(TaskMain)
 
 	//line.show();
 	//NLcd::swapLcd(lcd2, lcd);
-	display_update();
 	//t1 = timer.now();
 
 

@@ -3,10 +3,10 @@
 
 
 //dest must have 12 chars
-U32 numToStr(S32 value, char* dest) {
+S8 numToStr(S32 value, char* dest) {
 	static char const digit[] = "0123456789";
 	char *p = dest;
-	U32 length = 0;
+	U8 length = 0;
 
 	if (value < 0) {
 		*p++ = '-';
@@ -28,10 +28,10 @@ U32 numToStr(S32 value, char* dest) {
 }
 
 
-U32 numToStr(U32 value, char* dest) {
+S8 numToStr(U32 value, char* dest) {
 	static char const digit[] = "0123456789";
 	char *p = dest;
-	U32 length = 0;
+	U8 length = 0;
 
 	U32 shifter = value;
 	do { //Move to where representation ends
@@ -48,98 +48,88 @@ U32 numToStr(U32 value, char* dest) {
 }
 
 
-U32 numToStr(float value, char* dest, U16 places) {
-	int minwidth = 0;
-	bool rightjustify = false;
-	// this is used to write a float value to string, outstr.  oustr is also the return value.
-	int digit;
-	static char const chardigit[] = "0123456789";
-	float tens = 0.1;
-	int tenscount = 0;
-	int i;
-	float tempfloat = value;
-	int c = 0;
-	int charcount = 1;
-	int extra = 0;
-	// make sure we round properly. this could use pow from <math.h>, but doesn't seem worth the import
-	// if this rounding step isn't here, the value  54.321 prints as 54.3209
+// for float to char*
+typedef union {
+	long L;
+	float F;
+} LF_t;
 
-	// calculate rounding term d:   0.5/pow(10,places)
-	float d = 0.5;
-	if (value < 0)
-		d *= -1.0;
-	// divide by ten for each decimal place
-	for (i = 0; i < places; i++)
-		d /= 10.0;
-	// this small addition, combined with truncation will round our values properly
-	tempfloat += d;
+S8 numToStr(float f, char* dest, U8 places) {
+	S32 mantissa, int_part, frac_part;
+	S16 exp2;
+	LF_t x;
+	char *p;
+	//static char outbuf[15];
 
-	// first get value tens to be the large power of ten less than value
-	if (value < 0)
-		tempfloat *= -1.0;
-	while ((tens * 10.0) <= tempfloat) {
-		tens *= 10.0;
-		tenscount += 1;
+	if (f == 0.0) {
+		dest[0] = '0';
+		dest[1] = '.';
+		dest[2] = '0';
+		dest[3] = 0;
+		return 4;
+	}
+	x.F = f;
+
+	exp2 = (unsigned char) (x.L >> 23) - 127;
+	mantissa = (x.L & 0xFFFFFF) | 0x800000;
+	frac_part = 0;
+	int_part = 0;
+
+	if (exp2 >= 23)
+		int_part = mantissa << (exp2 - 23);
+	else if (exp2 >= 0) {
+		int_part = mantissa >> (23 - exp2);
+		frac_part = (mantissa << (exp2 + 1)) & 0xFFFFFF;
+	} else
+		/* if (exp2 < 0) */
+		frac_part = (mantissa & 0xFFFFFF) >> -(exp2 + 1);
+
+	p = &(dest[0]);
+
+	if (x.L < 0) {
+		*p++ = '-';
 	}
 
-	if (tenscount > 0)
-		charcount += tenscount;
-	else
-		charcount += 1;
-
-	if (value < 0)
-		charcount += 1;
-	charcount += 1 + places;
-
-	minwidth += 1; // both count the null final character
-	if (minwidth > charcount) {
-		extra = minwidth - charcount;
+	if (int_part == 0) {
+		*p++ = '0';
 	}
+	else {
+		numToStr(int_part, p);
+		while (*p)
+			p++;
+	}
+	*p++ = '.';
 
-	if (extra > 0 && rightjustify) {
-		for (int i = 0; i < extra; i++) {
-			dest[c++] = ' ';
+	if (frac_part == 0) {
+		*p++ = '0';
+	}
+	else {
+		char m;
+
+		places = 2;//sizeof(outbuf) - (p - outbuf) - 1;
+		//if (max > 7)
+		//	max = 7;
+		/* print BCD */
+		for (m = 0; m < places; m++) {
+			/* frac_part *= 10;	*/
+			frac_part = (frac_part << 3) + (frac_part << 1);
+
+			*p++ = (frac_part >> 24) + '0';
+			frac_part &= 0xFFFFFF;
 		}
+		/* delete ending zeroes */
+		for (--p; p[0] == '0' && p[-1] != '.'; --p)
+			;
+		++p;
 	}
+	*p = 0;
 
-	// write out the negative if needed
-	if (value < 0)
-		dest[c++] = '-';
-
-	if (tenscount == 0)
-		dest[c++] = '0';
-
-	for (i = 0; i < tenscount; i++) {
-		digit = (int) (tempfloat / tens);
-		dest[c++] = chardigit[digit];
-		tempfloat = tempfloat - ((float) digit * tens);
-		tens /= 10.0;
-	}
-
-	// otherwise, write the point and continue on
-	if (places > 0)
-		dest[c++] = '.';
-
-	// now write out each decimal place by shifting digits one by one into the ones place and writing the truncated value
-	for (i = 0; i < places; i++) {
-		tempfloat *= 10.0;
-		digit = (int) tempfloat;
-		dest[c++] = chardigit[digit];
-		// once written, subtract off that digit
-		tempfloat = tempfloat - (float) digit;
-	}
-	if (extra > 0 && !rightjustify) {
-		for (int i = 0; i < extra; i++) {
-			dest[c++] = ' ';
-		}
-	}
-
-	dest[c++] = '\0';
-	return static_cast<U32>(charcount);
+	return (p - dest);
 }
 
+
 // dest must have 8 chars
-U32 numToHex(U32 value, char* dest) {
+S8 numToHex(U32 value, char* dest) {
 	// static for performance boost?
 	static char const digit[] = "0123456789ABCDEF";
 	char *p = dest;
