@@ -31,12 +31,15 @@ public:
 	~NNumIndicator();
 
 	float getNumber() const;
-	void setNumber(const float number);
+
+	template<typename T>
+	void setNumber(T number);
+
 	NNumIndicator& operator=(const float number) {
 		setNumber(number);
 		return *this;
 	}
-
+	void show(bool update = false) const;
 	void setPrecision(S8 places);
 };
 

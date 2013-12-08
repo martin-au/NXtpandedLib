@@ -29,19 +29,28 @@ CPU ATMEL_AT91SAM7S256
   };
   
 
-  
-	RESOURCE  ostreamRes
-	{
-   		RESOURCEPROPERTY = STANDARD;
-	};
+  RESOURCE ostreamRes
+  {
+      RESOURCEPROPERTY = STANDARD;
+  };
 
   /* Definition of TaskMain */
   TASK TaskMain
   {
-    AUTOSTART = TRUE
-    {
-      APPMODE = appmode1;
-    };
+    AUTOSTART = FALSE;
+    PRIORITY = 1; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    RESOURCE = ostreamRes;
+    STACKSIZE = 512;
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+  };
+  
+  
+    TASK Task2
+  {
+    AUTOSTART = FALSE;
     PRIORITY = 1; /* lowest priority */
     ACTIVATION = 1;
     SCHEDULE = FULL;
@@ -56,6 +65,42 @@ CPU ATMEL_AT91SAM7S256
     MINCYCLE = 1;
     MAXALLOWEDVALUE = 10000;
     TICKSPERBASE = 1; /* One tick is equal to 1msec */
+  };
+  
+  
+   /* Main Task */
+  ALARM cyclic_alarm_main
+  {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+        TASK = TaskMain;
+    };
+    AUTOSTART = TRUE
+    {
+        ALARMTIME = 1;
+        CYCLETIME = 1000; /* Task is executed every 10msec */
+        APPMODE = appmode1;
+    };
   };  
+  
+  
+   /* Main Task */
+  ALARM cyclic_alarm_task2
+  {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+        TASK = Task2;
+    };
+    AUTOSTART = TRUE
+    {
+        ALARMTIME = 1;
+        CYCLETIME = 2000; /* Task is executed every 10msec */
+        APPMODE = appmode1;
+    };
+  };
+
+
 };
 

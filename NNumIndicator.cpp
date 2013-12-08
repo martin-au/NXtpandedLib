@@ -31,9 +31,12 @@ float NNumIndicator::getNumber() const {
 }
 
 
-void NNumIndicator::setNumber(const float number) {
-	num = number;
-	// TODO Move below part into show!
+template<typename T>
+void NNumIndicator::setNumber(T number) {
+	num = static_cast<float>(number);
+}
+
+void NNumIndicator::show(bool update) const {
 	label->clear();
 	label->append(num);
 	// not optimized but good indicator if somethings wrong!
@@ -42,6 +45,7 @@ void NNumIndicator::setNumber(const float number) {
 		for (S8 i = 0; i < this->fieldWidth(); ++i)
 			label->append('#');
 	}
+	NLabel::show(update);
 }
 
 

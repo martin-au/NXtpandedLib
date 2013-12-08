@@ -2,7 +2,7 @@
 
 #include "ostream.hpp"
 
-ostream::ostream(ResourceType res,
+ostream::ostream(mutex_t res,
 				 const U16 startLine,
 				 const U16 lastLine,
 				 const U16 x,
@@ -14,10 +14,9 @@ ostream::ostream(ResourceType res,
   width(width), // absichern!!
   somenew(0),
   nextHex(0),
-  floatplaces(2)
+  floatplaces(2),
+  mutex(res)
  {
-	// no validity check to save ram!
-	mutex = res;
 	// get width to end of display
 	S16 remaining = (MAX_CURSOR_X + 1) - x; // +1 because 0 do not count
 	if (remaining >= width) {
@@ -75,7 +74,7 @@ void ostream::newline() {
 void ostream::flush() {
 	if (!somenew)
 		return;   // do not update display if there is nothing new!
-	GetResource(mutex);
+	LockGuard lock(mutex);
 
 	// since flush can happen in any code segment with debugging
 	// we are not allowed to change cursor position!!
@@ -92,7 +91,6 @@ void ostream::flush() {
 	}
 	somenew = false;
 	display_goto_xy(save_x, save_y);
-	ReleaseResource(mutex);
 	display_update();
 }
 
@@ -109,7 +107,7 @@ void ostream::streamhandler(const char *str) {
 	// i..end of textBuffer pre
 	// j..copy to string dest
 	// k..copy from string src
-	GetResource(mutex);
+	LockGuard lock(mutex);
 	U16 i, j, k;
 	k = 0;
 	i = strlen(textBuffer[cursorLine]);
@@ -132,16 +130,15 @@ void ostream::streamhandler(const char *str) {
 	textBuffer[cursorLine][i + j] = '\0';
 
 	somenew = true;
-	ReleaseResource(mutex);
 }
 
 
 // manipulator
 
 ostream& endl(ostream& stream) {
-	GetResource(stream.mutex);
+	stream.mutex.Acquire();
 	stream.newline();
-	ReleaseResource(stream.mutex);
+	stream.mutex.Release();
 	stream.flush();
 	return stream;
 }

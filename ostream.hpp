@@ -16,7 +16,7 @@ extern "C" {
 }
 
 //for codecorrection
-#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
+
 #include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/display.h"
 
 #include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
@@ -24,6 +24,7 @@ extern "C" {
 #include "convert.hpp"
 
 #include "Uncopyable.hpp"
+#include "Mutex.hpp"
 
 // TODO Make a line type class?
 
@@ -41,7 +42,7 @@ private:
 	bool nextHex;
 	U16 floatplaces;
 
-	ResourceType mutex;
+	mutex_t mutex;
 
 	// Console buffer array
 	char **textBuffer;
@@ -67,7 +68,7 @@ public:
     // Max cursor position in Y(vertical) axis.
 	static const unsigned int MAX_CURSOR_Y = 7;
 
-	explicit ostream(ResourceType res,
+	explicit ostream(mutex_t res,
 			 const U16 startLine = 0,
 			 const U16 lastLine = MAX_CURSOR_Y,
 			 const U16 x = 0,
