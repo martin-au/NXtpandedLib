@@ -120,11 +120,12 @@ void ostream::streamhandler(const char *str) {
 		if (str[k] == '\n') {
 			textBuffer[cursorLine][i + j] = '\0';
 			newline();
-			k++; // jump over
+			//k++; // jump over
 			j = 0;
 			i = 0; // we assume that there is nothing in next line
+		} else {
+			textBuffer[cursorLine][i + j] = str[k];
 		}
-		textBuffer[cursorLine][i + j] = str[k];
 		k++;
 	}
 	textBuffer[cursorLine][i + j] = '\0';

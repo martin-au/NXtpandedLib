@@ -8,7 +8,7 @@
 #ifndef __NLCD_HPP_
 #define __NLCD_HPP_
 
-#include "Uncopyable.hpp"
+//#include "Uncopyable.hpp"
 
 #include "LcdConstants.hpp"
 //#include <algorithm>
@@ -26,7 +26,7 @@ struct PixelInvert;
  * Its high efficient so there is no range checking!!
  * If you write for example on pixel x 101 y 65 anything could happen!
  */
-class NLcd : private Uncopyable{
+class NLcd {
 private:
 	U8 *disp;
 public:

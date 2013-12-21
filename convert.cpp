@@ -1,6 +1,8 @@
 
 #include "convert.hpp"
 
+// TODO digit global in namespace!
+// TODO test lenght calculation with
 
 //dest must have 12 chars
 S8 numToStr(S32 value, char* dest) {
@@ -10,15 +12,16 @@ S8 numToStr(S32 value, char* dest) {
 
 	if (value < 0) {
 		*p++ = '-';
-		length++;
+		//length++;
 		value *= -1;
 	}
 	S32 shifter = value;
 	do { //Move to where representation ends
 		++p;
-		length++;
+		//length++;
 		shifter = shifter / 10;
 	} while (shifter);
+	length = p - dest;
 	*p = '\0';
 	do { //Move back, inserting digits as u go
 		*--p = digit[value % 10];

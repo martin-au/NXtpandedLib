@@ -38,7 +38,7 @@ CPU ATMEL_AT91SAM7S256
   TASK TaskMain
   {
     AUTOSTART = FALSE;
-    PRIORITY = 1; /* lowest priority */
+    PRIORITY = 1; 
     ACTIVATION = 1;
     SCHEDULE = FULL;
     RESOURCE = ostreamRes;
@@ -51,7 +51,7 @@ CPU ATMEL_AT91SAM7S256
     TASK Task2
   {
     AUTOSTART = FALSE;
-    PRIORITY = 1; /* lowest priority */
+    PRIORITY = 4; 
     ACTIVATION = 1;
     SCHEDULE = FULL;
     RESOURCE = ostreamRes;
@@ -79,7 +79,7 @@ CPU ATMEL_AT91SAM7S256
     AUTOSTART = TRUE
     {
         ALARMTIME = 1;
-        CYCLETIME = 1000; /* Task is executed every 10msec */
+        CYCLETIME = 2000; /* Task is executed every 10msec */
         APPMODE = appmode1;
     };
   };  
@@ -96,7 +96,7 @@ CPU ATMEL_AT91SAM7S256
     AUTOSTART = TRUE
     {
         ALARMTIME = 1;
-        CYCLETIME = 2000; /* Task is executed every 10msec */
+        CYCLETIME = 1; /* Task is executed every 1msec */
         APPMODE = appmode1;
     };
   };
