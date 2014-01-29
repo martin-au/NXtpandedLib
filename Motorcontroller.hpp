@@ -9,7 +9,7 @@
 #define __MOTORCONTROLLER_HPP_
 
 #include "Mutex.hpp"
-
+#include "Uncopyable.hpp"
 
 //#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Clock.h"
 //#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Port.h"
@@ -64,7 +64,17 @@ public:
 		  ma(0),
 		  mp(0),
 		  me(0) {
-		mot->setBrake(false);
+		mot->setBrake(true);
+	}
+
+	void setAmax(S16 paraAmax) {
+		// GetResource
+		amax = paraAmax;
+		// ReleaseResource
+	}
+
+	void setVmax(S16 paraVmax) {
+		vmax = paraVmax;
 	}
 
 	void controllerOn() {
@@ -91,7 +101,6 @@ public:
 	   } while (on);
 	}
 
-
 	void waitMove() const {
 	   bool go;
 	   do {
@@ -111,7 +120,22 @@ public:
 	   return go;
 	}
 
-	void moveRel(S32 pos, S16 pwr = 0, bool waitMove = true, S32 off = 0);
+	void moveRel(S32 angle, S16 pwr = 0, bool waitMove = true, S32 off = 0);
+
+	void moveAbs(S32 pos, S16 pwr = 0, bool waitMove = true);
+
+	void move(S16 pwr) {
+		this->controllerOff();
+		mot->setPWM(pwr);
+	}
+
+	void stop(bool brake) {
+		this->controllerOff();
+		mot->setBrake(brake);
+		mot->setPWM(0);
+	}
+
+	void resetMotorPos(S16 pwr);
 
 	void process();
 
@@ -142,6 +166,51 @@ void Motorcontroller::moveRel(S32 pos, S16 pwr, bool waitMove, S32 off) {
    }
    if(waitMove)
       this->waitMove();
+}
+
+
+
+void Motorcontroller::moveAbs(S32 pos, S16 pwr, bool waitMove) {
+   pos = -pos;
+   if(pwr > 0) {
+	  // Acquire(motor_mtx);
+      phigh = pwr;
+   	  mtx = -M_SCALE*pos;
+   	  mup = (mtx > mx);
+   	  mon = true;
+   	  mgo = true;
+   	  //Release(motor_mtx);
+   	  if(waitMove) {
+   		  this->waitMove();
+   	  }
+   }
+}
+
+
+
+// please let the motor time to settle!
+void Motorcontroller::resetMotorPos(S16 pwr) {
+   S32 tachoNow, tachoPrev;
+
+   // power limiting (anything above this level would be dangerous)
+   if(pwr > 50)
+      pwr = 50;
+   if(pwr < -50)
+      pwr = -50;
+
+   //Acquire(motor_mtx);
+   mon = false;
+   //Release(motor_mtx);
+   mot->setPWM(pwr);
+   mot->setBrake(true);
+   tachoNow = mot->getCount();
+   do {
+      Sleep(25);
+      tachoPrev = tachoNow;
+      tachoNow = mot->getCount();
+   } while(tachoNow != tachoPrev);
+   mot->setPWM(0);
+   mot->reset();
 }
 
 
