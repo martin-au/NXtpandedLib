@@ -10,7 +10,7 @@ namespace LCD {
 
 	// text constants
 	const S8 LINE_WIDTH = 16;
-	const S8 ROWS = DEPTH;
+	const S8 ROWS = DEPTH; // share pointer
 
 	// one char
 	const S8 CHAR_WIDTH = 6;

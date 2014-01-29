@@ -1,6 +1,7 @@
 
 #include "convert.hpp"
 
+
 // TODO digit global in namespace!
 // TODO test lenght calculation with
 
@@ -53,28 +54,28 @@ S8 numToStr(U32 value, char* dest) {
 
 // for float to char*
 typedef union {
-	long L;
-	float F;
-} LF_t;
+	long l;
+	float f;
+} __lf_t;
 
-S8 numToStr(float f, char* dest, U8 places) {
+S8 numToStr(float num, char* dest, U8 places) {
 	S32 mantissa, int_part, frac_part;
 	S16 exp2;
-	LF_t x;
+	__lf_t x;
 	char *p;
 	//static char outbuf[15];
 
-	if (f == 0.0) {
+	if (num == 0.0) {
 		dest[0] = '0';
 		dest[1] = '.';
 		dest[2] = '0';
 		dest[3] = 0;
 		return 4;
 	}
-	x.F = f;
+	x.f = num;
 
-	exp2 = (unsigned char) (x.L >> 23) - 127;
-	mantissa = (x.L & 0xFFFFFF) | 0x800000;
+	exp2 = (unsigned char) (x.l >> 23) - 127;
+	mantissa = (x.l & 0xFFFFFF) | 0x800000;
 	frac_part = 0;
 	int_part = 0;
 
@@ -89,7 +90,7 @@ S8 numToStr(float f, char* dest, U8 places) {
 
 	p = &(dest[0]);
 
-	if (x.L < 0) {
+	if (x.l < 0) {
 		*p++ = '-';
 	}
 

@@ -62,7 +62,7 @@ protected:
 	S32 startIndex; /**< start index*/
 	S32 endIndex; /**< end inde*/
 
-	static const S32 DefaultSize = 150; /**< Default size */
+	static const S32 DefaultSize = 15; /**< Default size */
 	static const float DefaultStart = 0.30; /**< Default start position in %*/
 
 public:

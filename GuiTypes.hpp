@@ -9,6 +9,7 @@
 #define __GUITYPES_HPP_
 
 
+
 // interface ok
 class DrawOpt {
 	S8 opt;
