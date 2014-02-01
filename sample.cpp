@@ -53,32 +53,69 @@ void user_1ms_isr_type2(void){
 mutex_t streammtx(ostreamRes);
 ostream cout(streammtx);
 
+#include "NTimer.hpp"
 
+#include "NComSingle.hpp"
+ecrobot::Usb usb;
+Com::NCom comHandler(usb);
+Com::NComSingle com(comHandler);
+
+
+/*
 #include "Motorcontroller.hpp"
 ecrobot::Motor _mA(PORT_A);
 Nxt::Motorcontroller motorA(&_mA, 18, 100);
+*/
 
 extern "C" {
 
-//U32 len;
-//unsigned char data[MAX_USB_DATA_LEN]; // first byte is preserved for disconnect request from host
-//#define DISCONNECT_REQ 0xFF
 
+// 1000 ms cycle
 TASK(TaskMain) {
-	cout << "Controller On" << endl;
-	motorA.controllerOn();
-	cout << "Motor Go" << endl;
-	GetResource(motorARes);
-	motorA.moveRel(180, 50, false);
-	ReleaseResource(motorARes);
-	cout << "Moving" << endl;
+	if(!usb.isConnected()) {
+		TerminateTask();
+	}
+
+	NTimer timer;
+
+	U8 idx = 0;
+	Com::NCom::comDatatype datatype;
+	Com::NCom::comNModes nmode;
+
+	timer.start();
+	// receive a msg and get info
+	if(com.receive(idx, datatype, nmode) > 0) {
+		// ok there is a msg, who should get the msg
+		if(idx == 1 && datatype == Com::NCom::typeU32 && nmode == Com::NCom::modeSingle) {
+			// finally write receive msg into variable
+			U32 rec = com.getData();
+			cout << "Receive: " << rec << endl;
+		} else {
+			// for debugging
+			unsigned char * pdata = com.getDataRaw();
+
+			cout << "Error 1" << endl;
+			cout << static_cast<U32>(pdata[0]) << endl;
+			cout << static_cast<U32>(pdata[1]) << endl;
+			cout << "                 " << endl;
+			//cout << *(pdata+1) << endl;
+			com.clear();
+		}
+	} else {
+		cout << "No data" << endl;
+	}
+
+	timer.stop();
+	U32 msg = timer.getLast();
+	com.send(msg, 1);
+
+	timer.reset();
 	TerminateTask();
 }
 
+// 1 ms cycle
 TASK(Task2) {
-	GetResource(motorARes);
-	motorA.process();
-	ReleaseResource(motorARes);
+	usb.commHandler();
 	TerminateTask();
 }
 
