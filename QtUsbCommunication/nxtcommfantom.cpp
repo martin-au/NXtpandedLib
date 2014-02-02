@@ -82,7 +82,7 @@ nFANTOM100_iNXT NXTCommFantom_open(ViChar* nxt_id)
  */
 int NXTCommFantom_getName(nFANTOM100_iNXT nxt, ViChar* name)
 {
-	char buf[MAX_DATA_LEN];
+    char buf[MAX_PACKAGE_LEN];
 	int read_len;
 	int i;
 	int timeout = 10000;
@@ -120,7 +120,7 @@ int NXTCommFantom_connect(nFANTOM100_iNXT nxt)
 {
 	/* unique signature to connect with only ECRobot USB API */
 	static const char ecrobot_sig[] = {'E', 'C', 'R', 'O', 'B', 'O', 'T'};
-	char buf[MAX_DATA_LEN];
+    char buf[MAX_PACKAGE_LEN];
 	int read_len;
 	int i;
 	int timeout = 10000;
@@ -132,7 +132,7 @@ int NXTCommFantom_connect(nFANTOM100_iNXT nxt)
 	{
 		while(timeout-- > 0)
 		{
-            read_len = NXTCommFantom_receive(nxt, (unsigned char*)buf, 0, MAX_DATA_LEN);
+            read_len = NXTCommFantom_receive(nxt, (unsigned char*)buf, 0, MAX_PACKAGE_LEN);
 			if (read_len > 0) break;
 		}
 		if (read_len == 0) return 0; /* no return until time out */
@@ -164,7 +164,7 @@ int NXTCommFantom_send(nFANTOM100_iNXT nxt, const unsigned char* data, int offse
 {
 	ViStatus status = 0;
 	
-	if (len > MAX_DATA_LEN) return 0;
+    if (len > MAX_PACKAGE_LEN) return 0;
     // Martin Aumair -> no cast!
     return nFANTOM100_iNXT_write(nxt, data + offset, len, &status);
 }
@@ -183,7 +183,7 @@ int NXTCommFantom_receive(nFANTOM100_iNXT nxt, unsigned char* data, int offset, 
 {
 	ViStatus status = 0;
 
-	if (len > MAX_DATA_LEN) len = MAX_DATA_LEN;
+    if (len > MAX_PACKAGE_LEN) len = MAX_PACKAGE_LEN;
     // Martin Aumair -> no cast!
     return nFANTOM100_iNXT_read(nxt, data + offset, len, &status);
 }

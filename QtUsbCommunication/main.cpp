@@ -61,15 +61,28 @@ int main(int argc, char *argv[])
     QTimer *timer1 = new QTimer;
     QTimer *timer2 = new QTimer;
 
-    QObject::connect(&com, SIGNAL(received(quint8,quint8)), logger, SLOT(out(quint8,quint8)));
+    QObject::connect(&com, SIGNAL(received(quint32,quint8)), logger, SLOT(out(quint32,quint8)));
+    QObject::connect(&com, SIGNAL(received(qint32,quint8)), logger, SLOT(out(qint32,quint8)));
+    QObject::connect(&com, SIGNAL(received(bool,quint8)), logger, SLOT(out(bool,quint8)));
+    QObject::connect(&com, SIGNAL(received(float,quint8)),logger, SLOT(out(float,quint8)));
+    QObject::connect(&com, SIGNAL(received(char,quint8)), logger, SLOT(out(char,quint8)));
+    QObject::connect(&com, SIGNAL(received(QString,quint8)), logger, SLOT(out(QString,quint8)));
 
     QObject::connect(timer1, SIGNAL(timeout()), &com, SLOT(handler()));
     timer1->start(900);
 
     QObject::connect(timer2, SIGNAL(timeout()), logger, SLOT(send()));
+
     QObject::connect(logger, SIGNAL(sendThis(quint32,quint8)), &com, SLOT(send(quint32,quint8)));
+    QObject::connect(logger, SIGNAL(sendThis(qint32,quint8)), &com, SLOT(send(qint32,quint8)));
+    QObject::connect(logger, SIGNAL(sendThis(bool,quint8)), &com, SLOT(send(bool,quint8)));
+    QObject::connect(logger, SIGNAL(sendThis(float,quint8)), &com, SLOT(send(float,quint8)));
+    QObject::connect(logger, SIGNAL(sendThis(char,quint8)), &com, SLOT(send(char,quint8)));
+    QObject::connect(logger, SIGNAL(sendThis(QString,quint8)), &com, SLOT(send(QString,quint8)));
+
     timer2->start(901);
 
-    QObject::connect(&a, SIGNAL(closingDown()), &com, SLOT(close());
+    QObject::connect(&a, SIGNAL(aboutToQuit()), &com, SLOT(close()));
+
     return a.exec();
 }

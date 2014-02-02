@@ -185,15 +185,7 @@ NString& NString::append(const NString& inString) {
 }
 
 
-NString& NString::append(const char in_char) {
-	addBuffer(1);                                // check size
 
-	string[length + 1] = '\0';  	//this->string[length];           //
-	string[length] = in_char;       // copy append char
-	++length;                       // calcul new size
-
-	return *this;
-}
 
 
 const NString NString::operator+(const NString& inString) const {

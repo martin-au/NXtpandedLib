@@ -69,6 +69,8 @@ Nxt::Motorcontroller motorA(&_mA, 18, 100);
 
 extern "C" {
 
+//Com::NCom::comDatatype state = Com::NCom::typeU32;
+U8 state = static_cast<U8>(Com::NCom::typeU32);
 
 // 1000 ms cycle
 TASK(TaskMain) {
@@ -76,22 +78,54 @@ TASK(TaskMain) {
 		TerminateTask();
 	}
 
-	NTimer timer;
-
 	U8 idx = 0;
 	Com::NCom::comDatatype datatype;
 	Com::NCom::comNModes nmode;
 
-	timer.start();
 	// receive a msg and get info
 	if(com.receive(idx, datatype, nmode) > 0) {
 		// ok there is a msg, who should get the msg
-		if(idx == 1 && datatype == Com::NCom::typeU32 && nmode == Com::NCom::modeSingle) {
-			// finally write receive msg into variable
-			U32 rec = com.getData();
+		switch(datatype) {
+		// finally write receive msg into variable
+		case Com::NCom::typeU32 :
+		{
+			U32 rec = com.getDataU32();
 			cout << "Receive: " << rec << endl;
-		} else {
-			// for debugging
+			break;
+		}
+		case Com::NCom::typeS32 :
+		{
+			S32 rec = com.getDataS32();
+			cout << "Receive: " << rec << endl;
+			break;
+		}
+		case Com::NCom::typeBool:
+		{
+			bool rec = com.getDataBool();
+			char b = rec ? 'T' : 'F';
+			cout << "Receive: " << b << endl;
+			break;
+		}
+		case Com::NCom::typeFloat:
+		{
+			float rec = com.getDataFloat();
+			cout << "Receive: " << rec << endl;
+			break;
+		}
+		case Com::NCom::typeChar:
+		{
+			char rec = com.getDataChar();
+			cout << "Receive: " << rec << endl;
+			break;
+		}
+		case Com::NCom::typeString:
+		{
+			NString rec = com.getDataString();
+			cout << "Receive: " << rec << endl;
+			break;
+		}
+		default:
+		{	// for debugging
 			unsigned char * pdata = com.getDataRaw();
 
 			cout << "Error 1" << endl;
@@ -101,15 +135,55 @@ TASK(TaskMain) {
 			//cout << *(pdata+1) << endl;
 			com.clear();
 		}
+		}
+
 	} else {
-		cout << "No data" << endl;
+		//cout << "No data" << endl;
 	}
 
-	timer.stop();
-	U32 msg = timer.getLast();
-	com.send(msg, 1);
 
-	timer.reset();
+	switch(state) {
+	case Com::NCom::typeU32:
+	{
+		U32 msg = 12345678;
+		com.send(msg, 1);
+	}
+	break;
+	case Com::NCom::typeS32:
+	{
+		S32 msg = -123456;
+		com.send(msg, 1);
+	}
+	break;
+	case Com::NCom::typeBool:
+	{
+		bool msg = true;
+		com.send(msg, 1);
+	}
+	break;
+	case Com::NCom::typeFloat:
+	{
+		float msg = -123.456;
+		com.send(msg, 1);
+	}
+	break;
+	case Com::NCom::typeChar:
+	{
+		char msg = 'M';
+		com.send(msg, 1);
+	}
+	break;
+	case Com::NCom::typeString:
+	{
+		NString msg("Hallo Welt");
+		com.send(msg, 1);
+	}
+	break;
+	default: break;
+	}
+
+	++state;
+
 	TerminateTask();
 }
 

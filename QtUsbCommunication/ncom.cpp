@@ -103,6 +103,66 @@ quint32 NCom::send(quint32 n, quint8 idx) {
 }
 
 
+quint32 NCom::send(qint32 n, quint8 idx) {
+    NCom::comDatatype type = NCom::typeS32;
+    NCom::comNModes mode = NCom::modeSingle;
+
+    data[2] =  (n >> 24) & 0xFF;
+    data[3] =  (n >> 16) & 0xFF;
+    data[4] =  (n >> 8) & 0xFF;
+    data[5] =  n & 0xFF;
+    return this->send(data, idx, type, mode);
+}
+
+quint32 NCom::send(bool b, quint8 idx) {
+    NCom::comDatatype type = NCom::typeBool;
+    NCom::comNModes mode = NCom::modeSingle;
+
+    data[2] = static_cast<unsigned char>(b);
+    return this->send(data, idx, type, mode);
+}
+
+
+quint32 NCom::send(float num, quint8 idx) {
+    NCom::comDatatype type = NCom::typeFloat;
+    NCom::comNModes mode = NCom::modeSingle;
+
+    if(sizeof(float) == 4) {
+        floatUnion_t fu;
+        fu.f = num;
+
+        memcpy(data+2, fu.bytes, 4);
+        return this->send(data, idx, type, mode);
+    }
+    return -1;
+}
+
+quint32 NCom::send(char ch, quint8 idx) {
+    NCom::comDatatype type = NCom::typeChar;
+    NCom::comNModes mode = NCom::modeSingle;
+
+    data[2] = static_cast<unsigned char>(ch);
+    return this->send(data, idx, type, mode);
+}
+
+
+quint32 NCom::send(const QString &string, quint8 idx) {
+    NCom::comDatatype type = NCom::typeString;
+    NCom::comNModes mode = NCom::modeSingle;
+
+    char *str = string.toLocal8Bit().data();
+
+    if(string.size()+1 <= NCom::MAX_DATA_LEN) {
+        memcpy((data+2), str, string.size()+1);
+    } else {
+        data[MAX_PACKAGE_LEN] = static_cast<unsigned char>('\0');
+        memcpy((data+2), str, NCom::MAX_DATA_LEN-1);
+    }
+    return this->send(data, idx, type, mode);
+}
+
+
+
 void NCom::handler() {
     if(isConnected()) {
         quint8 idx = 0;
@@ -112,14 +172,37 @@ void NCom::handler() {
         if(receive(data, idx, type, mode) > 0) {
             if(type == typeU32 && mode == modeSingle) {
                 quint32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
-                emit received(idx, ret);
+                emit received(ret, idx);
                 clear();
+            } else if(type == typeS32 && mode == modeSingle) {
+                qint32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
+                emit received(ret, idx);
+                clear();
+            } else if(type == typeBool && mode == modeSingle) {
+                bool ret = (data[2] > 0) ? true : false;
+                emit received(ret, idx);
+                clear();
+            } else if(type == typeFloat && mode == modeSingle) {
+                if(sizeof(float) == 4) {
+                    floatUnion_t fu;
+                    memcpy(fu.bytes , data+2, 4);
+                    emit received(fu.f, idx);
+                }
+                clear();
+            } else if(type == typeChar && mode == modeSingle) {
+                emit received(static_cast<char>(data[2]), idx);
+            } else if(type == typeString && mode == modeSingle) {
+                QString ret("");
+                for(int i=2; ; i++) {
+                    char ch = static_cast<char>(data[i]);
+                    if(ch == '\0') break;
+                    ret += ch;
+                }
+                emit received(ret, idx);
             }
-        }
 
+        }
     }
 }
 
 }
-
-

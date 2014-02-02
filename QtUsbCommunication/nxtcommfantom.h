@@ -8,7 +8,7 @@
 
 #define MAX_DEV_ID		65
 #define MAX_DEV_NAME    16
-#define MAX_DATA_LEN	64
+#define MAX_PACKAGE_LEN	64
 
 extern int NXTCommFantom_find(ViChar* nxt_id);
 extern nFANTOM100_iNXT NXTCommFantom_open(ViChar* nxt_id);
