@@ -12,8 +12,37 @@
 #include "NCom.hpp"
 
 #include "NString.hpp"
+#include "NVector.hpp"
 
 namespace Com {
+
+
+inline unsigned char* num2Bytes (S32 num, unsigned char *pstart) {
+	*pstart 	=  (num >> 24) & 0xFF;
+	*(pstart+1) =  (num >> 16) & 0xFF;
+	*(pstart+2) =  (num >> 8) & 0xFF;
+	*(pstart+3) =   num & 0xFF;
+	return (pstart+4);
+}
+
+inline unsigned char* num2Bytes (U32 num, unsigned char *pstart) {
+	*pstart 	=  (num >> 24) & 0xFF;
+	*(pstart+1) =  (num >> 16) & 0xFF;
+	*(pstart+2) =  (num >> 8) & 0xFF;
+	*(pstart+3) =   num & 0xFF;
+	return (pstart+4);
+}
+
+inline unsigned char* bytes2Num (S32 &num, unsigned char *pstart) {
+	num = (*pstart << 24) | (*(pstart+1) << 16) | (*(pstart+2) << 8) | (*(pstart+3));
+	return (pstart+4);
+}
+
+inline unsigned char* bytes2Num (U32 &num, unsigned char *pstart) {
+	num = (*pstart << 24) | (*(pstart+1) << 16) | (*(pstart+2) << 8) | (*(pstart+3));
+	return (pstart+4);
+}
+
 
 class NComSingle {
 private:
@@ -37,8 +66,10 @@ public:
 		NCom::comDatatype type = NCom::typeBool;
 		NCom::comNModes mode = NCom::modeSingle;
 
-		data[2] = static_cast<unsigned char>(b);
-		return com.send(data, idx, type, mode);
+		data[NCom::data0ByteIdx] = static_cast<unsigned char>(b);
+		U32 len = com.send(data, idx, type, mode, 1);
+		memset(data, 0, NCom::headerOverhead+1);
+		return len;
 	}
 
 
@@ -46,22 +77,20 @@ public:
 		NCom::comDatatype type = NCom::typeU32;
 		NCom::comNModes mode = NCom::modeSingle;
 
-		data[2] =  (num >> 24) & 0xFF;
-		data[3] =  (num >> 16) & 0xFF;
-		data[4] =  (num >> 8) & 0xFF;
-		data[5] =  num & 0xFF;
-		return com.send(data, idx, type, mode);
+		num2Bytes(num, &data[NCom::data0ByteIdx]);
+		U32 len = com.send(data, idx, type, mode, 4);
+		memset(data, 0, NCom::headerOverhead+4);
+		return len;
 	}
 
 	U32 send(S32 num, U8 idx = 0) {
 		NCom::comDatatype type = NCom::typeS32;
 		NCom::comNModes mode = NCom::modeSingle;
 
-		data[2] =  (num >> 24) & 0xFF;
-		data[3] =  (num >> 16) & 0xFF;
-		data[4] =  (num >> 8) & 0xFF;
-		data[5] =  num & 0xFF;
-		return com.send(data, idx, type, mode);
+		num2Bytes(num, &data[NCom::data0ByteIdx]);
+		U32 len = com.send(data, idx, type, mode, 4);
+		memset(data, 0, NCom::headerOverhead+4);
+		return len;
 	}
 
 	U32 send(float num, U8 idx = 0) {
@@ -72,15 +101,19 @@ public:
 		fu.f = num;
 
 		memcpy(data+2, fu.bytes, 4);
-		return com.send(data, idx, type, mode);
+		U32 len = com.send(data, idx, type, mode, 4);
+		memset(data, 0, NCom::headerOverhead+4);
+		return len;
 	}
 
 	U32 send(char ch, U8 idx = 0) {
 			NCom::comDatatype type = NCom::typeChar;
 			NCom::comNModes mode = NCom::modeSingle;
 
-			data[2] = static_cast<unsigned char>(ch);
-			return com.send(data, idx, type, mode);
+			data[NCom::data0ByteIdx] = static_cast<unsigned char>(ch);
+			U32 len = com.send(data, idx, type, mode, 1);
+			memset(data, 0, NCom::headerOverhead+1);
+			return len;
 	}
 
 	U32 send(const NString &string, U8 idx = 0) {
@@ -96,7 +129,45 @@ public:
 			memcpy((data+2), str, NCom::MAX_DATA_LENGTH-1);
 		}
 
-		return com.send(data, idx, type, mode);
+		U32 len = com.send(data, idx, type, mode, string.size()+1); // +1 -> NUL \0 !
+		memset(data, 0, NCom::headerOverhead+string.size()+1);
+		return len;
+	}
+
+	/*
+	U32 send(const NVector<U32> &vec, U8 idx = 0) {
+		NCom::comDatatype type = NCom::typeU32;
+		NCom::comNModes mode = NCom::modePackage;
+
+		const S16 maxlen = (static_cast<S16>(NCom::MAX_DATA_LENGTH/sizeof(U32)) > vec.size()) ?
+				vec.size() : NCom::MAX_DATA_LENGTH/sizeof(U32);
+
+		unsigned char *pstart = &data[NCom::data0ByteIdx];
+
+		for(S16 i=0; i < maxlen; ++i) {
+			pstart = num2Bytes(vec.at(i), pstart);
+		}
+		U32 len = com.send(data, idx, type, mode, maxlen);
+		memset(data, 0, NCom::headerOverhead+maxlen);
+		return len;
+	}
+	*/
+
+	U32 send(U32 *package, U8 idx = 0, U32 len = 0) {
+		NCom::comDatatype type = NCom::typeU32;
+		NCom::comNModes mode = NCom::modePackage;
+
+		const S16 maxlen = (static_cast<S16>(NCom::MAX_DATA_LENGTH/sizeof(U32)) > len) ?
+		len : NCom::MAX_DATA_LENGTH/sizeof(U32);
+
+		unsigned char *pstart = &data[NCom::data0ByteIdx];
+
+		for(S16 i=0; i < maxlen; ++i) {
+			pstart = num2Bytes(*(package+i), pstart);
+		}
+		U32 retlen = com.send(data, idx, type, mode, (maxlen*4));
+		memset(data, 0, NCom::headerOverhead+maxlen*4);
+		return retlen;
 	}
 
 
@@ -107,19 +178,21 @@ public:
 	}
 
 	U32 getDataU32() {
-		 U32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
+		 U32 ret = 0;
+		 bytes2Num(ret, &data[NCom::data0ByteIdx]);
 		 memset(data, 0, 6);
 		 return ret;
 	}
 
 	S32 getDataS32() {
-		S32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
+		S32 ret = 0;
+		bytes2Num(ret, &data[NCom::data0ByteIdx]);
 		memset(data, 0, 6);
 		return ret;
 	}
 
 	bool getDataBool() {
-		bool ret = (data[2] > 0) ? true : false;
+		bool ret = (data[NCom::data0ByteIdx] > 0) ? true : false;
 		memset(data, 0, 3);
 		return ret;
 	}
@@ -133,7 +206,7 @@ public:
 	}
 
 	char getDataChar() {
-		char ret = static_cast<char>(data[2]);
+		char ret = static_cast<char>(data[NCom::data0ByteIdx]);
 		memset(data, 0, 3);
 		return ret;
 	}
@@ -149,6 +222,12 @@ public:
         memset(data, 0, 2+1+ret.size());
         return ret;
 	}
+
+	/*
+	NVector<U32> getDataVectorU32() {
+		//NVector<U32> ret(10);
+	}
+	*/
 
 	// only for debugging, i know bad coding style ;)
 	unsigned char * getDataRaw() {

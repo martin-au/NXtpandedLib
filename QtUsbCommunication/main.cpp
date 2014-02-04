@@ -67,9 +67,10 @@ int main(int argc, char *argv[])
     QObject::connect(&com, SIGNAL(received(float,quint8)),logger, SLOT(out(float,quint8)));
     QObject::connect(&com, SIGNAL(received(char,quint8)), logger, SLOT(out(char,quint8)));
     QObject::connect(&com, SIGNAL(received(QString,quint8)), logger, SLOT(out(QString,quint8)));
+    QObject::connect(&com, SIGNAL(received(QVector<quint32>,quint8)), logger, SLOT(out(QVector<quint32>,quint8)));
 
     QObject::connect(timer1, SIGNAL(timeout()), &com, SLOT(handler()));
-    timer1->start(900);
+    timer1->start(1000);
 
     QObject::connect(timer2, SIGNAL(timeout()), logger, SLOT(send()));
 

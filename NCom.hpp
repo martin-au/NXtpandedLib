@@ -27,6 +27,12 @@ private:
 	};
 
 public:
+	static const S32 headerByteIdx = 0;
+	static const S32 idxByteIdx = 1;
+	static const S32 data0ByteIdx = 2;
+	static const U8 headerOverhead = 2;
+	static const U8 MAX_DATA_LENGTH = ecrobot::Usb::MAX_USB_DATA_LENGTH - headerOverhead;
+
 	enum disconReq {
 		noDisconnect, disconnect
 	};
@@ -38,26 +44,28 @@ public:
 		typeFloat =	 4,
 		typeChar = 	 5,
 		typeString = 6
+		// free 7 - 15
 	};
 	enum comNModes {
 		modeBasic = 	0,
-		modeSingle = 	1,
-		modePackage = 	2,
-		modePart = 		3,
-		modeStream = 	4
+		modeSingle = 	1, // Single variable
+		modePackage = 	2, // Arrays, Vectors ..
+		modePart = 		3, // Long package/string sending in parts
+		modeStream = 	4  // direct stream to pc ostrem fstream
+		//free = 		5  //
+		//free = 		6  //
+		//free = 		7  //
 	};
-
-	static const U8 MAX_DATA_LENGTH = ecrobot::Usb::MAX_USB_DATA_LENGTH - 2;
 
 	NCom(ecrobot::Usb &comObject) : com(comObject) {}
 	~NCom() {}
 
-	U32 send(U8 *data, U8 idx, comDatatype datatype, comNModes nmode = modeBasic);
+	U32 send(U8 *data, U8 idx, comDatatype datatype, comNModes nmode = modeBasic, U32 length = ecrobot::Usb::MAX_USB_DATA_LENGTH);
 	U32 receive(U8 *data, U8 &idx, comDatatype &datatype, comNModes &nmode) const;
 };
 
 
-U32 NCom::send(U8 *data, U8 idx, comDatatype datatype, comNModes nmode) {
+U32 NCom::send(U8 *data, U8 idx, comDatatype datatype, comNModes nmode, U32 length) {
 	header mHeader;
 	mHeader.disconReq = noDisconnect;
 	mHeader.datatype = datatype;
@@ -65,7 +73,7 @@ U32 NCom::send(U8 *data, U8 idx, comDatatype datatype, comNModes nmode) {
 
 	data[0] = mHeader.asU8;
 	data[1] = idx;
-	return com.send(data, 0, ecrobot::Usb::MAX_USB_DATA_LENGTH);
+	return com.send(data, 0, headerOverhead+length);
 }
 
 
@@ -88,4 +96,4 @@ U32 NCom::receive(U8 *data, U8 &idx, comDatatype &datatype, comNModes &nmode) co
 }
 
 } /* namespace Com */
-#endif /* NCOM_HPP_ */
+#endif /* __NCOM_HPP_ */

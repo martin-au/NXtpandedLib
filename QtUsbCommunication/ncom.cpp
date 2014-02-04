@@ -1,8 +1,37 @@
 #include "ncom.h"
+#include <QSharedPointer>
 
 #include <QDebug>
 
 namespace QNxt {
+
+inline unsigned char* num2Bytes (qint32 num, unsigned char *pstart) {
+    *pstart 	=  (num >> 24) & 0xFF;
+    *(pstart+1) =  (num >> 16) & 0xFF;
+    *(pstart+2) =  (num >> 8) & 0xFF;
+    *(pstart+3) =   num & 0xFF;
+    return (pstart+4);
+}
+
+inline unsigned char* num2Bytes (quint32 num, unsigned char *pstart) {
+    *pstart 	=  (num >> 24) & 0xFF;
+    *(pstart+1) =  (num >> 16) & 0xFF;
+    *(pstart+2) =  (num >> 8) & 0xFF;
+    *(pstart+3) =   num & 0xFF;
+    return (pstart+4);
+}
+
+inline unsigned char* bytes2Num (qint32 &num, unsigned char *pstart) {
+    num = (*pstart << 24) | (*(pstart+1) << 16) | (*(pstart+2) << 8) | (*(pstart+3));
+    return (pstart+4);
+}
+
+inline unsigned char* bytes2Num (quint32 &num, unsigned char *pstart) {
+    num = (*pstart << 24) | (*(pstart+1) << 16) | (*(pstart+2) << 8) | (*(pstart+3));
+    return (pstart+4);
+}
+
+
 
 NCom::NCom()
 {
@@ -150,7 +179,17 @@ quint32 NCom::send(const QString &string, quint8 idx) {
     NCom::comDatatype type = NCom::typeString;
     NCom::comNModes mode = NCom::modeSingle;
 
-    char *str = string.toLocal8Bit().data();
+    //const char *str = string.toStdString().c_str();
+
+    //qDebug() << "Sending: " << static_cast<int>(str[1]);
+
+    // Problems with converting, this is not nice but it solves the problem..
+    char *str = new char[string.size()+1];
+    for(int i=0; i<string.size(); ++i) {
+        char ch = string.at(i).toLatin1();
+        str[i] = ch;
+    }
+    str[string.size()] = '\0';
 
     if(string.size()+1 <= NCom::MAX_DATA_LEN) {
         memcpy((data+2), str, string.size()+1);
@@ -158,6 +197,7 @@ quint32 NCom::send(const QString &string, quint8 idx) {
         data[MAX_PACKAGE_LEN] = static_cast<unsigned char>('\0');
         memcpy((data+2), str, NCom::MAX_DATA_LEN-1);
     }
+    delete[] str;
     return this->send(data, idx, type, mode);
 }
 
@@ -169,26 +209,23 @@ void NCom::handler() {
         comDatatype type;
         comNModes mode;
 
-        if(receive(data, idx, type, mode) > 0) {
+        quint32 len = receive(data, idx, type, mode);
+        if(len > 0) {
             if(type == typeU32 && mode == modeSingle) {
                 quint32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
                 emit received(ret, idx);
-                clear();
             } else if(type == typeS32 && mode == modeSingle) {
                 qint32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
                 emit received(ret, idx);
-                clear();
             } else if(type == typeBool && mode == modeSingle) {
                 bool ret = (data[2] > 0) ? true : false;
                 emit received(ret, idx);
-                clear();
             } else if(type == typeFloat && mode == modeSingle) {
                 if(sizeof(float) == 4) {
                     floatUnion_t fu;
                     memcpy(fu.bytes , data+2, 4);
                     emit received(fu.f, idx);
                 }
-                clear();
             } else if(type == typeChar && mode == modeSingle) {
                 emit received(static_cast<char>(data[2]), idx);
             } else if(type == typeString && mode == modeSingle) {
@@ -199,8 +236,31 @@ void NCom::handler() {
                     ret += ch;
                 }
                 emit received(ret, idx);
+            } else if(type == typeU32 && mode == modePackage) {
+                int numPackage = (len-2)/4;
+                qDebug() << "numPackage: " << numPackage;
+                QVector<quint32> vec(numPackage);
+
+                unsigned char *pstart = &data[2];
+                for(int i=0; i<numPackage; ++i) {
+                    quint32 num = 0;
+                    pstart = bytes2Num(num, pstart);
+                    vec.insert(i, num);
+                }
+                emit received(vec, idx);
+
+
+            } else {
+                qDebug() << "Handler Error:";
+                qDebug() << "Received:";
+                qDebug() << "Len: " << len;
+                qDebug() << "Idx: " << idx;
+                qDebug() << "Type: " << type;
+                qDebug() << "Mode: " << mode;
+                qDebug() << "Header: " << static_cast<int>(data[0]);
             }
 
+        clear();
         }
     }
 }

@@ -56,6 +56,9 @@ public:
         modePackage = 2,
         modePart = 3,
         modeStream = 4
+        //free = 		5  //
+        //free = 		6  //
+        //free = 		7  //
     };
 
     NCom();
@@ -94,6 +97,7 @@ signals:
     void received(float data,   quint8 idx);
     void received(char data,   quint8 idx);
     void received(QString data, quint8 idx);
+    void received(QVector<quint32> data, quint8 idx);
 };
 
 

@@ -141,11 +141,10 @@ TASK(TaskMain) {
 		//cout << "No data" << endl;
 	}
 
-
 	switch(state) {
 	case Com::NCom::typeU32:
 	{
-		U32 msg = 12345678;
+		U32 msg = 123456;
 		com.send(msg, 1);
 	}
 	break;
@@ -179,10 +178,30 @@ TASK(TaskMain) {
 		com.send(msg, 1);
 	}
 	break;
+	case 7:
+	{
+		/*
+		NVector<U32> vec(4, 0.3);
+		vec.pushBack(1);
+		vec.pushBack(2);
+		vec.pushBack(3);
+		vec.pushBack(4);
+		cout << vec.size() << endl;
+		com.send(vec, 1);
+		*/
+		U32 pack[4];
+		pack[0] = 1;
+		pack[1] = 2;
+		pack[2] = 3;
+		pack[3] = 4;
+		com.send(pack, 1, 4);
+	}
+	break;
 	default: break;
 	}
 
 	++state;
+
 
 	TerminateTask();
 }

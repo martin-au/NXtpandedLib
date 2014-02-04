@@ -37,6 +37,9 @@ public slots:
     void out(QString data, quint8 idx) {
         qDebug() << "idx: " << idx <<  "Received: " << data;
     }
+    void out(QVector<quint32> data,quint8 idx) {
+        qDebug() << "idx: " << idx <<  "Received: " << data;
+    }
 
     void send() {
         switch(state) {
