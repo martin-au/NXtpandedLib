@@ -10,7 +10,7 @@
 NLabel::NLabel(const S8 indent, const S8 row, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
 	setField(indent, row, 1, charWidth);
-	label = new NString(charWidth);
+	label = new NString(charWidth);  // TODO Move new into init list!
 }
 
 
@@ -94,7 +94,7 @@ NString NLabel::getText() const {
 	return *label;
 }
 
-
+// TODO Check size of string here?
 void NLabel::setText(const NString &text) {
 	if (text.size() > 0) {
 		*label = text;
@@ -150,7 +150,7 @@ void NLabel::alignBuddy(const NAlignment &align) const {
 // modifiy this string
 // display this string
 // problem : getString will maby not return the true length of the string!
-// solve to this: cut string during construction!
+// solve : cut string during construction!
 void NLabel::show(bool update) const {
 	display_goto_xy(this->indent(), this->row());
 	S8 labelLen = static_cast<S8>(label->size());
@@ -184,6 +184,7 @@ void NLabel::show(bool update) const {
 	}
 	setVisibility(true);
 }
+
 
 
 void NLabel::erase(bool update) const {
