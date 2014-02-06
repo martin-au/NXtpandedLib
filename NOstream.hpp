@@ -1,5 +1,5 @@
 /*
- * ostream
+ * NOstream
  *
  *  Created on: 30.09.2013
  *      Author: Martin
@@ -28,7 +28,7 @@ extern "C" {
 
 // TODO Make a line type class?
 
-class ostream : private Uncopyable
+class NOstream : private Uncopyable
 {
 private:
 	// Actual cursor Line
@@ -48,13 +48,13 @@ private:
 	char **textBuffer;
 
 	// allowing manipulators (endl, hex ...)
-	typedef ostream& (*ostreamManipulator)(ostream&);
+	typedef NOstream& (*NOstreamManipulator)(NOstream&);
 
 	// cursor in console area
 	inline bool inArea(const U16 x, const U16 y) const;
 
 	// set cursor position
-	void cursor(U16 x, U16 y);
+	void cursor(U16 x, U16 y) const;
 
 	void newline();
 
@@ -68,32 +68,34 @@ public:
     // Max cursor position in Y(vertical) axis.
 	static const unsigned int MAX_CURSOR_Y = 7;
 
-	explicit ostream(mutex_t res,
+	explicit NOstream(mutex_t res,
 			 const U16 startLine = 0,
 			 const U16 lastLine = MAX_CURSOR_Y,
 			 const U16 x = 0,
 			 const U16 width = 16);
-	~ostream();
+	~NOstream();
 
 	// do not allow copy
 
 	void flush();
+	void hide(bool update = false) const;
+
 	U16 precision() const;
 	U16 precision(U16 prec);
 
-	friend ostream& hex(ostream& stream);
-	friend ostream& endl(ostream& stream);
+	friend NOstream& hex(NOstream& stream);
+	friend NOstream& endl(NOstream& stream);
 
-	ostream& operator<<(const char* str);
-	ostream& operator<<(char str);
-	ostream& operator<<(S32 num);
-	ostream& operator<<(U32 num);
-	ostream& operator<<(float num);
+	NOstream& operator<<(const char* str);
+	NOstream& operator<<(char str);
+	NOstream& operator<<(S32 num);
+	NOstream& operator<<(U32 num);
+	NOstream& operator<<(float num);
 
 
 	/*
 	template<typename T>
-	ostream& operator<<(T num) {
+	NOstream& operator<<(T num) {
 		if (num < 0)
 			return operator<<(static_cast<S32>(num));
 		else
@@ -102,13 +104,20 @@ public:
 	*/
 
 
-	ostream& operator<<(ostream& stream) {return *this;}
-	ostream& operator<<(ostreamManipulator manip);
+	NOstream& operator<<(NOstream& stream) {return *this;}
+	NOstream& operator<<(NOstreamManipulator manip);
 };
 
 
+bool NOstream::inArea(const U16 x, const U16 y) const {
+	return (y >= startLine) && (y <= lastLine) && (x >= (this->x))
+			&& (x <= (width + (this->x) - 1));
+}
+
+
+
 // easier
-#include "ostream.cpp"
+#include "NOstream.cpp"
 
 
 

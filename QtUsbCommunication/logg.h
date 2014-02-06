@@ -42,13 +42,23 @@ public slots:
     }
 
     void send() {
+        QString str("C++");
+
         switch(state) {
         case 0: emit sendThis(static_cast<quint32>(12345), 1); break;
         case 1: emit sendThis(static_cast<qint32>(-1234), 1); break;
         case 2: emit sendThis(true, 1); break;
         case 3: emit sendThis(static_cast<float>(-12.34), 1); break;
         case 4: emit sendThis('M', 1); break;
-        case 5: QString str("C++"); emit sendThis(str, 1); break;
+        case 5: emit sendThis(str, 1); break;
+        case 6:
+            QVector<qint32> vec;
+            vec.push_back(0);
+            vec.push_back(0);
+            vec.push_back(0);
+            vec.push_back(0);
+            emit sendThis(vec, 1);
+            break;
         }
         state++;
     }
@@ -59,5 +69,6 @@ signals:
     void sendThis(float n, quint8 idx);
     void sendThis(char n, quint8 idx);
     void sendThis(QString n, quint8 idx);
+    void sendThis(QVector<qint32> n, quint8 idx);
 };
 #endif // LOGG_H

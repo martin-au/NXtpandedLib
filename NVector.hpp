@@ -18,8 +18,11 @@ extern "C" {
 //for codecorrection
 #include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
-#define NULL 0
 
+// NULL
+#include <stddef.h>
+
+#include "C:/cygwin/nxtOSEK/ecrobot/c++/util/New.cpp"
 
 /**
 * @author Berenger
@@ -80,7 +83,7 @@ public:
 	 *@param inSize the buffer size
 	 *@param inPointOfStart the point of start [0;1]
 	 */
-	NVector(const S32 inSize, const double inPointOfStart = DefaultStart) {
+	NVector(const S32 inSize, const float inPointOfStart = DefaultStart) {
 		this->buffer = reinterpret_cast<T*>(new char[sizeof(T) * inSize]);
 		this->capacity = inSize;
 		if (inPointOfStart <= 1 && inPointOfStart >= 0)

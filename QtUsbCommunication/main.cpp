@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 
 
     auto *logger = new Logg();
-    QTimer *timer1 = new QTimer;
     QTimer *timer2 = new QTimer;
 
     QObject::connect(&com, SIGNAL(received(quint32,quint8)), logger, SLOT(out(quint32,quint8)));
@@ -69,9 +68,6 @@ int main(int argc, char *argv[])
     QObject::connect(&com, SIGNAL(received(QString,quint8)), logger, SLOT(out(QString,quint8)));
     QObject::connect(&com, SIGNAL(received(QVector<quint32>,quint8)), logger, SLOT(out(QVector<quint32>,quint8)));
 
-    QObject::connect(timer1, SIGNAL(timeout()), &com, SLOT(handler()));
-    timer1->start(1000);
-
     QObject::connect(timer2, SIGNAL(timeout()), logger, SLOT(send()));
 
     QObject::connect(logger, SIGNAL(sendThis(quint32,quint8)), &com, SLOT(send(quint32,quint8)));
@@ -80,9 +76,11 @@ int main(int argc, char *argv[])
     QObject::connect(logger, SIGNAL(sendThis(float,quint8)), &com, SLOT(send(float,quint8)));
     QObject::connect(logger, SIGNAL(sendThis(char,quint8)), &com, SLOT(send(char,quint8)));
     QObject::connect(logger, SIGNAL(sendThis(QString,quint8)), &com, SLOT(send(QString,quint8)));
+    QObject::connect(logger, SIGNAL(sendThis(QVector<qint32>,quint8)), &com, SLOT(send(QVector<qint32>,quint8)));
 
     timer2->start(901);
 
+    com.startHandler(999);
     QObject::connect(&a, SIGNAL(aboutToQuit()), &com, SLOT(close()));
 
     return a.exec();

@@ -11,7 +11,6 @@ extern "C" {
 #include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
 #include "convert.hpp"
-#include "ostream.hpp"
 
 /// TODO Fix converter functions duplication, no converter for S8?!
 
@@ -265,7 +264,7 @@ public:
 		return *this;
 	}
 
-	friend ostream& operator<<(ostream &os, const NString& str) {
+	friend NOstream& operator<<(NOstream &os, const NString& str) {
 		os << str.data();
 		return os;
 	}

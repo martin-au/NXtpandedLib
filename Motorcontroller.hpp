@@ -304,7 +304,6 @@ void Motorcontroller::process() {
 			}
 			mp = p;
 		}
-
 		mx = ax + d;
 		mv = v;
 		ma = a;

@@ -8,15 +8,13 @@
 #include "NLabel.hpp"
 
 NLabel::NLabel(const S8 indent, const S8 row, S8 charWidth) :
-		buddy(0), buddyAlignment(0) {
+		label(new NString(charWidth)), buddy(0), buddyAlignment(0) {
 	setField(indent, row, 1, charWidth);
-	label = new NString(charWidth);  // TODO Move new into init list!
 }
 
 
 NLabel::NLabel(const NString &text, const S8 indent, const S8 row, S8 charWidth) :
-		buddy(0), buddyAlignment(0) {
-	label = new NString(text);
+		label(new NString(text)) , buddy(0), buddyAlignment(0) {
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
 	}
@@ -42,8 +40,7 @@ NLabel::NLabel(const char *text, const S8 indent, const S8 row, S8 charWidth) :
 
 
 NLabel::NLabel(NLabel * const buddyOf, S8 charWidth) :
-		buddy(0), buddyAlignment(0) {
-	label = new NString(charWidth);
+		label(new NString(charWidth)), buddy(0), buddyAlignment(0) {
 	this->fieldWidth(charWidth);
 	if (buddyOf) {
 		buddyOf->setBuddy(this);
@@ -52,8 +49,7 @@ NLabel::NLabel(NLabel * const buddyOf, S8 charWidth) :
 
 
 NLabel::NLabel(const NString &text, NLabel * const buddyOf, S8 charWidth) :
-		buddy(0), buddyAlignment(0) {
-	label = new NString(text);
+		label(new NString(text)), buddy(0), buddyAlignment(0) {
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
 	}
@@ -94,7 +90,7 @@ NString NLabel::getText() const {
 	return *label;
 }
 
-// TODO Check size of string here?
+
 void NLabel::setText(const NString &text) {
 	if (text.size() > 0) {
 		*label = text;

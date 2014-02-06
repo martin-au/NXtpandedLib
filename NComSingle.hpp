@@ -49,15 +49,20 @@ private:
 	NCom &com;
 
 	unsigned char data[ecrobot::Usb::MAX_USB_DATA_LENGTH];
+	S32 lastLen;
 
 	union floatUnion_t {
 	    float f;
 	    unsigned char bytes[4];
 	};
 
+	void clearData() {
+		memset(data, 0, ecrobot::Usb::MAX_USB_DATA_LENGTH);
+	}
+
 public:
-	NComSingle(NCom &ncom) : com(ncom) {
-		clear();
+	NComSingle(NCom &ncom) : com(ncom), lastLen(0) {
+		clearData();
 	}
 	~NComSingle() {}
 
@@ -171,10 +176,34 @@ public:
 	}
 
 
+	U32 send(S32 *package, U8 idx = 0, U32 len = 0) {
+		NCom::comDatatype type = NCom::typeU32;
+		NCom::comNModes mode = NCom::modePackage;
+
+		const S16 maxlen = (static_cast<S16>(NCom::MAX_DATA_LENGTH/sizeof(S32)) > len) ?
+		len : NCom::MAX_DATA_LENGTH/sizeof(S32);
+
+		unsigned char *pstart = &data[NCom::data0ByteIdx];
+
+		for(S16 i=0; i < maxlen; ++i) {
+			pstart = num2Bytes(*(package+i), pstart);
+		}
+		U32 retlen = com.send(data, idx, type, mode, (maxlen*4));
+		memset(data, 0, NCom::headerOverhead+maxlen*4);
+		return retlen;
+	}
+
+
 	// this puts next message into the buffer and gives information about message
 	// user decides how to process data
 	U32 receive(U8 &idx, NCom::comDatatype &datatype, NCom::comNModes &nmode) {
-		return com.receive(data, idx, datatype, nmode);
+		lastLen = com.receive(data, idx, datatype, nmode);
+		return lastLen;
+	}
+
+	// call this if you receive a message and you do nothing with it!
+	void discard() {
+		memset(data, 0, lastLen);
 	}
 
 	U32 getDataU32() {
@@ -223,6 +252,40 @@ public:
         return ret;
 	}
 
+	S32 getDataPackageU32(U32 *dataPack) {
+		if(dataPack != NULL) return -1;
+        S16 numPackage = (lastLen-NCom::headerOverhead)/4;
+        if (numPackage <= 0) return numPackage;
+
+        dataPack = new U32[numPackage];
+
+        unsigned char *pstart = &data[NCom::data0ByteIdx];
+        for(S16 i=0; i<numPackage; ++i) {
+            U32 num = 0;
+            pstart = bytes2Num(num, pstart);
+            dataPack[i] = num;
+        }
+        return numPackage;
+	}
+
+	// TODO use smart pointer here!!!
+	S32 getDataPackageS32(S32 *dataPack) {
+		if(dataPack != NULL) return -1;
+		S16 numPackage = (lastLen-NCom::headerOverhead)/4;
+        if (numPackage <= 0) return numPackage;
+
+        dataPack = new S32[numPackage]; // problem with new returning always NULL
+
+        unsigned char *pstart = &data[NCom::data0ByteIdx];
+        for(S16 i=0; i<numPackage; ++i) {
+            S32 num = 0;
+            pstart = bytes2Num(num, pstart);
+            dataPack[i] = num;
+        }
+        return numPackage;
+	}
+
+
 	/*
 	NVector<U32> getDataVectorU32() {
 		//NVector<U32> ret(10);
@@ -232,10 +295,6 @@ public:
 	// only for debugging, i know bad coding style ;)
 	unsigned char * getDataRaw() {
 		return &data[0];
-	}
-
-	void clear() {
-		memset(data, 0, ecrobot::Usb::MAX_USB_DATA_LENGTH);
 	}
 };
 

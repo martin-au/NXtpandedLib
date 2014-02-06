@@ -49,9 +49,9 @@ void user_1ms_isr_type2(void){
 
 // C++ Includes, Globals
 
-#include "ostream.hpp"
+#include "NOstream.hpp"
 mutex_t streammtx(ostreamRes);
-ostream cout(streammtx);
+NOstream cout(streammtx);
 
 #include "NTimer.hpp"
 
@@ -82,8 +82,9 @@ TASK(TaskMain) {
 	Com::NCom::comDatatype datatype;
 	Com::NCom::comNModes nmode;
 
+	S32 datalen = com.receive(idx, datatype, nmode);
 	// receive a msg and get info
-	if(com.receive(idx, datatype, nmode) > 0) {
+	if(datalen > 0) {
 		// ok there is a msg, who should get the msg
 		switch(datatype) {
 		// finally write receive msg into variable
@@ -95,8 +96,20 @@ TASK(TaskMain) {
 		}
 		case Com::NCom::typeS32 :
 		{
-			S32 rec = com.getDataS32();
-			cout << "Receive: " << rec << endl;
+			if(nmode == Com::NCom::modeSingle) {
+				S32 rec = com.getDataS32();
+				cout << "Receive: " << rec << endl;
+			} else if(nmode == Com::NCom::modePackage) {
+				S32 *data = NULL;
+				S32 len = com.getDataPackageS32(data);
+				if(len > 0 && data != NULL) {
+					cout << "Receive:" << endl;
+					for(S16 i=0; i<len; ++i) {
+						cout << "Package: " << data[i] << endl;
+					}
+				}
+				delete[] data;
+			}
 			break;
 		}
 		case Com::NCom::typeBool:
@@ -133,7 +146,7 @@ TASK(TaskMain) {
 			cout << static_cast<U32>(pdata[1]) << endl;
 			cout << "                 " << endl;
 			//cout << *(pdata+1) << endl;
-			com.clear();
+			com.discard();
 		}
 		}
 

@@ -34,11 +34,13 @@ inline unsigned char* bytes2Num (quint32 &num, unsigned char *pstart) {
 
 
 NCom::NCom()
+    : pollTimer(new QTimer(this))
 {
     clear();
 }
 
 NCom::~NCom() {
+    stopHandler();
     if(isConnected()) {
         close();
     }
@@ -67,10 +69,9 @@ bool NCom::open() {
 
 
 void NCom::close() {
-    quint8 data[MAX_DATA_LEN];
     header mHeader;
     mHeader.disconReq = disconnect;
-    data[0] = mHeader.asU8;
+    data[headerByteIdx] = mHeader.asU8;
     send(data, 0, comDatatype::typeU32, comNModes::modeBasic);
     NXTCommFantom_close(nxt);
     emit closed();
@@ -85,7 +86,18 @@ bool NCom::isConnected() {
 }
 
 
-quint32 NCom::send(quint8 *data, quint8 idx, comDatatype datatype, comNModes nmode) {
+void NCom::startHandler(int pollIntervall) {
+    QObject::connect(pollTimer, SIGNAL(timeout()), this, SLOT(handler()));
+    pollTimer->start(pollIntervall);
+}
+
+void NCom::stopHandler() {
+    pollTimer->stop();
+    QObject::disconnect(pollTimer, SIGNAL(timeout()), this, SLOT(handler()));
+}
+
+
+quint32 NCom::send(quint8 *data, quint8 idx, comDatatype datatype, comNModes nmode, int len) {
     if(!isConnected() || data == 0) {
         return 0;
     }
@@ -94,25 +106,25 @@ quint32 NCom::send(quint8 *data, quint8 idx, comDatatype datatype, comNModes nmo
     mHeader.datatype = datatype;
     mHeader.mode = nmode;
 
-    data[0] = mHeader.asU8;
-    data[1] = idx;
+    data[headerByteIdx] = mHeader.asU8;
+    data[idxByteIdx] = idx;
 
-    quint32 len = NXTCommFantom_send(nxt, static_cast<const unsigned char*>(data), 0, MAX_DATA_LEN);
+    quint32 retlen = NXTCommFantom_send(nxt, static_cast<const unsigned char*>(data), 0, headerOverhead+len);
     clear();
-    return len;
+    return retlen;
 }
 
 
 quint32 NCom::receive(quint8 *data, quint8 &idx, comDatatype &datatype, comNModes &nmode) {
-    quint32 len = NXTCommFantom_receive(nxt, static_cast<unsigned char*>(data), 0, MAX_DATA_LEN);
+    quint32 len = NXTCommFantom_receive(nxt, static_cast<unsigned char*>(data), 0, MAX_PACKAGE_LEN);
     if(len > 0) {
         header mHeader;
-        mHeader.asU8 = data[0];
+        mHeader.asU8 = data[headerByteIdx];
         if(mHeader.disconReq == disconnect) {
             close();
             return 0;
         }
-        idx = data[1];
+        idx = data[idxByteIdx];
         datatype = static_cast<comDatatype>(mHeader.datatype);
         nmode = static_cast<comNModes>(mHeader.mode);
     }
@@ -124,11 +136,8 @@ quint32 NCom::send(quint32 n, quint8 idx) {
     NCom::comDatatype type = NCom::typeU32;
     NCom::comNModes mode = NCom::modeSingle;
 
-    data[2] =  (n >> 24) & 0xFF;
-    data[3] =  (n >> 16) & 0xFF;
-    data[4] =  (n >> 8) & 0xFF;
-    data[5] =  n & 0xFF;
-    return this->send(data, idx, type, mode);
+    num2Bytes(n, &data[data0ByteIdx]);
+    return this->send(data, idx, type, mode, 4);
 }
 
 
@@ -136,19 +145,16 @@ quint32 NCom::send(qint32 n, quint8 idx) {
     NCom::comDatatype type = NCom::typeS32;
     NCom::comNModes mode = NCom::modeSingle;
 
-    data[2] =  (n >> 24) & 0xFF;
-    data[3] =  (n >> 16) & 0xFF;
-    data[4] =  (n >> 8) & 0xFF;
-    data[5] =  n & 0xFF;
-    return this->send(data, idx, type, mode);
+    num2Bytes(n, &data[data0ByteIdx]);
+    return this->send(data, idx, type, mode, 4);
 }
 
 quint32 NCom::send(bool b, quint8 idx) {
     NCom::comDatatype type = NCom::typeBool;
     NCom::comNModes mode = NCom::modeSingle;
 
-    data[2] = static_cast<unsigned char>(b);
-    return this->send(data, idx, type, mode);
+    data[data0ByteIdx] = static_cast<unsigned char>(b);
+    return this->send(data, idx, type, mode, 1);
 }
 
 
@@ -160,8 +166,8 @@ quint32 NCom::send(float num, quint8 idx) {
         floatUnion_t fu;
         fu.f = num;
 
-        memcpy(data+2, fu.bytes, 4);
-        return this->send(data, idx, type, mode);
+        memcpy(&data[data0ByteIdx], fu.bytes, 4);
+        return this->send(data, idx, type, mode, 4);
     }
     return -1;
 }
@@ -170,8 +176,8 @@ quint32 NCom::send(char ch, quint8 idx) {
     NCom::comDatatype type = NCom::typeChar;
     NCom::comNModes mode = NCom::modeSingle;
 
-    data[2] = static_cast<unsigned char>(ch);
-    return this->send(data, idx, type, mode);
+    data[data0ByteIdx] = static_cast<unsigned char>(ch);
+    return this->send(data, idx, type, mode, 1);
 }
 
 
@@ -191,16 +197,50 @@ quint32 NCom::send(const QString &string, quint8 idx) {
     }
     str[string.size()] = '\0';
 
-    if(string.size()+1 <= NCom::MAX_DATA_LEN) {
-        memcpy((data+2), str, string.size()+1);
+    if(string.size()+1 <= MAX_DATA_LEN) {
+        memcpy(&data[data0ByteIdx], str, string.size()+1);
     } else {
-        data[MAX_PACKAGE_LEN] = static_cast<unsigned char>('\0');
-        memcpy((data+2), str, NCom::MAX_DATA_LEN-1);
+        data[MAX_PACKAGE_LEN-1] = static_cast<unsigned char>('\0');
+        memcpy(&data[data0ByteIdx], str, NCom::MAX_DATA_LEN-1);
     }
     delete[] str;
-    return this->send(data, idx, type, mode);
+    return this->send(data, idx, type, mode, string.size()+1); // low level send will cut away to big len
 }
 
+
+
+quint32 NCom::send(const QVector<quint32> &vector, quint8 idx) {
+    NCom::comDatatype type = NCom::typeU32;
+    NCom::comNModes mode = NCom::modePackage;
+
+    const int maxlen = ((NCom::MAX_DATA_LEN/sizeof(quint32)) >= vector.size()) ?
+    vector.size() : NCom::MAX_DATA_LEN/sizeof(quint32);
+
+    unsigned char *pstart = &data[NCom::data0ByteIdx];
+
+    for(int i=0; i < maxlen; ++i) {
+        pstart = num2Bytes(vector.at(i), pstart);
+    }
+    int retlen = this->send(data, idx, type, mode, (maxlen*4));
+    return retlen;
+}
+
+
+quint32 NCom::send(const QVector<qint32> &vector, quint8 idx) {
+    NCom::comDatatype type = NCom::typeS32;
+    NCom::comNModes mode = NCom::modePackage;
+
+    const int maxlen = ((NCom::MAX_DATA_LEN/sizeof(qint32)) >= vector.size()) ?
+    vector.size() : NCom::MAX_DATA_LEN/sizeof(qint32);
+
+    unsigned char *pstart = &data[NCom::data0ByteIdx];
+
+    for(int i=0; i < maxlen; ++i) {
+        pstart = num2Bytes(vector.at(i), pstart);
+    }
+    int retlen = this->send(data, idx, type, mode, (maxlen*4));
+    return retlen;
+}
 
 
 void NCom::handler() {
@@ -212,44 +252,61 @@ void NCom::handler() {
         quint32 len = receive(data, idx, type, mode);
         if(len > 0) {
             if(type == typeU32 && mode == modeSingle) {
-                quint32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
+                quint32 ret = 0;
+                bytes2Num(ret, &data[data0ByteIdx]);
                 emit received(ret, idx);
             } else if(type == typeS32 && mode == modeSingle) {
-                qint32 ret = (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | (data[5]);
+                qint32 ret = 0;
+                bytes2Num(ret, &data[data0ByteIdx]);
                 emit received(ret, idx);
             } else if(type == typeBool && mode == modeSingle) {
-                bool ret = (data[2] > 0) ? true : false;
+                bool ret = (data[data0ByteIdx] > 0) ? true : false;
                 emit received(ret, idx);
             } else if(type == typeFloat && mode == modeSingle) {
                 if(sizeof(float) == 4) {
                     floatUnion_t fu;
-                    memcpy(fu.bytes , data+2, 4);
+                    memcpy(fu.bytes , &data[data0ByteIdx], 4);
                     emit received(fu.f, idx);
                 }
             } else if(type == typeChar && mode == modeSingle) {
-                emit received(static_cast<char>(data[2]), idx);
+                emit received(static_cast<char>(data[data0ByteIdx]), idx);
             } else if(type == typeString && mode == modeSingle) {
                 QString ret("");
                 for(int i=2; ; i++) {
+                    // just in case someone try to send a not 0 terminated string!
+                    if(i >= MAX_PACKAGE_LEN) {
+                        data[i-1] = '\0';
+                        break;
+                    }
                     char ch = static_cast<char>(data[i]);
                     if(ch == '\0') break;
                     ret += ch;
                 }
                 emit received(ret, idx);
             } else if(type == typeU32 && mode == modePackage) {
-                int numPackage = (len-2)/4;
-                qDebug() << "numPackage: " << numPackage;
+                int numPackage = (len-headerOverhead)/4;
+                //qDebug() << "numPackage: " << numPackage;
                 QVector<quint32> vec(numPackage);
 
-                unsigned char *pstart = &data[2];
+                unsigned char *pstart = &data[data0ByteIdx];
                 for(int i=0; i<numPackage; ++i) {
                     quint32 num = 0;
                     pstart = bytes2Num(num, pstart);
                     vec.insert(i, num);
                 }
                 emit received(vec, idx);
+            } else if(type == typeS32 && mode == modePackage) {
+                int numPackage = (len-headerOverhead)/4;
+                //qDebug() << "numPackage: " << numPackage;
+                QVector<qint32> vec(numPackage);
 
-
+                unsigned char *pstart = &data[data0ByteIdx];
+                for(int i=0; i<numPackage; ++i) {
+                    qint32 num = 0;
+                    pstart = bytes2Num(num, pstart);
+                    vec.insert(i, num);
+                }
+                emit received(vec, idx);
             } else {
                 qDebug() << "Handler Error:";
                 qDebug() << "Received:";

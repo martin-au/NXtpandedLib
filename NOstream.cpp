@@ -1,8 +1,8 @@
 
 
-#include "ostream.hpp"
+#include "NOstream.hpp"
 
-ostream::ostream(mutex_t res,
+NOstream::NOstream(mutex_t res,
 				 const U16 startLine,
 				 const U16 lastLine,
 				 const U16 x,
@@ -35,7 +35,8 @@ ostream::ostream(mutex_t res,
 	}
 }
 
-ostream::~ostream() {
+NOstream::~NOstream() {
+	hide();
 	int rows = lastLine + 1 - startLine;
 	for (int i = 0; i < rows + 1; i++) {
 		delete[] textBuffer[i];
@@ -43,15 +44,11 @@ ostream::~ostream() {
 	delete[] textBuffer;
 }
 
-bool ostream::inArea(const U16 x, const U16 y) const {
-	return (y >= startLine) && (y <= lastLine) && (x >= (this->x))
-			&& (x <= (width + (this->x) - 1));
-}
 
 
 
 // Set cursor to (x,y) position. Top left is (0,0).
-void ostream::cursor(U16 x, U16 y) {
+void NOstream::cursor(U16 x, U16 y) const {
 	x = (x > MAX_CURSOR_X) ? MAX_CURSOR_X : x;
 	y = (y > MAX_CURSOR_Y) ? MAX_CURSOR_Y : y;
 	if (inArea(x, y)) {
@@ -59,7 +56,7 @@ void ostream::cursor(U16 x, U16 y) {
 	}
 }
 
-void ostream::newline() {
+void NOstream::newline() {
 	++cursorLine;
 	// moving out of lcd
 	if (cursorLine > (lastLine + 1)) {
@@ -71,7 +68,7 @@ void ostream::newline() {
 	}
 }
 
-void ostream::flush() {
+void NOstream::flush() {
 	if (!somenew)
 		return;   // do not update display if there is nothing new!
 	LockGuard lock(mutex);
@@ -83,10 +80,18 @@ void ostream::flush() {
 	// and yes, its still not task save: there should be no cursor change until goto.
 
 	for (unsigned int i = 0; i <= lastLine; ++i) {
+		bool lineEnd = false;
 		for(unsigned int j = x; j<(x+width); ++j) {
+			if(textBuffer[i][j] == '\0') {
+				lineEnd = true;
+				continue;
+			}
 			cursor(j, i);
-			// clean full line!
-			display_char( (textBuffer[i][j] != '\0')? (textBuffer[i][j]) : ' ');
+			if(lineEnd) {
+				display_char(' ');
+			} else {
+				display_char(textBuffer[i][j]);
+			}
 		}
 	}
 	somenew = false;
@@ -94,16 +99,32 @@ void ostream::flush() {
 	display_update();
 }
 
-U16 ostream::precision() const {
+void NOstream::hide(bool update) const {
+	int save_x = display_get_x();
+	int save_y = display_get_y();
+
+	for (unsigned int i = 0; i <= lastLine; ++i) {
+		for(unsigned int j = x; j<(x+width); ++j) {
+			cursor(j, i);
+			display_char(' ');
+		}
+	}
+	display_goto_xy(save_x, save_y);
+	if(update) {
+		display_update();
+	}
+}
+
+U16 NOstream::precision() const {
 	return floatplaces;
 }
 
-U16 ostream::precision(U16 prec) {
+U16 NOstream::precision(U16 prec) {
 	floatplaces = prec;
 	return floatplaces;
 }
 
-void ostream::streamhandler(const char *str) {
+void NOstream::streamhandler(const char *str) {
 	// i..end of textBuffer pre
 	// j..copy to string dest
 	// k..copy from string src
@@ -136,7 +157,7 @@ void ostream::streamhandler(const char *str) {
 
 // manipulator
 
-ostream& endl(ostream& stream) {
+NOstream& endl(NOstream& stream) {
 	stream.mutex.Acquire();
 	stream.newline();
 	stream.mutex.Release();
@@ -144,17 +165,17 @@ ostream& endl(ostream& stream) {
 	return stream;
 }
 
-ostream& hex(ostream& stream) {
+NOstream& hex(NOstream& stream) {
 	stream.nextHex = true;
 	return stream;
 }
 
-ostream& ostream::operator<<(const char* str) {
+NOstream& NOstream::operator<<(const char* str) {
 	streamhandler(str);
 	return *this;
 }
 
-ostream& ostream::operator<<(char str) {
+NOstream& NOstream::operator<<(char str) {
 	char tmp[2];
 	tmp[0] = str;
 	tmp[1] = '\0';
@@ -162,7 +183,7 @@ ostream& ostream::operator<<(char str) {
 	return *this;
 }
 
-ostream& ostream::operator<<(S32 num) {
+NOstream& NOstream::operator<<(S32 num) {
 	if (!nextHex) {
 		char str[12];
 		numToStr(num, str);
@@ -176,7 +197,7 @@ ostream& ostream::operator<<(S32 num) {
 	return *this;
 }
 
-ostream& ostream::operator<<(U32 num) {
+NOstream& NOstream::operator<<(U32 num) {
 	if (!nextHex) {
 		char str[11];
 		numToStr(num, str);
@@ -190,7 +211,7 @@ ostream& ostream::operator<<(U32 num) {
 	return *this;
 }
 
-ostream& ostream::operator<<(float num) {
+NOstream& NOstream::operator<<(float num) {
 	//putf("f", num);
 	char str[12];
 	numToStr(num, str, floatplaces);
@@ -198,7 +219,7 @@ ostream& ostream::operator<<(float num) {
 	return *this;
 }
 
-ostream& ostream::operator<<(ostreamManipulator manip) {
+NOstream& NOstream::operator<<(NOstreamManipulator manip) {
 	return manip(*this);
 }
 

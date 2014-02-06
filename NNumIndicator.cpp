@@ -13,8 +13,7 @@
 
 NNumIndicator::NNumIndicator(S8 indent, S8 row, S8 numWidth) :
 	NLabel(indent, row, numWidth), num(0), precision(2) {
-	setField(indent, row, 1, numWidth);
-	label = new NString(numWidth); // TODO Remove this!
+
 }
 
 
