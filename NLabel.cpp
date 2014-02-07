@@ -173,7 +173,7 @@ void NLabel::show(bool update) const {
 			dispStr.append(' ');
 		}
 
-		display_string(dispStr.data());
+		display_string(dispStr.data()); // TODO Use display_char 
 	}
 	if (update) {
 		display_update();
