@@ -51,8 +51,23 @@ private:
 
 	mutable bool mVisible; // change allowed during show() const!
 protected:
+	/*
+	NWidget(S8 setX, S8 setY, S8 setHeight, S8 setWidth)
+		: mX(setX),
+		  mY(setY),
+		  mHeight(setHeight),
+		  mWidth(setWidth),
+		  rowX(0),
+		  rowY(),
+		  rows(0),
+		  textWidth(0),
+		  mVisible(0) {}
+	NWidget(S8 setIndent, S8 setRow, S8 setLines, S8 setFieldWidth) {
+		setField(setIndent, setRow, setLines, setFieldWidth);
+	}
+	*/
 
-	void setVisibility(bool visible) const {
+	void setVisibility(bool visible) {
 		mVisible = visible;
 	}
 	// virtual functions would be better but to much overhead in embedded c++!
@@ -90,6 +105,20 @@ protected:
 	void fieldWidth(S8 setFieldWidth) {
 		mWidth = setFieldWidth * LCD::CHAR_WIDTH;
 		textWidth = setFieldWidth;
+	}
+
+	void setField(S8 indentX, S8 rowY, S8 nrows, S8 nchars) {
+		indent(indentX);
+		row(rowY);
+		lines(nrows);
+		fieldWidth(nchars);
+	}
+
+	void setPixelField(S8 x, S8 y, S8 width, S8 height) {
+		this->x(x);
+		this->y(y);
+		this->width(width);
+		this->height(height);
 	}
 
 public:
@@ -139,20 +168,6 @@ public:
 		return mVisible;
 	}
 
-	void setField(S8 indentX, S8 rowY, S8 nrows, S8 nchars) {
-		indent(indentX);
-		row(rowY);
-		lines(nrows);
-		fieldWidth(nchars);
-
-	}
-
-	void setPixelField(S8 x, S8 y, S8 width, S8 height) {
-		this->x(x);
-		this->y(y);
-		this->width(width);
-		this->height(height);
-	}
 	bool inLcd() const {
 		return LCD::objectInLcd(x(), y(), height(), width());
 	}

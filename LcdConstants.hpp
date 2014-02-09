@@ -33,9 +33,9 @@ namespace LCD {
 	S8 lineToPixel(const S8 line) {
 		return line*LCD::DEPTH;
 	}
-
+    // <= height ok??
 	bool pixelInLcd(const S16 x, const S16 y) {
-		return ((x >= 0) && (x < LCD::WIDTH) && (y >= 0) && (y < LCD::HEIGHT));
+		return ((x >= 0) && (x < LCD::WIDTH) && (y >= 0) && (y <= LCD::HEIGHT));
 	}
 
 	bool cursorInLcd(const S16 indent, const S16 row) {

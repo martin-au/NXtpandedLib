@@ -2,75 +2,63 @@
 
 #include "NOstream.hpp"
 
+// user errors are no problem, we check this when setting cursor position
 NOstream::NOstream(mutex_t res,
-				 const U16 startLine,
-				 const U16 lastLine,
-				 const U16 x,
-				 const U16 width)
+				   U8 startLine,
+				   U8 rows,
+				   U8 indent,
+				   U8 lineWidth)
 : cursorLine(startLine),
-  startLine(startLine),
-  lastLine(lastLine),
-  x(x),
-  width(width), // absichern!!
-  somenew(0),
-  nextHex(0),
+  somenew(false),
+  nextHex(false),
   floatplaces(2),
   mutex(res)
  {
-	// get width to end of display
-	S16 remaining = (MAX_CURSOR_X + 1) - x; // +1 because 0 do not count
-	if (remaining >= width) {
-		// from x to end of line
-		this->width = width; //+1 for array
-	} else {
-		this->width = remaining;
-	}
+	/*
+	startLine(startLine),
+   consoleRows((rows > LCD::ROWS) ? LCD::ROWS : rows),
+   x((indent > MAX_CURSOR_X) ? MAX_CURSOR_X : indent),
+   width(((MAX_CURSOR_X - this->x) > width) ? (MAX_CURSOR_X - this->x) : width),
+	 */
+	// block user errors, otherwise we may get big arrays and program crashes with new
+	rows = (rows > LCD::ROWS) ? LCD::ROWS : rows;
+	lineWidth = ((MAX_CURSOR_X - indent) < lineWidth) ? MAX_CURSOR_X - indent : lineWidth;
+	if(lineWidth > LCD::LINE_WIDTH) lineWidth = LCD::LINE_WIDTH;
 
-	int rows = lastLine + 1 - startLine;
-	textBuffer = new char *[rows];
+	setField(indent, startLine, rows, lineWidth);
+
+
+	textBuffer = new char *[lines()];
 
 	for (int i = 0; i < rows + 1; i++) {
-		textBuffer[i] = new char[width];
+		textBuffer[i] = new char[fieldWidth()+1]; // +1 for '\0'
 		strcpy(textBuffer[i], "");
 	}
 }
 
 NOstream::~NOstream() {
 	hide();
-	int rows = lastLine + 1 - startLine;
-	for (int i = 0; i < rows + 1; i++) {
+	for (int i = 0; i < lines() + 1; i++) {
 		delete[] textBuffer[i];
 	}
 	delete[] textBuffer;
 }
 
 
-
-
-// Set cursor to (x,y) position. Top left is (0,0).
-void NOstream::cursor(U16 x, U16 y) const {
-	x = (x > MAX_CURSOR_X) ? MAX_CURSOR_X : x;
-	y = (y > MAX_CURSOR_Y) ? MAX_CURSOR_Y : y;
-	if (inArea(x, y)) {
-		display_goto_xy(static_cast<int>(x), static_cast<int>(y));
-	}
-}
-
-void NOstream::newline() {
-	++cursorLine;
-	// moving out of lcd
-	if (cursorLine > (lastLine + 1)) {
-		for (unsigned int i = 0; i <= lastLine; ++i) {
+// make sure that there is space for new line
+void NOstream::newLineSpace() {
+	if (cursorLine >= lines()) {
+		for (U8 i = 0; i < (lines()-1); ++i) {
 			strcpy(textBuffer[i], textBuffer[i + 1]);
 		}
-		strcpy(textBuffer[lastLine + 1], ""); // do we need this? textBuffer[lastLine+1][0] = '\0'
+		strcpy(textBuffer[lines()-1], "");
 		cursorLine--;
 	}
 }
 
 void NOstream::flush() {
-	if (!somenew)
-		return;   // do not update display if there is nothing new!
+	if(!inLcd() || !somenew) return;
+
 	LockGuard lock(mutex);
 
 	// since flush can happen in any code segment with debugging
@@ -79,14 +67,17 @@ void NOstream::flush() {
 	int save_y = display_get_y();
 	// and yes, its still not task save: there should be no cursor change until goto.
 
-	for (unsigned int i = 0; i <= lastLine; ++i) {
+	// for every line
+	for (U8 i = 0; i < lines(); ++i) {
 		bool lineEnd = false;
-		for(unsigned int j = x; j<(x+width); ++j) {
+		// for every char in line
+		for(U8 j = 0; j < fieldWidth(); ++j) {
 			if(textBuffer[i][j] == '\0') {
 				lineEnd = true;
+				// jump over termination and continue with whitespace
 				continue;
 			}
-			cursor(j, i);
+			display_goto_xy(j+indent(), i);
 			if(lineEnd) {
 				display_char(' ');
 			} else {
@@ -100,12 +91,15 @@ void NOstream::flush() {
 }
 
 void NOstream::hide(bool update) const {
+	if(!inLcd()) return;
+
 	int save_x = display_get_x();
 	int save_y = display_get_y();
 
-	for (unsigned int i = 0; i <= lastLine; ++i) {
-		for(unsigned int j = x; j<(x+width); ++j) {
-			cursor(j, i);
+	U8 last = indent() + fieldWidth();
+	for (U8 i = 0; i < lines(); ++i) {
+		for(U8 j = indent(); j < last; ++j) {
+			display_goto_xy(j, i);
 			display_char(' ');
 		}
 	}
@@ -125,25 +119,26 @@ U16 NOstream::precision(U16 prec) {
 }
 
 void NOstream::streamhandler(const char *str) {
-	// i..end of textBuffer pre
-	// j..copy to string dest
-	// k..copy from string src
+	newLineSpace();
+	// i..idx of first free char in textBuffer
+	// j..idx iterator of destination string
+	// k..idx iterator of source string
 	LockGuard lock(mutex);
-	U16 i, j, k;
-	k = 0;
-	i = strlen(textBuffer[cursorLine]);
-	for (j = 0; str[k] != '\0'; j++) {
-		if ((i + j) >= width) {
+	U16 j = 0;
+	U16 k = 0;
+	U16 i = strlen(textBuffer[cursorLine]);
+	for (; str[k] != '\0'; j++) {
+		if ((i + j) >= fieldWidth()) {
 			// cutoff or line feed?
-			// textBuffer[cursorLine][width] = '\0';
+			// textBuffer[cursorLine][fieldWidth()] = '\0';
 			break;
 		}
 		if (str[k] == '\n') {
 			textBuffer[cursorLine][i + j] = '\0';
 			newline();
-			//k++; // jump over
+			newLineSpace();
 			j = 0;
-			i = 0; // we assume that there is nothing in next line
+			i = 0;
 		} else {
 			textBuffer[cursorLine][i + j] = str[k];
 		}

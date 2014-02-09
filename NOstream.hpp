@@ -15,29 +15,28 @@ extern "C" {
 	#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/display.h"
 }
 
-//for codecorrection
-
+#include "LcdConstants.hpp"
 #include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/display.h"
 
 #include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
 
 #include "convert.hpp"
 
+#include "NWidget.hpp"
 #include "Uncopyable.hpp"
 #include "Mutex.hpp"
 
-// TODO Make a line type class?
 
-class NOstream : private Uncopyable
+class NOstream : public NWidget, private Uncopyable
 {
 private:
 	// Actual cursor Line
-	unsigned int cursorLine;
+	U8 cursorLine;
 	// boarders
-	unsigned int startLine;
-	unsigned int lastLine;
-	unsigned int x;
-	unsigned int width;
+	//U8 startLine;
+	//U8 consoleRows;
+	//U8 x;
+	//U8 width;
 	bool somenew;
 	bool nextHex;
 	U16 floatplaces;
@@ -51,12 +50,15 @@ private:
 	typedef NOstream& (*NOstreamManipulator)(NOstream&);
 
 	// cursor in console area
-	inline bool inArea(const U16 x, const U16 y) const;
+	inline bool inArea(U16 x, U16 y) const;
 
 	// set cursor position
-	void cursor(U16 x, U16 y) const;
+	//bool cursor(U16 x, U16 y) const;
 
-	void newline();
+	void newline() {
+		++cursorLine;
+	}
+	void newLineSpace();
 
 	// the only way to put data into the textBuffer
 	// responsible for text formatting...
@@ -64,15 +66,15 @@ private:
 public:
 
 	// Max cursor position in X(horizontal) axis.
-	static const unsigned int MAX_CURSOR_X = 15;
+	static const U8 MAX_CURSOR_X = LCD::LINE_WIDTH - 1;
     // Max cursor position in Y(vertical) axis.
-	static const unsigned int MAX_CURSOR_Y = 7;
+	static const U8 MAX_CURSOR_Y = LCD::ROWS - 1;
 
 	explicit NOstream(mutex_t res,
-			 const U16 startLine = 0,
-			 const U16 lastLine = MAX_CURSOR_Y,
-			 const U16 x = 0,
-			 const U16 width = 16);
+			 	      U8 startLine = 0,
+			          U8 rows = LCD::ROWS,
+			          U8 x = 0,
+			          U8 width = LCD::LINE_WIDTH);
 	~NOstream();
 
 	// do not allow copy
@@ -90,30 +92,42 @@ public:
 	NOstream& operator<<(char str);
 	NOstream& operator<<(S32 num);
 	NOstream& operator<<(U32 num);
+
+	NOstream& operator<<(S16 num) {return operator<<(static_cast<S32>(num));}
+	NOstream& operator<<(U16 num) {return operator<<(static_cast<U32>(num));}
+	NOstream& operator<<(S8 num)  {return operator<<(static_cast<S32>(num));}
+	NOstream& operator<<(U8 num)  {return operator<<(static_cast<U32>(num));}
+
 	NOstream& operator<<(float num);
 
-
-	/*
-	template<typename T>
-	NOstream& operator<<(T num) {
-		if (num < 0)
-			return operator<<(static_cast<S32>(num));
-		else
-			return operator<<(static_cast<U32>(num));
+	NOstream& operator<<(bool b) {
+		if(b) return *this << "true";
+		else  return *this << "false";
 	}
-	*/
-
 
 	NOstream& operator<<(NOstream& stream) {return *this;}
 	NOstream& operator<<(NOstreamManipulator manip);
 };
 
-
-bool NOstream::inArea(const U16 x, const U16 y) const {
-	return (y >= startLine) && (y <= lastLine) && (x >= (this->x))
-			&& (x <= (width + (this->x) - 1));
+/*
+bool NOstream::inArea(U16 x, U16 y) const {
+	return (y >= startLine) && (y < consoleRows) && (x >= (this->x))
+			&& (x < (width + (this->x)));
 }
+*/
 
+/*
+// Set cursor to (x,y) position. Top left is (0,0).
+bool NOstream::cursor(U16 x, U16 y) const {
+	x = (x > MAX_CURSOR_X) ? MAX_CURSOR_X : x;
+	y = (y > MAX_CURSOR_Y) ? MAX_CURSOR_Y : y;
+	if (inArea(x, y)) {
+		display_goto_xy(static_cast<int>(x), static_cast<int>(y));
+		return true;
+	}
+	return false;
+}
+*/
 
 
 // easier

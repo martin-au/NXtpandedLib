@@ -74,6 +74,9 @@ U8 state = static_cast<U8>(Com::NCom::typeU32);
 
 // 1000 ms cycle
 TASK(TaskMain) {
+	cout << "Test - " << state << "###############" << endl;
+
+	/*
 	if(!usb.isConnected()) {
 		TerminateTask();
 	}
@@ -115,8 +118,7 @@ TASK(TaskMain) {
 		case Com::NCom::typeBool:
 		{
 			bool rec = com.getDataBool();
-			char b = rec ? 'T' : 'F';
-			cout << "Receive: " << b << endl;
+			cout << "Receive: " << rec << endl;
 			break;
 		}
 		case Com::NCom::typeFloat:
@@ -193,15 +195,6 @@ TASK(TaskMain) {
 	break;
 	case 7:
 	{
-		/*
-		NVector<U32> vec(4, 0.3);
-		vec.pushBack(1);
-		vec.pushBack(2);
-		vec.pushBack(3);
-		vec.pushBack(4);
-		cout << vec.size() << endl;
-		com.send(vec, 1);
-		*/
 		U32 pack[4];
 		pack[0] = 1;
 		pack[1] = 2;
@@ -212,6 +205,7 @@ TASK(TaskMain) {
 	break;
 	default: break;
 	}
+	*/
 
 	++state;
 

@@ -141,40 +141,43 @@ void NLabel::alignBuddy(const NAlignment &align) const {
 	}
 }
 
-// const problem:
-// make copy of this string
-// modifiy this string
-// display this string
-// problem : getString will maby not return the true length of the string!
-// solve : cut string during construction!
+
 void NLabel::show(bool update) const {
-	display_goto_xy(this->indent(), this->row());
-	S8 labelLen = static_cast<S8>(label->size());
+	const S8 labelLen = static_cast<S8>(label->size());
 
 	// we have to change label here because the width of the label
 	// can change between setText and show
+
+	bool endString = false;
+	for(S16 i=0; i < this->fieldWidth(); ++i) {
+		display_goto_xy(this->indent()+i, this->row());
+		if(!endString && label[i] == '\0') {
+			endString = true;
+			continue;
+		}
+		if(endString) {
+			// clean rest of field
+			display_char(' ');
+		} else {
+			display_char(label[i]);
+		}
+	}
+
+	/*
 	if (this->fieldWidth() == labelLen) {
 		display_string(label->data());
 	} else if (this->fieldWidth() < labelLen) {
-		// NString dispStr = label->substr(0, textWidth);
-		//dispStr.assign((textWidth), '\0'); // !const
 		display_string(label->substr(0, this->fieldWidth()).data());
-		//dispStr.assign((textWidth), tmp);  // !const
 	} else if (this->fieldWidth() > labelLen) {
-		// label->addBuffer(textWidth - labelLen); // !const
-		/*
-		for (S8 i = 0; i < (textWidth - labelLen); ++i) {
-			label->append(' ');    // !const
-		}
-		*/
 		NString dispStr(this->fieldWidth());
 		dispStr = *label;
 		for (S8 i = 0; i < (this->fieldWidth() - labelLen); ++i) {
 			dispStr.append(' ');
 		}
 
-		display_string(dispStr.data()); // TODO Use display_char 
+		display_string(dispStr.data());
 	}
+	*/
 	if (update) {
 		display_update();
 	}
