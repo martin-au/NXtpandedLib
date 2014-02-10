@@ -74,7 +74,11 @@ U8 state = static_cast<U8>(Com::NCom::typeU32);
 
 // 1000 ms cycle
 TASK(TaskMain) {
-	cout << "Test - " << state << "###############" << endl;
+	if(state % 2) {
+		cout << "State - " << state << endl;
+	} else {
+		cout.hide(true);
+	}
 
 	/*
 	if(!usb.isConnected()) {
@@ -215,7 +219,8 @@ TASK(TaskMain) {
 
 // 1 ms cycle
 TASK(Task2) {
-	usb.commHandler();
+	//cout.flush();
+	//usb.commHandler();
 	TerminateTask();
 }
 

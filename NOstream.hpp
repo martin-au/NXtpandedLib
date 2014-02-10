@@ -32,11 +32,6 @@ class NOstream : public NWidget, private Uncopyable
 private:
 	// Actual cursor Line
 	U8 cursorLine;
-	// boarders
-	//U8 startLine;
-	//U8 consoleRows;
-	//U8 x;
-	//U8 width;
 	bool somenew;
 	bool nextHex;
 	U16 floatplaces;
@@ -49,12 +44,6 @@ private:
 	// allowing manipulators (endl, hex ...)
 	typedef NOstream& (*NOstreamManipulator)(NOstream&);
 
-	// cursor in console area
-	inline bool inArea(U16 x, U16 y) const;
-
-	// set cursor position
-	//bool cursor(U16 x, U16 y) const;
-
 	void newline() {
 		++cursorLine;
 	}
@@ -64,12 +53,6 @@ private:
 	// responsible for text formatting...
 	void streamhandler(const char *str);
 public:
-
-	// Max cursor position in X(horizontal) axis.
-	static const U8 MAX_CURSOR_X = LCD::LINE_WIDTH - 1;
-    // Max cursor position in Y(vertical) axis.
-	static const U8 MAX_CURSOR_Y = LCD::ROWS - 1;
-
 	explicit NOstream(mutex_t res,
 			 	      U8 startLine = 0,
 			          U8 rows = LCD::ROWS,
@@ -108,26 +91,6 @@ public:
 	NOstream& operator<<(NOstream& stream) {return *this;}
 	NOstream& operator<<(NOstreamManipulator manip);
 };
-
-/*
-bool NOstream::inArea(U16 x, U16 y) const {
-	return (y >= startLine) && (y < consoleRows) && (x >= (this->x))
-			&& (x < (width + (this->x)));
-}
-*/
-
-/*
-// Set cursor to (x,y) position. Top left is (0,0).
-bool NOstream::cursor(U16 x, U16 y) const {
-	x = (x > MAX_CURSOR_X) ? MAX_CURSOR_X : x;
-	y = (y > MAX_CURSOR_Y) ? MAX_CURSOR_Y : y;
-	if (inArea(x, y)) {
-		display_goto_xy(static_cast<int>(x), static_cast<int>(y));
-		return true;
-	}
-	return false;
-}
-*/
 
 
 // easier

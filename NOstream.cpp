@@ -14,22 +14,15 @@ NOstream::NOstream(mutex_t res,
   floatplaces(2),
   mutex(res)
  {
-	/*
-	startLine(startLine),
-   consoleRows((rows > LCD::ROWS) ? LCD::ROWS : rows),
-   x((indent > MAX_CURSOR_X) ? MAX_CURSOR_X : indent),
-   width(((MAX_CURSOR_X - this->x) > width) ? (MAX_CURSOR_X - this->x) : width),
-	 */
 	// block user errors, otherwise we may get big arrays and program crashes with new
 	rows = (rows > LCD::ROWS) ? LCD::ROWS : rows;
-	lineWidth = ((MAX_CURSOR_X - indent) < lineWidth) ? MAX_CURSOR_X - indent : lineWidth;
+	S16 remaining = LCD::LINE_WIDTH - indent;
+	lineWidth = (remaining < lineWidth) ? remaining : lineWidth;
 	if(lineWidth > LCD::LINE_WIDTH) lineWidth = LCD::LINE_WIDTH;
 
 	setField(indent, startLine, rows, lineWidth);
 
-
 	textBuffer = new char *[lines()];
-
 	for (int i = 0; i < rows + 1; i++) {
 		textBuffer[i] = new char[fieldWidth()+1]; // +1 for '\0'
 		strcpy(textBuffer[i], "");
