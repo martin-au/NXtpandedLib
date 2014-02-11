@@ -185,7 +185,7 @@ void NLabel::show(bool update) const {
 }
 
 
-
+// TODO use display_char here (faster, lighter)
 void NLabel::erase(bool update) const {
 	// clean up (but save string)
 	char clear[this->fieldWidth() + 1];
