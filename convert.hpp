@@ -11,6 +11,20 @@ extern "C" {
 
 #include "C:/cygwin/GNUARM/include/c++/4.0.2/tr1/type_traits"
 
+// the functions should be used to calculate the resulting string size before
+// actual converting. Remember to let space for the '\0' char!!
+inline S8 numDigits(S32 num) {
+	S8 cnt= (num < 0) ? 1 : 0;
+	for(; num; num /= 10, cnt++);
+	return cnt;
+}
+
+inline S8 numDigits(U32 num) {
+	S8 cnt= 0;
+	for(; num; num /= 10, cnt++);
+	return cnt;
+}
+
 //convert helper
 S8 numToStr(S32 value, char* dest);
 S8 numToStr(U32 value, char* dest);

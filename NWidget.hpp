@@ -67,7 +67,8 @@ protected:
 	}
 	*/
 
-	void setVisibility(bool visible) {
+	// is const because visibility may change during show
+	void setVisibility(bool visible) const {
 		mVisible = visible;
 	}
 	// virtual functions would be better but to much overhead in embedded c++!

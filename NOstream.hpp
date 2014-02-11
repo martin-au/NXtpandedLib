@@ -33,11 +33,11 @@ class NOstream : public NWidget, private Uncopyable
 private:
 	// Actual cursor Line
 	U8 cursorLine;
-	bool somenew; // TODO make mutable, make flush() const
+	mutable bool somenew;
 	bool nextHex;
 	U16 floatplaces;
 
-	mutex_t mutex;
+	mutable mutex_t mutex;
 
 	// Console buffer array
 	char **textBuffer;
@@ -61,7 +61,11 @@ public:
 			  U8 width = LCD::LINE_WIDTH);
 	~NOstream();
 
-	void flush();
+	void flush(bool update = false) const;
+
+	void show(bool update = false) const {
+		flush(update);
+	}
 	void hide(bool update = false) const;
 
 	U16 precision() const;
@@ -75,6 +79,7 @@ public:
 	NOstream& operator<<(S32 num);
 	NOstream& operator<<(U32 num);
 
+	NOstream& operator<<(int num) {return operator<<(static_cast<S32>(num));}
 	NOstream& operator<<(S16 num) {return operator<<(static_cast<S32>(num));}
 	NOstream& operator<<(U16 num) {return operator<<(static_cast<U32>(num));}
 	NOstream& operator<<(S8 num)  {return operator<<(static_cast<S32>(num));}

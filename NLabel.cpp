@@ -7,13 +7,13 @@
 
 #include "NLabel.hpp"
 
-NLabel::NLabel(const S8 indent, const S8 row, S8 charWidth) :
+NLabel::NLabel(S8 indent, S8 row, S8 charWidth) :
 		label(new NString(charWidth)), buddy(0), buddyAlignment(0) {
 	setField(indent, row, 1, charWidth);
 }
 
 
-NLabel::NLabel(const NString &text, const S8 indent, const S8 row, S8 charWidth) :
+NLabel::NLabel(const NString &text, S8 indent, S8 row, S8 charWidth) :
 		label(new NString(text)) , buddy(0), buddyAlignment(0) {
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
@@ -21,7 +21,7 @@ NLabel::NLabel(const NString &text, const S8 indent, const S8 row, S8 charWidth)
 	setField(indent, row, 1, charWidth);
 }
 
-NLabel::NLabel(const char *text, const S8 indent, const S8 row, S8 charWidth) :
+NLabel::NLabel(const char *text, S8 indent, S8 row, S8 charWidth) :
 		buddy(0), buddyAlignment(0) {
 	if (text) {
 		label = new NString(text);
@@ -36,6 +36,13 @@ NLabel::NLabel(const char *text, const S8 indent, const S8 row, S8 charWidth) :
 		charWidth = static_cast<S8>(label->size());
 	}
 	setField(indent, row, 1, charWidth);
+}
+
+template<typename T>
+NLabel::NLabel(const T num, const S8 indent, const S8 row, S8 numWidth)
+ : label(new NString(numWidth)), buddy(0), buddyAlignment(0) {
+	setField(indent, row, 1, numWidth);
+	setNumber(num);
 }
 
 
@@ -83,7 +90,7 @@ NLabel::~NLabel() {
 	// remove from display
 	label->clear();
 	show();
-	delete label;
+	delete[] label;
 }
 
 NString NLabel::getText() const {
@@ -103,14 +110,26 @@ void NLabel::setText(const char *text) {
 	}
 }
 
+template<typename T>
+void NLabel::setNumber(T number) {
+	label->clear();
+	label->append(number);
+	// i think this is better you see the overflow and then optimize your program
+	if (static_cast<S8>(label->size()) > fieldWidth()) {
+		label->clear();
+		for (S8 i = 0; i < this->fieldWidth(); ++i)
+			label->append('#');
+	}
+}
+
 void NLabel::clear() {
 	label->clear();    // !const
-	erase(false);
+	hide(false);
 }
 
 // its better to know the position at construction time!
 bool NLabel::setPosition(const S8 indent, const S8 row) {
-	erase();
+	hide();
 
 	setField(indent, row, 1, this->fieldWidth());
 	if (buddy)
@@ -143,11 +162,6 @@ void NLabel::alignBuddy(const NAlignment &align) const {
 
 
 void NLabel::show(bool update) const {
-	const S8 labelLen = static_cast<S8>(label->size());
-
-	// we have to change label here because the width of the label
-	// can change between setText and show
-
 	bool endString = false;
 	for(S16 i=0; i < this->fieldWidth(); ++i) {
 		display_goto_xy(this->indent()+i, this->row());
@@ -159,25 +173,10 @@ void NLabel::show(bool update) const {
 			// clean rest of field
 			display_char(' ');
 		} else {
-			display_char(label[i]);
+			display_char(label->at(i));
 		}
 	}
 
-	/*
-	if (this->fieldWidth() == labelLen) {
-		display_string(label->data());
-	} else if (this->fieldWidth() < labelLen) {
-		display_string(label->substr(0, this->fieldWidth()).data());
-	} else if (this->fieldWidth() > labelLen) {
-		NString dispStr(this->fieldWidth());
-		dispStr = *label;
-		for (S8 i = 0; i < (this->fieldWidth() - labelLen); ++i) {
-			dispStr.append(' ');
-		}
-
-		display_string(dispStr.data());
-	}
-	*/
 	if (update) {
 		display_update();
 	}
@@ -185,15 +184,12 @@ void NLabel::show(bool update) const {
 }
 
 
-// TODO use display_char here (faster, lighter)
-void NLabel::erase(bool update) const {
-	// clean up (but save string)
-	char clear[this->fieldWidth() + 1];
-	for (S8 i = 0; i < this->fieldWidth(); ++i)
-		clear[i] = ' ';
-	clear[this->fieldWidth()] = '\0';
-	display_goto_xy(this->indent(), this->row());
-	display_string(clear);
+
+void NLabel::hide(bool update) const {
+	for(S16 i=0; i < this->fieldWidth(); ++i) {
+		display_goto_xy(this->indent()+i, this->row());
+		display_char(' ');
+	}
 	if (update) {
 		display_update();
 	}

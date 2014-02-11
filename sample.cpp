@@ -55,11 +55,13 @@ NOstream cout(streammtx);
 
 #include "NTimer.hpp"
 
+#include "NLabel.hpp"
+/*
 #include "NComSingle.hpp"
 ecrobot::Usb usb;
 Com::NCom comHandler(usb);
 Com::NComSingle com(comHandler);
-
+*/
 
 /*
 #include "Motorcontroller.hpp"
@@ -70,15 +72,14 @@ Nxt::Motorcontroller motorA(&_mA, 18, 100);
 extern "C" {
 
 //Com::NCom::comDatatype state = Com::NCom::typeU32;
-U8 state = static_cast<U8>(Com::NCom::typeU32);
+//U8 state = static_cast<U8>(Com::NCom::typeU32);
+U8 state = 0;
 
 // 1000 ms cycle
 TASK(TaskMain) {
-	if(state % 2) {
-		cout << "State - " << state << endl;
-	} else {
-		cout.hide(true);
-	}
+	S32 x = 123;
+	NLabel label1(x, 2, 3, 4);
+	label1.show(true);
 
 	/*
 	if(!usb.isConnected()) {

@@ -59,19 +59,24 @@ NString::NString(S32 inBufferlength)
 
 // Max length as string but without the 0-termination
 
-const S32 NString::BCharMaxlength = 3; /**< BChar Max length in string format       */
-const S32 NString::BShortMaxlength = 6; /**< BShort Max length in string format  */
-const S32 NString::BIntMaxlength = 11; /**< BInt Max length in string format        */
+/*
+const S32 NString::BCharMaxlength = 3;
+const S32 NString::BShortMaxlength = 6;
+const S32 NString::BIntMaxlength = 11;
 
-const S32 NString::BUCharMaxlength = 3; /**< BUChar Max length in string format  */
-const S32 NString::BUShortMaxlength = 5; /**< BUShort Max length in string format     */
-const S32 NString::BUIntMaxlength = 10; /**< BUInt Max length in string format       */
-const S32 NString::BFloatMaxlength = 15; /**< BFloat Max length in string format  */
+const S32 NString::BUCharMaxlength = 3;
+const S32 NString::BUShortMaxlength = 5;
+const S32 NString::BUIntMaxlength = 10;
+*/
+const S32 NString::BFloatMaxlength = 15;
+
 
 bool NString::addBuffer(const S32 inRequeriedSpace) {
 	if (bufferlength <= inRequeriedSpace + length) { // If the buffer is too small
 		bufferlength = 2 * (length + inRequeriedSpace); // calcul requierd buffer
 		char * str = new char[bufferlength];                // allocate buffer
+
+		if(!str) return false;
 
 		if (string) {
 			NString::copy(string, str);                  // copy original string
@@ -84,6 +89,21 @@ bool NString::addBuffer(const S32 inRequeriedSpace) {
 	}
 	return false;
 }
+
+void NString::shrinkToFit() {
+	char * str = new char[size() + 1];
+	if (str) {
+		bufferlength = size() + 1;
+		if (string) {
+			NString::copy(string, str);                  // copy original string
+			delete[] string;
+		} else {
+			str[0] = '\0';
+		}
+		string = str;
+	}
+}
+
 
 NString NString::substr(S32 pos, S32 len) const {
 	if (pos < 0 || pos >= this->length) {

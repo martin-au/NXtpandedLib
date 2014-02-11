@@ -48,7 +48,7 @@ void NOstream::newLineSpace() {
 	}
 }
 
-void NOstream::flush() {
+void NOstream::flush(bool update) const {
 	if(!inLcd() || !somenew) return;
 
 	LockGuard lock(mutex);
@@ -79,7 +79,9 @@ void NOstream::flush() {
 	}
 	somenew = false;
 	display_goto_xy(save_x, save_y);
-	display_update();
+	if(update) {
+		display_update();
+	}
 	setVisibility(true);
 }
 

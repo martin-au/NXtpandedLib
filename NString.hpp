@@ -26,16 +26,16 @@ protected:
 	U16 decplaces;
 	// static const char HexChars[];
 
-	/** MAx length S32 a print version */
-	static const S32 BCharMaxlength; /**< BChar Max length in string format		*/
-	static const S32 BShortMaxlength; /**< BShort Max length in string format		*/
-	static const S32 BIntMaxlength; /**< BInt Max length in string format		*/
+/*
+	static const S32 BCharMaxlength;
+	static const S32 BShortMaxlength;
+	static const S32 BIntMaxlength;
 
-	static const S32 BUCharMaxlength; /**< BUChar Max length in string format		*/
-	static const S32 BUShortMaxlength; /**< BUShort Max length in string format	*/
-	static const S32 BUIntMaxlength; /**< BUInt Max length in string format		*/
-
-	static const S32 BFloatMaxlength; /**< BFloat Max length in string format  	*/
+	static const S32 BUCharMaxlength;
+	static const S32 BUShortMaxlength;
+	static const S32 BUIntMaxlength;
+*/
+	static const S32 BFloatMaxlength;
 
 public:
 	static const S32 npos = -1;
@@ -66,7 +66,7 @@ public:
 	 */
 	~NString() { // !deleted virtual
 		if (string)
-			delete (string);
+			delete[] string;
 	}
 
 	/**
@@ -135,6 +135,10 @@ public:
 	 * @return true if space was allocate
 	 */
 	bool addBuffer(const S32 in_requeriedSpace);
+
+	// TODO add shrink
+	void shrinkToFit();
+
 	/**
 	 * @brief Append with char*
 	 * @param inString The original string
@@ -277,7 +281,7 @@ public:
 		if (in_value == 0)
 			append('0');
 		else {
-			addBuffer(BShortMaxlength);
+			addBuffer(numDigits(static_cast<S32>(in_value)));
 			length += numToStr(in_value, this->string + length);
 		}
 		return *this;
@@ -287,7 +291,7 @@ public:
 		if (in_value == 0u)
 			append('0');
 		else {
-			addBuffer(BUShortMaxlength);
+			addBuffer(numDigits(static_cast<U32>(in_value)));
 			length += numToStr(in_value, this->string + length);
 		}
 		return *this;
@@ -297,17 +301,23 @@ public:
 		if (in_value == 0)
 			append('0');
 		else {
-			addBuffer(BIntMaxlength);
+			addBuffer(numDigits(in_value));
 			length += numToStr(in_value, this->string + length);
 		}
 		return *this;
 	}
+
+	NString& append(const int in_value) {
+		append(static_cast<S32>(in_value));
+		return *this;
+	}
+
 	/** @brief Append a value to the current string */
 	NString& append(const U32 in_value) {
 		if (in_value == 0u)
 			append('0');
 		else {
-			addBuffer(BUIntMaxlength);
+			addBuffer(numDigits(in_value));
 			length += numToStr(in_value, this->string + length);
 		}
 		return *this;
@@ -331,7 +341,7 @@ public:
 		if (in_value < 0.0000001 && in_value > -0.0000001)
 			append("0.0");
 		else {
-			addBuffer(BFloatMaxlength); // TODO Inefficient with NNumIndicator!
+			addBuffer(BFloatMaxlength); // float is really inefficient ...
 			length += numToStr(in_value, this->string + length, decplaces);
 		}
 		return *this;
