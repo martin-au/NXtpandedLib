@@ -26,13 +26,14 @@ extern "C" {
 #include "Uncopyable.hpp"
 #include "Mutex.hpp"
 
+// TODO new function show because this is also a NWidget?
 
 class NOstream : public NWidget, private Uncopyable
 {
 private:
 	// Actual cursor Line
 	U8 cursorLine;
-	bool somenew;
+	bool somenew; // TODO make mutable, make flush() const
 	bool nextHex;
 	U16 floatplaces;
 
@@ -54,13 +55,11 @@ private:
 	void streamhandler(const char *str);
 public:
 	explicit NOstream(mutex_t res,
-			 	      U8 startLine = 0,
-			          U8 rows = LCD::ROWS,
-			          U8 x = 0,
-			          U8 width = LCD::LINE_WIDTH);
+			  U8 startLine = 0,
+			  U8 rows = LCD::ROWS,
+			  U8 x = 0,
+			  U8 width = LCD::LINE_WIDTH);
 	~NOstream();
-
-	// do not allow copy
 
 	void flush();
 	void hide(bool update = false) const;
