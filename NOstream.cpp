@@ -1,5 +1,4 @@
 
-
 #include "NOstream.hpp"
 
 // user errors are no problem, we check this when setting cursor position
@@ -81,6 +80,7 @@ void NOstream::flush() {
 	somenew = false;
 	display_goto_xy(save_x, save_y);
 	display_update();
+	setVisibility(true);
 }
 
 void NOstream::hide(bool update) const {
@@ -100,6 +100,7 @@ void NOstream::hide(bool update) const {
 	if(update) {
 		display_update();
 	}
+	setVisibility(false);
 }
 
 U16 NOstream::precision() const {
