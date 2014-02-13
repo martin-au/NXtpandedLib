@@ -56,6 +56,8 @@ NOstream cout(streammtx);
 #include "NTimer.hpp"
 
 #include "NLabel.hpp"
+#include "NPairBox.hpp"
+
 /*
 #include "NComSingle.hpp"
 ecrobot::Usb usb;
@@ -77,11 +79,14 @@ U8 state = 0;
 
 // 1000 ms cycle
 TASK(TaskMain) {
-	S32 x = 123;
-	NLabel label1(x, 2, 3, 4);
-	label1.show(true);
+	NLabel label1;
+	NLabel label2("number:");
 
-	/*
+	NPairBox<NLabel, NLabel>  box(&label1, &label2);
+	box.setPosition(2, 2, NAlignment::right());
+	label1.setNumber(123);
+
+	/* USB EXAMPLE
 	if(!usb.isConnected()) {
 		TerminateTask();
 	}

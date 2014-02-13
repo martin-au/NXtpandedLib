@@ -89,6 +89,9 @@ public:
         }
         return *this;
     }
+
+	// use this to Acquire/Release manually
+	mutex_t &get() const {return _ref;}
 };
 
 
