@@ -77,14 +77,18 @@ extern "C" {
 //U8 state = static_cast<U8>(Com::NCom::typeU32);
 U8 state = 0;
 
+
+NLabel label1;
+NLabel label2("state:");
+
+NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
+
+
 // 1000 ms cycle
 TASK(TaskMain) {
-	NLabel label1;
-	NLabel label2("number:");
-
-	NPairBox<NLabel, NLabel>  box(&label1, &label2);
-	box.setPosition(2, 2, NAlignment::right());
-	label1.setNumber(123);
+	streammtx.acquire();
+	box.sec->setNumber(state);
+	streammtx.release();
 
 	/* USB EXAMPLE
 	if(!usb.isConnected()) {
@@ -223,8 +227,11 @@ TASK(TaskMain) {
 	TerminateTask();
 }
 
-// 1 ms cycle
+// 300 ms cycle
 TASK(Task2) {
+	streammtx.acquire();
+	box.show(true);
+	streammtx.release();
 	//cout.flush();
 	//usb.commHandler();
 	TerminateTask();

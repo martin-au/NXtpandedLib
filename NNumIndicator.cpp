@@ -7,7 +7,7 @@
 
 
 #include "NNumIndicator.hpp"
-
+/*
 // consturcotren von NLabel verwenden!!!
 
 
@@ -52,3 +52,4 @@ void NNumIndicator::setPrecision(S8 places) {
 	precision = places;
 	label->setPrecision(static_cast<U16>(places));
 }
+*/

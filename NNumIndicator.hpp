@@ -8,6 +8,7 @@
 #ifndef __NNUMINDICATOR_HPP_
 #define __NNUMINDICATOR_HPP_
 
+/*
 #include "NLabel.hpp"
 
 // deleted template class implementation because code bloat is extreme!
@@ -45,6 +46,6 @@ public:
 
 
 #include "NNumIndicator.cpp"
-
+*/
 
 #endif /* NNUMINDICATOR_HPP_ */

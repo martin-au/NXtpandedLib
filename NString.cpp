@@ -229,12 +229,6 @@ const NString NString::operator+(const char* const inString) const {
 	return concat;
 }
 
-char NString::operator[](const S32 in_index) const {
-	if (0 <= in_index && in_index < length)
-		return string[in_index];
-	return char();
-}
-
 NString& NString::operator=(const NString & inString) {
 	// self assigment save -> lenght == bufferlengt?
 	if (inString.length >= bufferlength) {     // check if buffer is enougth big

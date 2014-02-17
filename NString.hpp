@@ -105,7 +105,9 @@ public:
 	 * @return the char or BCharMax if index too large
 	 */
 	const char at(const S32 in_index) const {
-		return operator[](in_index);
+		if (0 <= in_index && in_index < length)
+			return string[in_index];;
+		return '?';
 	}
 
 	// saver than a operator implementation!
@@ -136,7 +138,6 @@ public:
 	 */
 	bool addBuffer(const S32 in_requeriedSpace);
 
-	// TODO add shrink
 	void shrinkToFit();
 
 	/**
@@ -177,7 +178,10 @@ public:
 	 * @param in_index the char position
 	 * @return the char or BCharMax if index too large
 	 */
-	char operator[](const S32 in_index) const;
+	const char NString::operator[](const S32 in_index) const {
+		//if (0 <= in_index && in_index < length)
+		return string[in_index];
+	}
 
 	/**
 	 * @brief Set the string

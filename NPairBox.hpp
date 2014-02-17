@@ -13,13 +13,34 @@
 #include "NWidget.hpp"
 
 template<class T1, class T2>
-class NPairBox {
-	//std::pair<T1*, T2*> widget;
+struct NPairBox {
 	T1* main;
 	T2* sec;
-public:
-	NPairBox(T1 *mainWidget, T2 *secWidget)
-		: main(mainWidget), sec(secWidget) {
+
+	NPairBox(T1 *mainWidget, T2 *secWidget) :
+			main(mainWidget), sec(secWidget) {
+	}
+
+	NPairBox(T1 *mainWidget, T2 *secWidget, S8 indent, S8 row, const NAlignment align) :
+			main(mainWidget), sec(secWidget) {
+		setPosition(indent, row, align);
+	}
+
+	NPairBox(T1 *mainWidget, T2 *secWidget, const NAlignment align) :
+			main(mainWidget), sec(secWidget) {
+		align2Main(align);
+	}
+
+	~NPairBox() {}
+
+	void show(bool update = false) const {
+		main->show(false);
+		sec->show(update);
+	}
+
+	void hide(bool update = false) const {
+		main->hide(false);
+		sec->hide(update);
 	}
 
 	bool setPosition(S8 indent, S8 row, const NAlignment align) {
@@ -30,8 +51,8 @@ public:
 	}
 
 	bool align2Main(const NAlignment align);
-
-	~NPairBox() {}
 };
+
+#include "NPairBox.cpp"
 
 #endif /* __NPAIRBOX_HPP_ */

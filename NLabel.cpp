@@ -8,13 +8,13 @@
 #include "NLabel.hpp"
 
 NLabel::NLabel(S8 indent, S8 row, S8 charWidth) :
-		label(new NString(charWidth)), buddy(0), buddyAlignment(0) {
-	setField(indent, row, 1, charWidth);
+		label(new NString(charWidth)), somenew(true) { // , buddy(0), buddyAlignment(0)
+ 	setField(indent, row, 1, charWidth);
 }
 
 
 NLabel::NLabel(const NString &text, S8 indent, S8 row, S8 charWidth) :
-		label(new NString(text)) , buddy(0), buddyAlignment(0) {
+		label(new NString(text)), somenew(true) {
 	if (!charWidth) {
 		charWidth = static_cast<S8>(label->size());
 	}
@@ -22,7 +22,7 @@ NLabel::NLabel(const NString &text, S8 indent, S8 row, S8 charWidth) :
 }
 
 NLabel::NLabel(const char *text, S8 indent, S8 row, S8 charWidth) :
-		buddy(0), buddyAlignment(0) {
+	somenew(true) {
 	if (text) {
 		label = new NString(text);
 	} else {
@@ -40,12 +40,12 @@ NLabel::NLabel(const char *text, S8 indent, S8 row, S8 charWidth) :
 
 template<typename T>
 NLabel::NLabel(const T num, const S8 indent, const S8 row, S8 numWidth)
- : label(new NString(numWidth)), buddy(0), buddyAlignment(0) {
+ : label(new NString(numWidth)), somenew(true) {
 	setField(indent, row, 1, numWidth);
 	setNumber(num);
 }
 
-
+/*
 NLabel::NLabel(NLabel * const buddyOf, S8 charWidth) :
 		label(new NString(charWidth)), buddy(0), buddyAlignment(0) {
 	this->fieldWidth(charWidth);
@@ -85,6 +85,7 @@ NLabel::NLabel(const char *text, NLabel * const buddyOf, S8 charWidth) :
 		buddyOf->setBuddy(this);
 	}
 }
+*/
 
 NLabel::~NLabel() {
 	// remove from display
@@ -101,12 +102,14 @@ NString NLabel::getText() const {
 void NLabel::setText(const NString &text) {
 	if (text.size() > 0) {
 		*label = text;
+		somenew = true;
 	}
 }
 
 void NLabel::setText(const char *text) {
 	if (text) {
 		*label = text;
+		somenew = true;
 	}
 }
 
@@ -120,10 +123,12 @@ void NLabel::setNumber(T number) {
 		for (S8 i = 0; i < this->fieldWidth(); ++i)
 			label->append('#');
 	}
+	somenew = true;
 }
 
 void NLabel::clear() {
 	label->clear();    // !const
+	somenew = true;
 	hide(false);
 }
 
@@ -132,12 +137,13 @@ bool NLabel::setPosition(const S8 indent, const S8 row) {
 	hide();
 
 	setField(indent, row, 1, this->fieldWidth());
-	if (buddy)
-		buddy->alignBuddy(buddyAlignment);
+	//if (buddy)
+	//	buddy->alignBuddy(buddyAlignment);
+	somenew = true;
 	return inLcd();
 }
 
-
+/*
 void NLabel::setBuddy(NLabel * const myBuddy, const NAlignment &align) const {
 	buddy = myBuddy;
 	alignBuddy(align);
@@ -159,20 +165,16 @@ void NLabel::alignBuddy(const NAlignment &align) const {
 		buddy->setPosition(this->indent(), this->row() + adjustment);
 	}
 }
-
+*/
 
 void NLabel::show(bool update) const {
-	bool endString = false;
+	if(!somenew) return;
 	for(S16 i=0; i < this->fieldWidth(); ++i) {
 		display_goto_xy(this->indent()+i, this->row());
-		if(!endString && label[i] == '\0') {
-			endString = true;
-			continue;
-		}
-		if(endString) {
-			// clean rest of field
+		if(i >= label->size()) {
 			display_char(' ');
-		} else {
+		}
+		else {
 			display_char(label->at(i));
 		}
 	}
@@ -186,6 +188,7 @@ void NLabel::show(bool update) const {
 
 
 void NLabel::hide(bool update) const {
+	if(!somenew) return;
 	for(S16 i=0; i < this->fieldWidth(); ++i) {
 		display_goto_xy(this->indent()+i, this->row());
 		display_char(' ');
