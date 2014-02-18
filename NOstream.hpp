@@ -98,7 +98,7 @@ public:
 
 
 // easier
-#include "NOstream.cpp"
+//#include "NOstream.cpp"
 
 
 

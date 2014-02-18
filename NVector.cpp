@@ -9,7 +9,7 @@
 #include "NVector.hpp"
 
 template<typename T>
-void NVector<T>::setCapacity(S32 in_capacity) {
+void NVector<T>::doSetCapacity(S32 in_capacity) {
 	const S32 currentSize = this->endIndex - this->startIndex;
 	S32 pointOfStart = (in_capacity * this->startIndex / this->capacity);
 

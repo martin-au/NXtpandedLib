@@ -45,7 +45,7 @@ void user_1ms_isr_type2(void){
 }
 
 
-} // extern C
+}; // extern C
 
 // C++ Includes, Globals
 
@@ -71,24 +71,60 @@ ecrobot::Motor _mA(PORT_A);
 Nxt::Motorcontroller motorA(&_mA, 18, 100);
 */
 
-extern "C" {
+
+
 
 //Com::NCom::comDatatype state = Com::NCom::typeU32;
 //U8 state = static_cast<U8>(Com::NCom::typeU32);
 U8 state = 0;
 
-
+/*
 NLabel label1;
 NLabel label2("state:");
 
 NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
-
+*/
 
 // 1000 ms cycle
+
+#include "NVector.hpp"
+
+NVector<int> vec(3000);
+
+extern "C" {
+
 TASK(TaskMain) {
+
+	NTimer timer;
+
+	// 8 ms at 29632 - os 28192
+	timer.start();
+	vec.pushBack(state); // 25792
+	for(int i=0; i<3000; i++) {
+		vec.pushBack(state); // 28192
+	}
+	cout << timer.stop() << "\n";
+
+
+	/*
+	// 0 - os 25344
+	timer.start();
+	int *vec = new int[3001];
+	vec[0] = state;
+	for (int i = 1; i < 3001; i++) {
+		vec[i] = i;
+	}
+	cout << timer.stop() << "\n";
+	delete[] vec;
+	*/
+
+	cout.flush(true);
+
+	/* LABEL TEST
 	streammtx.acquire();
 	box.sec->setNumber(state);
 	streammtx.release();
+	*/
 
 	/* USB EXAMPLE
 	if(!usb.isConnected()) {
@@ -229,9 +265,12 @@ TASK(TaskMain) {
 
 // 300 ms cycle
 TASK(Task2) {
+	/*
 	streammtx.acquire();
 	box.show(true);
 	streammtx.release();
+	*/
+
 	//cout.flush();
 	//usb.commHandler();
 	TerminateTask();

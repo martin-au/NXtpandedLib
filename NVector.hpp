@@ -54,6 +54,9 @@ extern "C" {
 * @example }
 */
 
+// antibug
+const float DefaultStart = 0.30; /**< Default start position in %*/
+
 template<typename T>
 class NVector {
 protected:
@@ -66,7 +69,6 @@ protected:
 	S32 endIndex; /**< end inde*/
 
 	static const S32 DefaultSize = 15; /**< Default size */
-	static const float DefaultStart = 0.30; /**< Default start position in %*/
 
 public:
 	/**
@@ -97,7 +99,7 @@ public:
 	/**
 	 *@brief destructor
 	 */
-	virtual ~NVector() {
+	 ~NVector() {
 		while (this->startIndex != this->endIndex) {
 			(&this->buffer[this->startIndex++])->~T();
 		}
@@ -117,7 +119,17 @@ public:
 	 *@brief set the buffer capacity
 	 *@param in_capacity to change the capacity
 	 */
-	void setCapacity(S32 in_capacity);
+	void doSetCapacity(S32 in_capacity);
+
+	// inline optimization
+	// we return before we call the not inline function
+	// note that we do not allow change capacity to less then current cap
+	// use doSetCapacity for this
+	void setCapacity(S32 in_capacity) {
+		if (in_capacity <= this->capacity)
+			return;
+		doSetCapacity(in_capacity);
+	}
 
 	/**
 	 *@brief set a value if possible
@@ -169,7 +181,7 @@ public:
 	 *@brief Append a value
 	 *@param inValue the value to append
 	 */
-	virtual void append(const T & inValue) {
+	void append(const T & inValue) {
 		new ((void*) &this->buffer[this->endIndex++]) T(inValue);
 
 		if (this->endIndex == this->capacity) {
@@ -181,7 +193,7 @@ public:
 	 *@brief Append a value
 	 *@param other the vector to append
 	 */
-	virtual void append(const NVector<T> & other) {
+	void append(const NVector<T> & other) {
 		if (this->capacity - this->endIndex < other.size())
 			setCapacity(this->capacity + other.size());
 
@@ -532,7 +544,7 @@ public:
 		/**
 		 *@brief destructor
 		 */
-		virtual ~iterator() {
+		~iterator() {
 		}
 		/**
 		 *@brief constructor with node
@@ -572,14 +584,14 @@ public:
 		 *@brief get data pointed by the operator
 		 *@return data
 		 */
-		virtual T& operator*() const {
+		T& operator*() const {
 			return this->vec->buffer[this->index];
 		}
 		/**
 		 *@brief get adresse data pointed by the operator
 		 *@return &data
 		 */
-		virtual T* operator->() const {
+		T* operator->() const {
 			return &this->vec->buffer[this->index];
 		}
 
@@ -695,21 +707,21 @@ public:
 		/**
 		 *@brief destructor
 		 */
-		virtual ~const_iterator() {
+		~const_iterator() {
 		}
 
 		/**
 		 *@brief get data pointed by the operator
 		 *@return data
 		 */
-		virtual const T& operator*() const {
+		const T& operator*() const {
 			return iterator::operator*();
 		}
 		/**
 		 *@brief get adress data pointed by the operator
 		 *@return &data
 		 */
-		virtual const T* operator->() const {
+		const T* operator->() const {
 			return iterator::operator*();
 		}
 	};
