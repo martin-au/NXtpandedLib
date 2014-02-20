@@ -8,12 +8,10 @@
 #ifndef __RECTANGLE_HPP_
 #define __RECTANGLE_HPP_
 
-
-
 #include "NShape.hpp"
 #include "LcdDrawer.hpp"
 
-
+namespace nxpl {
 
 class NRectangle : public NShape {
 private:
@@ -58,16 +56,16 @@ void NRectangle::setPosition(const S8 x0, const S8 y0, const S8 w, const S8 h) {
 
 
 void NRectangle::showImpl(bool update) const {
-	Drawer::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::draw());
+	nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::draw());
 }
 
 void NRectangle::eraseImpl(bool update) const {
-	Drawer::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::clear());
+	nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::clear());
 }
 
 
 void NRectangle::invertImpl(bool update) const {
-	Drawer::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::invert());
+	nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::invert());
 }
 
 void NRectangle::fill() const {
@@ -75,14 +73,14 @@ void NRectangle::fill() const {
 		return;
 	}
 	// TODO Try if -height/width works!
-	Drawer::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::draw());
+	nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::draw());
 }
 
 void NRectangle::fillErase() const {
 	if(lcd == 0) {
 		return;
 	}
-	Drawer::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::clear());
+	nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::clear());
 }
 
 
@@ -90,10 +88,9 @@ void NRectangle::fillInvert() const {
 	if(lcd == 0) {
 		return;
 	}
-	Drawer::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::invert());
+	nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::invert());
 }
 
-
-
+}
 
 #endif /* NREACTANGLE_HPP_ */

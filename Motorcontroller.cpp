@@ -7,8 +7,9 @@
 
 #include "Motorcontroller.hpp"
 
-namespace Nxt {
+namespace nxpl {
 
+/*
 Motorcontroller::Motorcontroller() {
 	// TODO Auto-generated constructor stub
 
@@ -17,5 +18,6 @@ Motorcontroller::Motorcontroller() {
 Motorcontroller::~Motorcontroller() {
 	// TODO Auto-generated destructor stub
 }
+*/
 
 } /* namespace Nxt */

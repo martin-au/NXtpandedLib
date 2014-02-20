@@ -12,6 +12,7 @@
 #include "NShape.hpp"
 #include "LcdDrawer.hpp"
 
+namespace nxpl {
 
 class NCircle : public NShape {
 private:
@@ -73,16 +74,16 @@ void NCircle::setPosition(const S8 centerX, const S8 centerY, const S8 radius) {
 
 
 void NCircle::showImpl(bool update) const {
-	Drawer::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::draw());
+	nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::draw());
 }
 
 void NCircle::eraseImpl(bool update) const {
-	Drawer::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::clear());
+	nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::clear());
 }
 
 
 void NCircle::invertImpl(bool update) const {
-	Drawer::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::invert());
+	nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::invert());
 }
 
 
@@ -126,5 +127,6 @@ void NCircle::fillInvert() const {
 	rasterCircleFill(&NLcd::invertPixel);
 }
 
+}
 
 #endif /* NCIRCLE_HPP_ */

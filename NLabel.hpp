@@ -12,6 +12,8 @@
 #include "NWidget.hpp"
 #include "Uncopyable.hpp"
 
+namespace nxpl {
+
 class NLabel: public NWidget, private Uncopyable {
 
 private:
@@ -84,8 +86,7 @@ public:
 	*/
 };
 
-
-
+}
 
 #include "NLabel.cpp"
 

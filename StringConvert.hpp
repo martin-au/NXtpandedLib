@@ -11,6 +11,8 @@ extern "C" {
 
 #include "C:/cygwin/GNUARM/include/c++/4.0.2/tr1/type_traits"
 
+namespace nxpl {
+
 // the functions should be used to calculate the resulting string size before
 // actual converting. Remember to let space for the '\0' char!!
 inline S8 numDigits(S32 num) {
@@ -31,8 +33,6 @@ S8 numToStr(U32 value, char* dest);
 S8 numToStr(float f, char* dest, U8 places = 2);
 S8 numToHex(U32 value, char* dest);
 
-// all other
-// not for unsigned float!
 template<typename T>
 S8 numToStr(T value, char* dest) {
 	if(std::tr1::is_floating_point<T>::value) {
@@ -44,7 +44,6 @@ S8 numToStr(T value, char* dest) {
 		return numToStr(static_cast<U32>(value), dest);
 }
 
-// easier
-#include "convert.cpp"
+}
 
 #endif // __CONVERT_H_

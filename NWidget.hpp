@@ -15,6 +15,7 @@
 /*
  * TODO: Introduce polymorph with virtual ..?
  */
+namespace nxpl {
 
 class NAlignment {
 private:
@@ -174,5 +175,6 @@ public:
 	}
 };
 
+}
 
 #endif /* NWIDGET_HPP_ */

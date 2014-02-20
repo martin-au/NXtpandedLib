@@ -11,7 +11,7 @@
 #include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Usb.h"
 
 
-namespace Com {
+namespace nxpl {
 
 class NCom {
 private:
@@ -95,5 +95,5 @@ U32 NCom::receive(U8 *data, U8 &idx, comDatatype &datatype, comNModes &nmode) co
 	return len;
 }
 
-} /* namespace Com */
+} /* namespace nxpl */
 #endif /* __NCOM_HPP_ */

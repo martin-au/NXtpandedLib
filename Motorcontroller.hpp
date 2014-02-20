@@ -21,7 +21,7 @@ extern "C" {
 }
 
 
-namespace Nxt {
+namespace nxpl {
 
 class Motorcontroller {
 private:
@@ -313,7 +313,7 @@ void Motorcontroller::process() {
 
 
 
-} /* namespace Nxt */
+} /* namespace nxpl */
 
 
 #endif /* __MOTORCONTROLLER_HPP_ */

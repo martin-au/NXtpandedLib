@@ -12,6 +12,8 @@
 
 #include "NWidget.hpp"
 
+namespace nxpl {
+
 template<class T1, class T2>
 struct NPairBox {
 	T1* main;
@@ -52,6 +54,8 @@ struct NPairBox {
 
 	bool align2Main(const NAlignment align);
 };
+
+}
 
 #include "NPairBox.cpp"
 

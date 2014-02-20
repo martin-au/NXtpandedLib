@@ -5,6 +5,10 @@
  *      Author: Martin
  */
 
+// NVector has problems with linking correctly in extern "C" block
+// C-Arrays are the way to go
+
+
 #ifndef __NVECTOR_HPP_
 #define __NVECTOR_HPP_
 
@@ -21,7 +25,8 @@ extern "C" {
 
 // NULL
 #include <stddef.h>
-
+// memcpy
+#include "C:/cygwin/GNUARM/arm-elf/include/string.h"
 #include "C:/cygwin/nxtOSEK/ecrobot/c++/util/New.cpp"
 
 /**
@@ -54,8 +59,10 @@ extern "C" {
 * @example }
 */
 
+namespace nxpl {
+
 // antibug
-const float DefaultStart = 0.30; /**< Default start position in %*/
+const float _DefaultStart = 0.30; /**< Default start position in %*/
 
 template<typename T>
 class NVector {
@@ -77,7 +84,7 @@ public:
 	NVector() {
 		this->buffer = reinterpret_cast<T*>(new char[sizeof(T) * DefaultSize]);
 		this->capacity = DefaultSize;
-		this->endIndex = this->startIndex = this->capacity * DefaultStart;
+		this->endIndex = this->startIndex = this->capacity * _DefaultStart;
 	}
 
 	/**
@@ -85,7 +92,7 @@ public:
 	 *@param inSize the buffer size
 	 *@param inPointOfStart the point of start [0;1]
 	 */
-	NVector(const S32 inSize, const float inPointOfStart = DefaultStart) {
+	NVector(const S32 inSize, const float inPointOfStart = _DefaultStart) {
 		this->buffer = reinterpret_cast<T*>(new char[sizeof(T) * inSize]);
 		this->capacity = inSize;
 		if (inPointOfStart <= 1 && inPointOfStart >= 0)
@@ -93,7 +100,7 @@ public:
 					* inPointOfStart);
 		else
 			this->endIndex = this->startIndex = static_cast<S32>(this->capacity
-					* DefaultStart);
+					* _DefaultStart);
 	}
 
 	/**
@@ -258,7 +265,7 @@ public:
 			(&this->buffer[this->startIndex++])->~T();
 		}
 		this->endIndex = this->startIndex = this->capacity
-				* (DefaultStart / 100.0);
+				* (_DefaultStart / 100.0);
 	}
 
 	/**
@@ -787,6 +794,8 @@ public:
 	iterator insert(iterator in_before, const T & inValue);
 
 };
+
+}
 
 #include "NVector.cpp"
 

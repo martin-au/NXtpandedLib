@@ -1,4 +1,6 @@
 
+namespace nxpl {
+
 
 class RefCount
 {
@@ -20,3 +22,5 @@ class RefCount
         return --cnt;
     }
 };
+
+}

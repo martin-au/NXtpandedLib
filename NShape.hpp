@@ -12,6 +12,7 @@
 // make pure virtual function work with nxtOSEK
 extern "C" int __cxa_pure_virtual(){return 0;}
 
+namespace nxpl {
 
 class NShape : public NWidget {
 protected:
@@ -68,5 +69,7 @@ private:
 	virtual void eraseImpl(bool update) const = 0;
 	virtual void invertImpl(bool update) const = 0;
 };
+
+}
 
 #endif /* NSHAPE_HPP_ */

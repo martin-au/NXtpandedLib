@@ -8,6 +8,8 @@
 
 #include "NVector.hpp"
 
+namespace nxpl {
+
 template<typename T>
 void NVector<T>::doSetCapacity(S32 in_capacity) {
 	const S32 currentSize = this->endIndex - this->startIndex;
@@ -285,5 +287,7 @@ typename NVector<T>::iterator NVector<T>::insert(
 		in_before.index = this->startIndex;
 
 	return in_before;
+}
+
 }
 

@@ -13,7 +13,7 @@
 #include "LcdConstants.hpp"
 //#include <algorithm>
 
-
+namespace nxpl {
 
 // functors for setPixel function
 struct PixelOn;
@@ -135,5 +135,6 @@ struct PixelInvert {
 	}
 };
 
+} // namespace nxpl
 
 #endif /* __NLCD_HPP_ */

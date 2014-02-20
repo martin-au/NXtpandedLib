@@ -8,7 +8,7 @@
 #ifndef __GUITYPES_HPP_
 #define __GUITYPES_HPP_
 
-
+namespace nxpl {
 
 // interface ok
 class DrawOpt {
@@ -26,5 +26,6 @@ public:
 	const S8 operator()(void) const {return opt;}
 };
 
+}
 
 #endif /* GUITYPES_HPP_ */

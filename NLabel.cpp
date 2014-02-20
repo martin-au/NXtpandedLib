@@ -7,6 +7,8 @@
 
 #include "NLabel.hpp"
 
+namespace nxpl {
+
 NLabel::NLabel(S8 indent, S8 row, S8 charWidth) :
 		label(new NString(charWidth)), somenew(true) { // , buddy(0), buddyAlignment(0)
  	setField(indent, row, 1, charWidth);
@@ -199,7 +201,7 @@ void NLabel::hide(bool update) const {
 	setVisibility(false);
 }
 
-
+}
 
 
 

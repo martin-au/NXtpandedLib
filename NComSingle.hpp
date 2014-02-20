@@ -14,7 +14,7 @@
 #include "NString.hpp"
 #include "NVector.hpp"
 
-namespace Com {
+namespace nxpl {
 
 
 inline unsigned char* num2Bytes (S32 num, unsigned char *pstart) {
@@ -298,5 +298,6 @@ public:
 	}
 };
 
-} /* namespace Com */
+} /* namespace nxpl */
+
 #endif /* NCOMSINGLE_HPP_ */

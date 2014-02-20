@@ -2,6 +2,7 @@
 
 #include "NPairBox.hpp"
 
+namespace nxpl {
 
 template<class T1, class T2>
 bool NPairBox<T1, T2>::align2Main(const NAlignment align) {
@@ -22,4 +23,6 @@ bool NPairBox<T1, T2>::align2Main(const NAlignment align) {
 		return sec->setPosition(main->indent(), main->row() + adjustment);
 	}
 	return false;
+}
+
 }

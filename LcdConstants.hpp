@@ -2,6 +2,8 @@
 #ifndef __LCDCONSTANTS_HPP_
 #define __LCDCONSTANTS_HPP_
 
+// double nesting to avoid namespace pollution
+namespace nxpl {
 namespace LCD {
 	const S8 WIDTH = 100;
 	const S8 HEIGHT = 64;
@@ -51,6 +53,7 @@ namespace LCD {
 		return pixelInLcd(x, y) && pixelInLcd(x + width, y)
 				&& pixelInLcd(x, y + height) && pixelInLcd(x + width, y + height);
 	}
+}
 }
 
 #endif

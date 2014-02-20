@@ -16,17 +16,13 @@ extern "C" {
 }
 
 #include "LcdConstants.hpp"
-#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/display.h"
-
-#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
-
-#include "convert.hpp"
 
 #include "NWidget.hpp"
 #include "Uncopyable.hpp"
 #include "Mutex.hpp"
 
 // TODO new function show because this is also a NWidget?
+namespace nxpl {
 
 class NOstream : public NWidget, private Uncopyable
 {
@@ -96,10 +92,6 @@ public:
 	NOstream& operator<<(NOstreamManipulator manip);
 };
 
-
-// easier
-//#include "NOstream.cpp"
-
-
+}
 
 #endif /* __OSTREAM_H_ */

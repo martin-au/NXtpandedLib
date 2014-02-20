@@ -10,6 +10,8 @@
 
 #include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Clock.h"
 
+namespace nxpl {
+
 class NTimer {
 private:
 	ecrobot::Clock clk;
@@ -91,6 +93,6 @@ void NTimer::reset() {
 	started = false;
 }
 
-
+}
 
 #endif /* NTIMER_HPP_ */

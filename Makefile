@@ -1,8 +1,8 @@
 # Target specific macros
 TARGET = mytest
 
-TARGET_CPP_SOURCES := NOstream.cpp \
-                      NVector.cpp  \
+TARGET_CPP_SOURCES := StringConvert.cpp \
+					  NOstream.cpp \
 					  sample.cpp 
 					
 			

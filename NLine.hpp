@@ -12,6 +12,8 @@
 #include "NShape.hpp"
 #include "LcdDrawer.hpp"
 
+namespace nxpl {
+
 class NLine : public NShape {
 private:
 
@@ -57,18 +59,19 @@ void NLine::setPosition(const S8 x0, const S8 y0, const S8 x1, const S8 y1) {
 
 
 void NLine::showImpl(bool update) const {
-	Drawer::drawLine(*lcd, x(), y(), endX(), endY(), DrawOpt::draw());
+	nxpl::drawLine(*lcd, x(), y(), endX(), endY(), DrawOpt::draw());
 }
 
 
 void NLine::eraseImpl(bool update) const {
-	Drawer::drawLine(*lcd, x(), y(), endX(), endY(), DrawOpt::clear());
+	nxpl::drawLine(*lcd, x(), y(), endX(), endY(), DrawOpt::clear());
 }
 
 
 void NLine::invertImpl(bool update) const {
-	Drawer::drawLine(*lcd, x(), y(), endX(), endY(), DrawOpt::invert());
+	nxpl::drawLine(*lcd, x(), y(), endX(), endY(), DrawOpt::invert());
 }
 
+}
 
 #endif /* NLINE_HPP_ */

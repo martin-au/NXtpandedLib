@@ -10,7 +10,9 @@ extern "C" {
 //for codecorrection
 #include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
-#include "convert.hpp"
+#include "StringConvert.hpp"
+
+namespace nxpl {
 
 /// TODO Fix converter functions duplication, no converter for S8?!
 
@@ -356,6 +358,7 @@ public:
 	}
 };
 
+}
 
 #include "NString.cpp"
 

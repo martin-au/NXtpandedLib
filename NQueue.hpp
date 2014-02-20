@@ -13,7 +13,7 @@
 * This interface defines a general queue abstraction that uses
 * templates so that it can work with any element type.
 */
-
+namespace nxpl {
 
 template <typename T>
 class NQueue {
@@ -48,7 +48,7 @@ private:
 	void expandCapacity();
 };
 
-
+}
 #include "NQueue.cpp"
 
 #endif /* NQUEUE_H_ */

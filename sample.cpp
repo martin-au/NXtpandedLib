@@ -50,8 +50,8 @@ void user_1ms_isr_type2(void){
 // C++ Includes, Globals
 
 #include "NOstream.hpp"
-mutex_t streammtx(ostreamRes);
-NOstream cout(streammtx);
+nxpl::mutex_t streammtx(ostreamRes);
+nxpl::NOstream cout(streammtx);
 
 #include "NTimer.hpp"
 
@@ -89,13 +89,13 @@ NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
 
 #include "NVector.hpp"
 
-NVector<int> vec(3000);
+nxpl::NVector<int> vec(3000);
 
 extern "C" {
 
 TASK(TaskMain) {
 
-	NTimer timer;
+	nxpl::NTimer timer;
 
 	// 8 ms at 29632 - os 28192
 	timer.start();

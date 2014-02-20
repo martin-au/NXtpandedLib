@@ -1,6 +1,7 @@
 
 #include "NString.hpp"
 
+namespace nxpl {
 
 NString::NString()
 : string(0), length(0), bufferlength(0), decplaces(2)
@@ -317,4 +318,6 @@ S32 NString::copy(const char* const in_src, char* const in_dest) {
 	in_dest[indexString] = in_src[indexString];
 
 	return indexString;
+}
+
 }

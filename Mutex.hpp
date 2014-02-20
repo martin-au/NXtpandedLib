@@ -19,6 +19,8 @@ extern "C" {
 #include "Uncopyable.hpp"
 #include "RefCount.hpp"
 
+namespace nxpl {
+
 struct mutex_t {
 private:
 	ResourceType mtx;
@@ -94,5 +96,6 @@ public:
 	mutex_t &get() const {return _ref;}
 };
 
+}
 
 #endif /* LOCKGUARD_HPP_ */

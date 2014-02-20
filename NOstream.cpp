@@ -1,5 +1,10 @@
 
 #include "NOstream.hpp"
+#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/display.h"
+#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
+#include "StringConvert.hpp"
+
+namespace nxpl {
 
 // user errors are no problem, we check this when setting cursor position
 NOstream::NOstream(mutex_t res,
@@ -214,3 +219,4 @@ NOstream& NOstream::operator<<(NOstreamManipulator manip) {
 	return manip(*this);
 }
 
+}
