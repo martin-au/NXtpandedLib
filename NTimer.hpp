@@ -19,7 +19,7 @@ private:
 	U32 tpause;
 	bool started;
 public:
-	NTimer();
+	NTimer() : clk(), time(0), tpause(0), started(false) {}
 	~NTimer() {}
 
 	void start(U32 offset = 0);
@@ -36,7 +36,7 @@ public:
 		return tpause;
 	}
 
-	U32 now() const {
+	U32 now() const { // TODO + pause?
 		return clk.now();
 	}
 
@@ -54,9 +54,6 @@ public:
 		}
 	}
 };
-
-
-NTimer::NTimer() : clk(), time(0), tpause(0), started(false) {}
 
 
 
