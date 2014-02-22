@@ -59,10 +59,10 @@ public:
 
 	void flush(bool update = false) const;
 
-	void show(bool update = false) const {
+	virtual void show(bool update = false) const {
 		flush(update);
 	}
-	void hide(bool update = false) const;
+	virtual void hide(bool update = false) const;
 
 	U16 precision() const;
 	U16 precision(U16 prec);

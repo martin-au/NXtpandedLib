@@ -57,6 +57,7 @@ nxpl::NOstream cout(streammtx);
 
 #include "NLabel.hpp"
 #include "NPairBox.hpp"
+#include "NLcdView.hpp"
 
 /*
 #include "NComSingle.hpp"
@@ -94,8 +95,8 @@ nxpl::NVector<int> vec(3000);
 extern "C" {
 
 TASK(TaskMain) {
-
 	nxpl::NTimer timer;
+	/*
 	nxpl::NLabel label1("time:");
 	nxpl::NLabel label2;
 	nxpl::NPairBox<nxpl::NLabel, nxpl::NLabel> box(&label1, &label2, 0, 0, nxpl::NAlignment::right());
@@ -106,12 +107,12 @@ TASK(TaskMain) {
 	// 41 ms / 26448B non virtual
 	// 41 ms / 26816B virtual
 	// 42 ms / 26816B virtual + baseclass call
-	/*
-    virtual: - program size increase 368B
-    		 - RT increase + 1/1000 ms per base call
-   	Conclusion: make now virtual and implement later a user choice for change
-   	            to non virtual during compilation
-	*/
+	//
+    // virtual: - program size increase 368B
+    //	 - RT increase + 1/1000 ms per base call
+   	// Conclusion: make now virtual and implement later a user choice for change
+   	//          to non virtual during compilation
+
 	for(int i=0; i<1000; i++) {
 		label1.setText("time:"); // force update
 		pbase->show();
@@ -119,7 +120,31 @@ TASK(TaskMain) {
 
 	box.sec->setNumber(timer.stop());
 	box.show(true);
+	*/
 
+	nxpl::NLabel label1("label1", 0, 0);
+	nxpl::NLabel label2(sizeof(label1), 0, 1);
+
+	nxpl::NLcdView view1;
+	nxpl::NLcdView view2;
+
+	cout << "Hello World";
+
+	view1.add(&label1);
+	view1.add(&label2);
+	view2.add(&cout);
+
+	view1.show(true);
+
+	timer.wait(2000);
+
+	nxpl::NLcdView::swap(view1, view2, true);
+
+	timer.wait(2000);
+
+	view1.remove(&label1);
+
+	nxpl::NLcdView::swap(view2, view1, true);
 
 	/*
 	// 0 - os 25344
