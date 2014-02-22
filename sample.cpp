@@ -96,14 +96,29 @@ extern "C" {
 TASK(TaskMain) {
 
 	nxpl::NTimer timer;
+	nxpl::NLabel label1("time:");
+	nxpl::NLabel label2;
+	nxpl::NPairBox<nxpl::NLabel, nxpl::NLabel> box(&label1, &label2, 0, 0, nxpl::NAlignment::right());
 
-	// 8 ms at 29632 - os 28192
+	nxpl::NWidget *pbase = &label1;
+
 	timer.start();
-	vec.pushBack(state); // 25792
-	for(int i=0; i<3000; i++) {
-		vec.pushBack(state); // 28192
+	// 41 ms / 26448B non virtual
+	// 41 ms / 26816B virtual
+	// 42 ms / 26816B virtual + baseclass call
+	/*
+    virtual: - program size increase 368B
+    		 - RT increase + 1/1000 ms per base call
+   	Conclusion: make now virtual and implement later a user choice for change
+   	            to non virtual during compilation
+	*/
+	for(int i=0; i<1000; i++) {
+		label1.setText("time:"); // force update
+		pbase->show();
 	}
-	cout << timer.stop() << "\n";
+
+	box.sec->setNumber(timer.stop());
+	box.show(true);
 
 
 	/*

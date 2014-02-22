@@ -34,7 +34,7 @@ public:
 		}
 	}
 
-	void show(bool update = false) const {
+	virtual void show(bool update = false) const {
 		if(lcd == 0) return;
 		if (!inLcd()) return;
 		showImpl(update);
@@ -44,7 +44,7 @@ public:
 		}
 	}
 
-	void erase(bool update = false) const {
+	void hide(bool update = false) const {
 		if(lcd == 0) return;
 		if (!inLcd()) return;
 		eraseImpl(update);

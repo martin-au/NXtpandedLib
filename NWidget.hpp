@@ -12,6 +12,8 @@
 // for static const
 #include "NLcd.hpp"
 
+extern "C" int __cxa_pure_virtual(){return 0;}
+
 /*
  * TODO: Introduce polymorph with virtual ..?
  */
@@ -127,6 +129,10 @@ public:
 	static const S8 keep = -1;
 
 	NWidget() : mX(0), mY(0), mHeight(0), mWidth(0), rowX(0), rowY(), rows(0), textWidth(0), mVisible(0) {}
+	virtual ~NWidget() {}
+
+	virtual void show(bool update = false) const = 0;
+	virtual void hide(bool update = false) const = 0;
 
 	S8 x() const {
 		return mX;

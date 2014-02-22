@@ -18,11 +18,21 @@ private:
 	U32 time;
 	U32 tpause;
 	bool started;
+
+	// calling this functions makes only sense when tpause > 0 (&&!started)
+	U32 stopTimeStamp() const {
+		return time + tpause - 1;
+	}
+	// calling this functions makes only sense when tpause > 0 (&&!started)
+	U32 timeSinceStopped() const {
+		return clk.now() - stopTimeStamp();
+	}
+
 public:
 	NTimer() : clk(), time(0), tpause(0), started(false) {}
 	~NTimer() {}
 
-	void start(U32 offset = 0);
+	void start();
 	U32 stop();
 	void reset();
 	U32 getLast() const {
@@ -30,14 +40,25 @@ public:
 	}
 	U32 getPause() const {
 		if(!started && tpause > 0) {
-			// timer started + stopped
-			return tpause - 1 + clk.now() - time;
+			return timeSinceStopped() + tpause - 1;
 		}
 		return tpause;
 	}
 
-	U32 now() const { // TODO + pause?
+	U32 now() const {
 		return clk.now();
+	}
+
+	U32 nowNoPause() const {
+		// Timer in running mode
+		if(started) {
+			return clk.now() - tpause;
+		// Timer stopped
+		} else if(tpause > 0) {
+			return clk.now() - tpause - 1;
+		}
+		// Timer reseted
+		return 0;
 	}
 
 	void wait(U32 waitTime, bool pause = false) {
@@ -57,18 +78,18 @@ public:
 
 
 
-void NTimer::start(U32 offset) {
+void NTimer::start() {
 	if(started) return;
 
-	time += offset;
-	started = true;
-
+	// user called start then stop and then start again
 	if(tpause > 0) {
+		// ! important remove offset -> see stop() for detail why
 		--tpause;
-		tpause += clk.now() - time;
-	} else {
+		tpause += timeSinceStopped();
+	} else { // start from zero
 		clk.reset();
 	}
+	started = true;
 }
 
 
@@ -77,13 +98,14 @@ U32 NTimer::stop() {
 
 	time = clk.now() - tpause;
 
+	// we need this offset so that the next call of start knows that the
+	// timer is in stop mode and not reseted! We save one variable..
 	++tpause;
 	started = false;
 	return time;
 }
 
 
-// call stop before reset!!!!!
 void NTimer::reset() {
 	time = 0;
 	tpause = 0;
@@ -92,4 +114,4 @@ void NTimer::reset() {
 
 }
 
-#endif /* NTIMER_HPP_ */
+#endif /* __NTIMER_HPP_ */

@@ -73,8 +73,8 @@ public:
 
 	bool setPosition(const S8 indent, const S8 row);
 	// problem : what if we have a const label?
-	void show(bool update = false) const;
-	void hide(bool update = false) const;
+	virtual void show(bool update = false) const;
+	virtual void hide(bool update = false) const;
 
 	// const label may have non const buddys
 	/*
