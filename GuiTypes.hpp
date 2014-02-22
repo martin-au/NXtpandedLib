@@ -10,7 +10,9 @@
 
 namespace nxpl {
 
-// interface ok
+/**
+ * \brief Draw Options for functions.
+ */
 class DrawOpt {
 	S8 opt;
 private:

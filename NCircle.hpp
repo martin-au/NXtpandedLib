@@ -18,10 +18,14 @@ class NCircle : public NShape {
 private:
 	S8 r;
 
-	void rasterCircleFill(void (NLcd::*fpPixelState)(const U8, const U8)) const;
+	void rasterCircleFill(void (NLcd::*fpPixelState)(U8, U8)) const;
 public:
 
-	NCircle(NLcd *nlcd, const S8 centerX, const S8 centerY, const S8 radius);
+	NCircle::NCircle(NLcd *nlcd, S8 centerX, S8 centerY, S8 radius) :
+			NShape(nlcd), r(radius) {
+		setPixelField(centerX - r, centerY - r, 2 * r, 2 * r);
+	}
+
 	~NCircle() {}
 
 	S8 centerX() const {
@@ -37,24 +41,42 @@ public:
 			r = radius;
 	}
 
-	void setPosition(const S8 centerX = keep, const S8 centerY = keep, const S8 radius = keep);
+	void setPosition(S8 centerX = keep, S8 centerY = keep, S8 radius = keep);
 
-	void fill() 	 const;
-	void fillErase() const;
-	void fillInvert() const;
+	void fill() const {
+		if (lcd == 0) {
+			return;
+		}
+		rasterCircleFill(&NLcd::pixelOn);
+	}
+
+	void fillErase() const {
+		if (lcd == 0) {
+			return;
+		}
+		rasterCircleFill(&NLcd::pixelOff);
+	}
+
+	void fillInvert() const {
+		if (lcd == 0) {
+			return;
+		}
+		rasterCircleFill(&NLcd::invertPixel);
+	}
 
 private:
-	void showImpl(bool update) const;
-	void eraseImpl(bool update) const;
-	void invertImpl(bool update) const;
+	void showImpl(bool update) const {
+		nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::draw());
+	}
+
+	void eraseImpl(bool update) const {
+		nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::clear());
+	}
+
+	void invertImpl(bool update) const {
+		nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::invert());
+	}
 };
-
-
-NCircle::NCircle(NLcd *nlcd, const S8 centerX, const S8 centerY, const S8 radius)
-	: NShape(nlcd), r(radius) {
-
-	setPixelField(centerX - r, centerY - r, 2*r, 2*r);
-}
 
 
 void NCircle::setPosition(const S8 centerX, const S8 centerY, const S8 radius) {
@@ -72,21 +94,6 @@ void NCircle::setPosition(const S8 centerX, const S8 centerY, const S8 radius) {
 }
 
 
-
-void NCircle::showImpl(bool update) const {
-	nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::draw());
-}
-
-void NCircle::eraseImpl(bool update) const {
-	nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::clear());
-}
-
-
-void NCircle::invertImpl(bool update) const {
-	nxpl::drawCircle(*lcd, centerX(), centerY(), r, DrawOpt::invert());
-}
-
-
 void NCircle::rasterCircleFill(void (NLcd::*fpPixelState)(const U8, const U8)) const {
 	S8 cX = centerX();
 	S8 cY = centerY();
@@ -101,30 +108,6 @@ void NCircle::rasterCircleFill(void (NLcd::*fpPixelState)(const U8, const U8)) c
 	if(isVisible()) {
 		this->show();
 	}
-}
-
-
-void NCircle::fill() const {
-	if(lcd == 0) {
-		return;
-	}
-	rasterCircleFill(&NLcd::pixelOn);
-}
-
-
-void NCircle::fillErase() const {
-	if(lcd == 0) {
-		return;
-	}
-	rasterCircleFill(&NLcd::pixelOff);
-}
-
-
-void NCircle::fillInvert() const {
-	if(lcd == 0) {
-		return;
-	}
-	rasterCircleFill(&NLcd::invertPixel);
 }
 
 }

@@ -32,17 +32,24 @@ private:
 public:
 
 	// use standard lcd of nxt
-	NLcd() : disp(display_get_buffer()) {
+	NLcd() :
+			disp(display_get_buffer()) {
 	}
 
+	// bitmap constructor
+	NLcd(U32 width, U32 depth) :
+			disp(new U8[width * depth]) {
+	}
 
 	~NLcd() {
+		if (disp != display_get_buffer()) {
+			delete[] disp;
+		}
 	}
 
 	bool noError() {
 		return (disp != 0);
 	}
-
 
 	/// fastest way to update pixel fields!
 	// for example a horizontal line   *******  <- mask is same for every one
@@ -50,21 +57,11 @@ public:
 		*(disp + (line * LCD::WIDTH + X)) = mask; // overlay! change to xor for no overlay?
 	}
 
-	void copyBitmap(const U8 *data, U32 width, U32 depth, U32 x, U32 y) {
-		if (!LCD::objectInLcd(x, y, LCD::lineToPixel(depth), width)) {
-			return;
-		}
-		// copy full bitmap to display
-		U32 iy; // in y
-		U32 jx; // in x
+	void copyBitmap(const U8 *data, U32 width, U32 depth, U32 x, U32 y);
 
-		for (iy = y; iy < depth; iy++) {
-			for (jx = x; jx < width; jx++) {
-				pixelMask(jx, iy, data[iy * LCD::WIDTH + jx]);
-			}
-		}
+	void copyNLcdBitmap(NLcd lcdBitmap, U32 width, U32 depth, U32 x, U32 y) {
+		copyBitmap(lcdBitmap.disp, width, depth, x, y);
 	}
-
 
 	// disp = 0100 0000
 	//        OR
@@ -73,25 +70,25 @@ public:
 
 	inline void pixelOn(const U8 X, const U8 Y) {
 		/* Test for pixel write fails!
-		if(!pixelInLcd(X, Y)) {
-			cout << "fail" << endl;
-			timer.wait(2000);
-			return;
-		}
-		*/
+		 if(!pixelInLcd(X, Y)) {
+		 cout << "fail" << endl;
+		 timer.wait(2000);
+		 return;
+		 }
+		 */
 		//*(disp + (LCD::pixelToLine(Y) * LCD::WIDTH + X)) |= (1 << (Y % LCD::DEPTH));
-		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) |= (1 << (Y % LCD::DEPTH));
+		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) |=
+				(1 << (Y % LCD::DEPTH));
 	}
-
 
 	// disp = 0100 0000
 	//        AND NOT
 	// set  = 0000 1000
 	// res  = 0100 0000
 
-
 	inline void pixelOff(const U8 X, const U8 Y) {
-		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) &= ~(1 << (Y % LCD::DEPTH));
+		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) &=
+				~(1 << (Y % LCD::DEPTH));
 	}
 
 	// disp = 0100 1000
@@ -100,7 +97,8 @@ public:
 	// res  = 0100 0001
 
 	inline void invertPixel(const U8 X, const U8 Y) {
-		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) ^= (1 << (Y % LCD::DEPTH));
+		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) ^=
+				(1 << (Y % LCD::DEPTH));
 	}
 
 	inline bool getPixel(const U8 X, const U8 Y) const {
@@ -109,7 +107,7 @@ public:
 	}
 
 	// is this useful? put outside of lcd class?
-	template <typename PixelOp>
+	template<typename PixelOp>
 	inline void setPixel(PixelOp op, const U8 X, const U8 Y) {
 		op(*this, X, Y);
 	}
@@ -134,6 +132,23 @@ struct PixelInvert {
 		lcd.invertPixel(x, y);
 	}
 };
+
+
+void NLcd::copyBitmap(const U8 *data, U32 width, U32 depth, U32 x, U32 y) {
+	if (!LCD::objectInLcd(x, y, LCD::lineToPixel(depth), width)) {
+		return;
+	}
+	// copy full bitmap to display
+	U32 iy; // in y
+	U32 jx; // in x
+
+	for (iy = y; iy < depth; iy++) {
+		for (jx = x; jx < width; jx++) {
+			pixelMask(jx, iy, data[iy * LCD::WIDTH + jx]);
+		}
+	}
+}
+
 
 } // namespace nxpl
 

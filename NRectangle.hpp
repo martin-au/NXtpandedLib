@@ -18,27 +18,56 @@ private:
 
 public:
 
-	NRectangle(NLcd *nlcd, const S8 x0, const S8 y0, const S8 w, const S8 h);
+	NRectangle(NLcd *nlcd, S8 x0, S8 y0, S8 w, S8 h) :
+			NShape(nlcd) {
+		setPixelField(x0, y0, w, h);
+	}
 	~NRectangle() {}
 
-	void setPosition(const S8 x0 = keep, const S8 y0 = keep, const S8 w = keep, const S8 h = keep);
-	void fill() 	 const;
-	void fillErase() const;
-	void fillInvert() const;
+	void setPosition(S8 x0 = keep, S8 y0 = keep, S8 w = keep, S8 h = keep);
+	void fill() const {
+		if (lcd == 0) {
+			return;
+		}
+		// TODO Try if -height/width works!
+		nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(),
+				DrawOpt::draw());
+	}
+
+	void fillErase() const {
+		if (lcd == 0) {
+			return;
+		}
+		nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(),
+				DrawOpt::clear());
+	}
+
+	void fillInvert() const {
+		if (lcd == 0) {
+			return;
+		}
+		nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(),
+				DrawOpt::invert());
+	}
 
 private:
-	void showImpl(bool update) const;
-	void eraseImpl(bool update) const;
-	void invertImpl(bool update) const;
+	void showImpl(bool update) const {
+		nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::draw());
+	}
+
+	void eraseImpl(bool update) const {
+		nxpl::drawRectangle(*lcd, x(), y(), width(), height(),
+				DrawOpt::clear());
+	}
+
+	void invertImpl(bool update) const {
+		nxpl::drawRectangle(*lcd, x(), y(), width(), height(),
+				DrawOpt::invert());
+	}
 };
 
-NRectangle::NRectangle(NLcd *nlcd, const S8 x0, const S8 y0, const S8 w, const S8 h)
-	: NShape(nlcd) {
-	setPixelField(x0, y0, w, h);
-}
 
-
-void NRectangle::setPosition(const S8 x0, const S8 y0, const S8 w, const S8 h) {
+void NRectangle::setPosition(S8 x0, S8 y0, S8 w, S8 h) {
 	if (isVisible()) {
 		this->erase();
 	}
@@ -50,45 +79,6 @@ void NRectangle::setPosition(const S8 x0, const S8 y0, const S8 w, const S8 h) {
 		width(w);
 	if (height() != keep)
 		height(h);
-}
-
-
-
-
-void NRectangle::showImpl(bool update) const {
-	nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::draw());
-}
-
-void NRectangle::eraseImpl(bool update) const {
-	nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::clear());
-}
-
-
-void NRectangle::invertImpl(bool update) const {
-	nxpl::drawRectangle(*lcd, x(), y(), width(), height(), DrawOpt::invert());
-}
-
-void NRectangle::fill() const {
-	if(lcd == 0) {
-		return;
-	}
-	// TODO Try if -height/width works!
-	nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::draw());
-}
-
-void NRectangle::fillErase() const {
-	if(lcd == 0) {
-		return;
-	}
-	nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::clear());
-}
-
-
-void NRectangle::fillInvert() const {
-	if(lcd == 0) {
-		return;
-	}
-	nxpl::drawRectangleFilled(*lcd, x(), y(), width(), height(), DrawOpt::invert());
 }
 
 }

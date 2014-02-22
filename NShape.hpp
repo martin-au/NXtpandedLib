@@ -5,8 +5,8 @@
  *      Author: Martin
  */
 
-#ifndef NSHAPE_HPP_
-#define NSHAPE_HPP_
+#ifndef __NSHAPE_HPP_
+#define __NSHAPE_HPP_
 
 
 // make pure virtual function work with nxtOSEK
@@ -72,4 +72,4 @@ private:
 
 }
 
-#endif /* NSHAPE_HPP_ */
+#endif /* __NSHAPE_HPP_ */

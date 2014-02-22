@@ -34,7 +34,6 @@ extern "C" {
 * @version 0.5
 * @date 24 novembre 2009
 * @file NVector.hpp
-* @package Utils
 * @brief Basic vector based on a memory area
 *
 * This Vector used a memory area, so you have to use it as an array.

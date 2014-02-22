@@ -67,6 +67,11 @@ public:
 		mot->setBrake(true);
 	}
 
+	~Motorcontroller() {
+		// TODO Problem because we use Sleep
+		this->controllerOff();
+	}
+
 	void setAmax(S16 paraAmax) {
 		// GetResource
 		amax = paraAmax;
@@ -81,25 +86,7 @@ public:
 		mon = true;
 	}
 
-	void controllerOff() {
-	   bool on;
-	   do {
-	      on = false;
-	      if (mon) {
-	         if(mgo) {
-	            on = true;
-	         } else {
-	            mot->setBrake(true);
-	            mot->setPWM(0);
-	            mon = false;
-	            mv  = 0;
-	            ma  = 0;
-	            mp  = 0;
-	         }
-	      }
-	      Sleep(1);
-	   } while (on);
-	}
+	void controllerOff();
 
 	void waitMove() const {
 	   bool go;
@@ -138,12 +125,29 @@ public:
 	void resetMotorPos(S16 pwr);
 
 	void process();
-
-	~Motorcontroller() {
-		// TODO Problem because we use Sleep
-		this->controllerOff();
-	}
 };
+
+
+void Motorcontroller::controllerOff() {
+   bool on;
+   do {
+      on = false;
+      if (mon) {
+         if(mgo) {
+            on = true;
+         } else {
+            mot->setBrake(true);
+            mot->setPWM(0);
+            mon = false;
+            mv  = 0;
+            ma  = 0;
+            mp  = 0;
+         }
+      }
+      Sleep(1);
+   } while (on);
+}
+
 
 // will set the controller to on!
 void Motorcontroller::moveRel(S32 pos, S16 pwr, bool waitMove, S32 off) {

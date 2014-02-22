@@ -3,6 +3,7 @@ TARGET = mytest
 
 TARGET_CPP_SOURCES := StringConvert.cpp \
 					  NOstream.cpp \
+				      NString.cpp \
 					  sample.cpp 
 					
 			
