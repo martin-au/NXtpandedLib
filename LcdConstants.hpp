@@ -1,4 +1,3 @@
-
 #ifndef __LCDCONSTANTS_HPP_
 #define __LCDCONSTANTS_HPP_
 
@@ -11,7 +10,7 @@ namespace LCD {
 	const S8 DEPTH = 8; 	  /**<LCD depth in pixel, depth = line height in pixel*/
 
 	// text constants
-	const S8 LINE_WIDTH = 16; /**<Line with in chars*/
+	const S8 LINE_WIDTH = 16; /**<Line width in chars*/
 	const S8 ROWS = DEPTH;    /**<Rows of NXT LCD*/
 
 	const S8 CHAR_WIDTH = 6;  /**<Width of one char on the the LCD in pixel*/
@@ -22,7 +21,7 @@ namespace LCD {
 	 *
 	 * Calculates which field the pixel belongs to. First field is 0.
 	 * @param x  Pixel X-Coordinate (from left).
-	 * @return Indent in measured in Chars.
+	 * @return Indent measured in Chars.
 	 */
 	S8 pixelToIndent(S8 x) {
 		return (x - 1) / LCD::CHAR_WIDTH;
@@ -33,7 +32,7 @@ namespace LCD {
 	 *
 	 * Calculates which line the pixel belongs to. Top line is 0.
 	 * @param y  Pixel Y-Coordinate (from top).
-	 * @return Line (0-LCD::DEPTH).
+	 * @return Line (0-LCD::ROWS).
 	 */
 	S8 pixelToLine(S8 y) {
 		return y/LCD::DEPTH;
@@ -53,7 +52,7 @@ namespace LCD {
 	/**
 	 * \brief Calculates the pixel coordinate from line.
 	 *
-	 * @param Line (0 - LCD::DEPTH)
+	 * @param Line (0 - LCD::ROWS)
 	 * @return Pixel Y-Coordinate.
 	 */
 	S8 lineToPixel(S8 line) {
@@ -73,8 +72,8 @@ namespace LCD {
 
 	/**
 	 * \ brief Checks if cursor position is in LCD.
-	 * @param indent Cursor Indent in chars.
-	 * @param row (0 - LCD::DEPTH)
+	 * @param indent Cursor Indent in chars. 
+	 * @param row
 	 * @return true if cursor is in LCD.
 	 */
 	bool cursorInLcd(const S16 indent, const S16 row) {
