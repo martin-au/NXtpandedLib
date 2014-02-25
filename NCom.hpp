@@ -13,9 +13,17 @@
 
 namespace nxpl {
 
+/** \brief Handler-Class implementing communication with message information.
+ *
+ * The class specifies how the message header is implemented.
+ * Its used that the receiver always knows which message belongs to some code.
+ * This is really useful in a system with multiple tasks where message fly around at different times/positions!
+ *
+ * You do not have to use this class if high level class NComSingle fits your needs!
+ */
 class NCom {
 private:
-	ecrobot::Usb &com; // only ref because global
+	ecrobot::Usb &com; // ref because usb objects must be global
 
 	typedef union header {
 		struct {
@@ -27,14 +35,15 @@ private:
 	};
 
 public:
-	static const S32 headerByteIdx = 0;
-	static const S32 idxByteIdx = 1;
-	static const S32 data0ByteIdx = 2;
-	static const U8 headerOverhead = 2;
-	static const U8 MAX_DATA_LENGTH = ecrobot::Usb::MAX_USB_DATA_LENGTH - headerOverhead;
+	static const S32 headerByteIdx = 0; /**<The index of the info-header byte in the message-data array. Never write on this byte!*/
+	static const S32 idxByteIdx = 1;    /**<The index of the userIdx-header byte in the message-data array.*/
+	static const S32 data0ByteIdx = 2;  /**<The index of the first data (payload) byte in the message-data array.*/
+	static const U8 headerOverhead = 2; /**<The number of bytes used for header-data*/
+	static const U8 MAX_DATA_LENGTH = ecrobot::Usb::MAX_USB_DATA_LENGTH - headerOverhead; /**<Max length of payload data in bytes*/
 
 	enum disconReq {
-		noDisconnect, disconnect
+		noDisconnect, /**<Not disconnect connection*/
+		disconnect    /**<Disconnect request for the receiver*/
 	};
 	enum comDatatype {
 		typeUnspec = 0,

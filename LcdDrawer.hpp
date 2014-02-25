@@ -4,25 +4,125 @@
 
 #include "NLcd.hpp"
 #include "GuiTypes.hpp"
-#include "C:/cygwin/GNUARM/include/c++/4.0.2/cstdlib" // abs?
 
 namespace nxpl {
 
-void drawLine(NLcd lcd, S8 x0, S8 y0, S8 x1, S8 y1, DrawOpt op);
+/**
+ * \brief Draw a line.
+ *
+ * This function lets you draw a line on the given lcd from x0, y0 to x1, y1.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd  The lcd for drawing the line.
+ * @param x0   The x value for the start of the line.
+ * @param y0   The y value for the start of the line.
+ * @param x1   The x value for the end of the line.
+ * @param y1   The y value for the end of the line.
+ * @param op   The optional drawing options.
+ */
+void drawLine(NLcd lcd, S8 x0, S8 y0, S8 x1, S8 y1, DrawOpt op = DrawOpt::draw());
 
-void drawRectangle(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op);
+/**
+ * \brief Draw a rectangle.
+ *
+ * This function lets you draw a rectangle on the given lcd at x, y with the
+ * specified width and height.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd  The lcd for drawing the rectangle.
+ * @param x0   The x value for the top left corner of the rectangle.
+ * @param y0   The y value for the top left corner of the rectangle.
+ * @param w    The width of the rectangle.
+ * @param h    The height of the rectangle.
+ * @param op   The optional drawing options.
+ */
+void drawRectangle(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op = DrawOpt::draw());
 
-void drawRectangleFilled(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op);
+/**
+ * \brief Draw a filled rectangle.
+ *
+ * This function lets you draw a filled rectangle on the given lcd at x, y with the
+ * specified width and height.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd  The lcd for drawing the rectangle.
+ * @param x0   The x value for the top left corner of the rectangle.
+ * @param y0   The y value for the top left corner of the rectangle.
+ * @param w    The width of the rectangle.
+ * @param h    The height of the rectangle.
+ * @param op   The optional drawing options.
+ */
+void drawRectangleFilled(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op = DrawOpt::draw());
 
-void drawCircle(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op);
+/** \brief Draw a circle.
+ *
+ * This function lets you draw a circle on the given lcd with its center at the specified x and y location, using the specified radius.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd      The lcd for drawing the circle.
+ * @param centerX  The x value for the center of the circle.
+ * @param centerY  The y value for the center of the circle.
+ * @param radius   The radius of the circle.
+ * @param op       	The optional drawing options.
+ */
+void drawCircle(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op = DrawOpt::draw());
 
 // TODO work here with functors?
-void drawCircleFilled(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op);
+/** \brief Draw a filled circle.
+ *
+ * This function lets you draw a filled circle on the given lcd with its center at the specified x and y location, using the specified radius.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd      The lcd for drawing the circle.
+ * @param centerX  The x value for the center of the circle.
+ * @param centerY  The y value for the center of the circle.
+ * @param radius   The radius of the circle.
+ * @param op       	The optional drawing options.
+ */
+void drawCircleFilled(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op = DrawOpt::draw());
 
-void drawEllipse(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op);
+/** \brief Draw an ellipse.
+ *
+ * This function lets you draw an ellipse on the screen with its center at the specified x and y location, using the specified radii.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd      The lcd for drawing the ellipse.
+ * @param centerX  The x value for the center of the ellipse.
+ * @param centerY  The y value for the center of the ellipse.
+ * @param a		   The x axis radius.
+ * @param b		   The y axis radius.
+ * @param op       The optional drawing options.
+ */
+void drawEllipse(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
 // TODO work with functors
-void drawEllipseFilled(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op);
+/** \brief Draw a filled ellipse.
+ *
+ * This function lets you draw a filled ellipse on the screen with its center at the specified x and y location, using the specified radii.
+ * Optionally specify drawing options.
+ * If this argument is not specified it defaults to DrawOpt::draw().
+ * Valid display options are listed in the DrawOpt class.
+ *
+ * @param lcd      The lcd for drawing the ellipse.
+ * @param centerX  The x value for the center of the ellipse.
+ * @param centerY  The y value for the center of the ellipse.
+ * @param a		   The x axis radius.
+ * @param b		   The y axis radius.
+ * @param op       The optional drawing options.
+ */
+void drawEllipseFilled(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
 } // namespace
 
