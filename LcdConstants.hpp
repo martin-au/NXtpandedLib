@@ -1,4 +1,3 @@
-
 #ifndef __LCDCONSTANTS_HPP_
 #define __LCDCONSTANTS_HPP_
 
@@ -11,8 +10,13 @@ namespace LCD {
 	const S8 DEPTH = 8; 	  /**<Lcd depth in pixel, depth = line height in pixel*/
 
 	// text constants
+<<<<<<< HEAD
 	const S8 LINE_WIDTH = 16; /**<Line with in chars*/
 	const S8 ROWS = DEPTH;    /**<Rows of NXT lcd*/
+=======
+	const S8 LINE_WIDTH = 16; /**<Line width in chars*/
+	const S8 ROWS = DEPTH;    /**<Rows of NXT LCD*/
+>>>>>>> 486df30e4dd3ce7105e25bafd64abfc405c6a0ba
 
 	const S8 CHAR_WIDTH = 6;  /**<Width of one char on the the lcd in pixel*/
 	const S8 CHAR_HEIGHT = 8; /**<Height of one char on the the lcd in pixel*/
@@ -22,7 +26,7 @@ namespace LCD {
 	 *
 	 * Calculates which field the pixel belongs to. First field is 0.
 	 * @param x  Pixel X-Coordinate (from left).
-	 * @return Indent in measured in Chars.
+	 * @return Indent measured in Chars.
 	 */
 	S8 pixelToIndent(S8 x) {
 		return (x - 1) / LCD::CHAR_WIDTH;
@@ -33,7 +37,11 @@ namespace LCD {
 	 *
 	 * Calculates which line the pixel belongs to. Top line is 0.
 	 * @param y  Pixel Y-Coordinate (from top).
+<<<<<<< HEAD
 	 * @return Line (0 - LCD::ROWS).
+=======
+	 * @return Line (0-LCD::ROWS).
+>>>>>>> 486df30e4dd3ce7105e25bafd64abfc405c6a0ba
 	 */
 	S8 pixelToLine(S8 y) {
 		return y/LCD::DEPTH;
@@ -53,7 +61,11 @@ namespace LCD {
 	/**
 	 * \brief Calculates the pixel coordinate from line.
 	 *
+<<<<<<< HEAD
 	 * @param line (0 - LCD::DEPTH)
+=======
+	 * @param Line (0 - LCD::ROWS)
+>>>>>>> 486df30e4dd3ce7105e25bafd64abfc405c6a0ba
 	 * @return Pixel Y-Coordinate.
 	 */
 	S8 lineToPixel(S8 line) {
@@ -72,11 +84,18 @@ namespace LCD {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * \brief Checks if cursor position is in lcd.
 	 *
 	 * @param indent Cursor Indent in chars.
 	 * @param row (0 - LCD::ROWS)
 	 * @return true if cursor is in lcd.
+=======
+	 * \ brief Checks if cursor position is in LCD.
+	 * @param indent Cursor Indent in chars. 
+	 * @param row
+	 * @return true if cursor is in LCD.
+>>>>>>> 486df30e4dd3ce7105e25bafd64abfc405c6a0ba
 	 */
 	bool cursorInLcd(const S16 indent, const S16 row) {
 		return ((indent >= 0) && (indent < LCD::LINE_WIDTH) && (row >= 0)
