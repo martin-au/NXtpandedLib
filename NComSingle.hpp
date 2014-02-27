@@ -16,7 +16,13 @@
 
 namespace nxpl {
 
-
+/**
+ * \brief Converts a signed 32 bit number to 4 bytes.
+ * Byte-Oreder: Big-Endian. Destination array must have capacity for 4 bytes.
+ * @param num Number to convert
+ * @param pstart Pointer to first byte (Most significant byte)
+ * @return Pointer to the byte after the least significant byte.
+ */
 inline unsigned char* num2Bytes (S32 num, unsigned char *pstart) {
 	*pstart 	=  (num >> 24) & 0xFF;
 	*(pstart+1) =  (num >> 16) & 0xFF;
@@ -25,6 +31,13 @@ inline unsigned char* num2Bytes (S32 num, unsigned char *pstart) {
 	return (pstart+4);
 }
 
+/**
+ * \brief Converts a unsigned 32 bit number to 4 bytes.
+ * Byte-Oreder: Big-Endian. Destination array must have capacity for 4 bytes.
+ * @param num Number to convert
+ * @param pstart Pointer to first byte (Most significant byte)
+ * @return Pointer to the byte after the least significant byte.
+ */
 inline unsigned char* num2Bytes (U32 num, unsigned char *pstart) {
 	*pstart 	=  (num >> 24) & 0xFF;
 	*(pstart+1) =  (num >> 16) & 0xFF;
@@ -33,17 +46,36 @@ inline unsigned char* num2Bytes (U32 num, unsigned char *pstart) {
 	return (pstart+4);
 }
 
+/**
+ * \brief Converts 4 bytes to a signed 32 bit value.
+ * Byte-Oreder: Big-Endian. Destination array must have capacity for 4 bytes.
+ * @param num Resulting number.
+ * @param pstart Pointer to first byte (Most significant byte)
+ * @return Pointer to the byte after the least significant byte.
+ */
 inline unsigned char* bytes2Num (S32 &num, unsigned char *pstart) {
 	num = (*pstart << 24) | (*(pstart+1) << 16) | (*(pstart+2) << 8) | (*(pstart+3));
 	return (pstart+4);
 }
 
+/**
+ * \brief Converts 4 bytes to a unsigned 32 bit value.
+ * Byte-Oreder: Big-Endian. Destination array must have capacity for 4 bytes.
+ * @param num Resulting number.
+ * @param pstart Pointer to first byte (Most significant byte)
+ * @return Pointer to the byte after the least significant byte.
+ */
 inline unsigned char* bytes2Num (U32 &num, unsigned char *pstart) {
 	num = (*pstart << 24) | (*(pstart+1) << 16) | (*(pstart+2) << 8) | (*(pstart+3));
 	return (pstart+4);
 }
 
-
+/**
+ * \brief Communication handler which allows to send/receive single variables/packages.
+ *
+ * This class class allows the user to implement a communication with some device in an easy, fast and natural way.
+ * It handles the low level data-bytes, encrypting, packaging...
+ */
 class NComSingle {
 private:
 	NCom &com;
@@ -61,12 +93,24 @@ private:
 	}
 
 public:
+	/**
+	 * Constructs the communication handler class.
+	 *
+	 * @param ncom
+	 */
 	NComSingle(NCom &ncom) : com(ncom), lastLen(0) {
 		clearData();
 	}
 	~NComSingle() {}
 
-
+	/** \brief Send boolean data.
+	 *
+	 * The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	 *
+	 * @param b Data to sent.
+	 * @param idx Special user message identifier between 0 and 255.
+	 * @return Length of sent data in bytes.
+	 */
 	U32 send(bool b, U8 idx = 0) {
 		NCom::comDatatype type = NCom::typeBool;
 		NCom::comNModes mode = NCom::modeSingle;
@@ -77,7 +121,14 @@ public:
 		return len;
 	}
 
-
+	/** \brief Send unsigned 32bit arithmetical data.
+	 *
+	 * The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	 *
+	 * @param num Number to sent.
+	 * @param idx Special user message identifier between 0 and 255.
+	 * @return Length of sent data in bytes.
+	 */
 	U32 send(U32 num, U8 idx = 0) {
 		NCom::comDatatype type = NCom::typeU32;
 		NCom::comNModes mode = NCom::modeSingle;
@@ -88,6 +139,14 @@ public:
 		return len;
 	}
 
+	/** \brief Send singed 32bit arithmetical data.
+	*
+	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	*
+	* @param num Number to sent.
+	* @param idx Special user message identifier between 0 and 255.
+	* @return Length of sent data in bytes.
+	*/
 	U32 send(S32 num, U8 idx = 0) {
 		NCom::comDatatype type = NCom::typeS32;
 		NCom::comNModes mode = NCom::modeSingle;
@@ -98,6 +157,14 @@ public:
 		return len;
 	}
 
+	/** \brief Send 32bit floating-point number.
+	*
+	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	*
+	* @param num Number to sent.
+	* @param idx Special user message identifier between 0 and 255.
+	* @return Length of sent data in bytes.
+	*/
 	U32 send(float num, U8 idx = 0) {
 		NCom::comDatatype type = NCom::typeFloat;
 		NCom::comNModes mode = NCom::modeSingle;
@@ -111,6 +178,14 @@ public:
 		return len;
 	}
 
+	/** \brief Send 8bit signed char.
+	*
+	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	*
+	* @param num Char to sent.
+	* @param idx Special user message identifier between 0 and 255.
+	* @return Length of sent data in bytes.
+	*/
 	U32 send(char ch, U8 idx = 0) {
 			NCom::comDatatype type = NCom::typeChar;
 			NCom::comNModes mode = NCom::modeSingle;
@@ -121,6 +196,14 @@ public:
 			return len;
 	}
 
+	/** \brief Send Text-String.
+	*
+	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	*
+	* @param string Message-String to sent.
+	* @param idx Special user message identifier between 0 and 255.
+	* @return Length of sent data in bytes.
+	*/
 	U32 send(const NString &string, U8 idx = 0) {
 		NCom::comDatatype type = NCom::typeString;
 		NCom::comNModes mode = NCom::modeSingle;
@@ -158,6 +241,14 @@ public:
 	}
 	*/
 
+	/** \brief Send array of unsigned 32bit arithmetical data.
+	*
+	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	*
+	* @param num *package Pointer to first element of data-array.
+	* @param idx Special user message identifier between 0 and 255.
+	* @return Length of sent data in bytes.
+	*/
 	U32 send(U32 *package, U8 idx = 0, U32 len = 0) {
 		NCom::comDatatype type = NCom::typeU32;
 		NCom::comNModes mode = NCom::modePackage;
@@ -175,7 +266,14 @@ public:
 		return retlen;
 	}
 
-
+	/** \brief Send array of signed 32bit arithmetical data.
+	*
+	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	*
+	* @param num *package Pointer to first element of data-array.
+	* @param idx Special user message identifier between 0 and 255.
+	* @return Length of sent data in bytes.
+	*/
 	U32 send(S32 *package, U8 idx = 0, U32 len = 0) {
 		NCom::comDatatype type = NCom::typeU32;
 		NCom::comNModes mode = NCom::modePackage;

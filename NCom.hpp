@@ -16,7 +16,7 @@ namespace nxpl {
 /** \brief Handler-Class implementing communication with message information.
  *
  * The class specifies how the message header is implemented.
- * Its used that the receiver always knows which message belongs to some code.
+ * It's used that the receiver always knows which message belongs to some code.
  * This is really useful in a system with multiple tasks where message fly around at different times/positions!
  *
  * You do not have to use this class if high level class NComSingle fits your needs!
@@ -45,31 +45,72 @@ public:
 		noDisconnect, /**<Not disconnect connection*/
 		disconnect    /**<Disconnect request for the receiver*/
 	};
+	/**
+	 * \brief Datatypes to send available with nxtOSEK.
+	 *
+	 * This specifies how the data looks like and in which type it should be converted.
+	 * The numbers from 7 to 15 are free for future.
+	 */
 	enum comDatatype {
-		typeUnspec = 0,
-		typeU32 = 	 1,
-		typeS32 = 	 2,
-		typeBool = 	 3,
-		typeFloat =	 4,
-		typeChar = 	 5,
-		typeString = 6
+		typeUnspec = 0, /**<Unspecified type, may be a error*/
+		typeU32 = 	 1, /**<Unsigned 32bit arithmetical type*/
+		typeS32 = 	 2, /**<Signed 32bit arithmetical type*/
+		typeBool = 	 3, /**<Boolean type*/
+		typeFloat =	 4, /**<32bit floating-point number*/
+		typeChar = 	 5, /**<8bit signed char*/
+		typeString = 6  /**<C-String type*/
 		// free 7 - 15
 	};
+	/**
+	 * \brief The communication modes available in NXtpandedLib.
+	 *
+	 * This specifies how the message should be handled by the the receiver.
+	 * 5-6 are free for future implementations.
+	 */
 	enum comNModes {
-		modeBasic = 	0,
-		modeSingle = 	1, // Single variable
-		modePackage = 	2, // Arrays, Vectors ..
-		modePart = 		3, // Long package/string sending in parts
-		modeStream = 	4  // direct stream to pc ostrem fstream
+		modeBasic = 	0, /**<raw data, may be error*/
+		modeSingle = 	1, /**<Send/receive single variable @sa NComSingle*/
+		modePackage = 	2, /**<Send/receive arrays, vectors, packed data/classes @sa NComSingle*/
+		modePart = 		3, /**<Send/receive big package/string sending in parts*/
+		modeStream = 	4  /**<Direct stream to pc ostrem fstream ...*/
 		//free = 		5  //
 		//free = 		6  //
 		//free = 		7  //
 	};
 
+	/**
+	 * \brief Construct a communication handler.
+	 * @param comObject A global constructed ecrobot::usb object.
+	 */
 	NCom(ecrobot::Usb &comObject) : com(comObject) {}
 	~NCom() {}
 
+	/** \brief Send data with info-header.
+	 *
+	 * Data should be array with capacity > NCom::headerOverhead.
+	 * Remind that you are not allowed to use the first two bytes. They will be overwritten by the handler!
+	 * The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	 *
+	 * @param data The data to send including the two bytes for header.
+	 * @param idx  Special user message identifier between 0 and 255.
+	 * @param datatype The data type of the encoded data.
+	 * @param nmode  The communication modes available in NXtpandedLib.
+	 * @param length Length of the payload data in bytes.
+	 * @return Length of sent data.
+	 */
 	U32 send(U8 *data, U8 idx, comDatatype datatype, comNModes nmode = modeBasic, U32 length = ecrobot::Usb::MAX_USB_DATA_LENGTH);
+
+	/** \brief Receive data with info-header.
+	 *
+	 * This function takes the data out of the in-queue. If there is no message in the in-queue it will return a length <= 0.
+	 *	The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
+	 *
+	 * @param data The received data including the two bytes for header. Make sure there is enough space for the data!
+	 * @param idx  Special user message identifier between 0 and 255.
+	 * @param datatype The data type of the encoded data.
+	 * @param nmode The communication modes available in NXtpandedLib.
+	 * @return Length of received data.
+	 */
 	U32 receive(U8 *data, U8 &idx, comDatatype &datatype, comNModes &nmode) const;
 };
 
