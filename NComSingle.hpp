@@ -75,6 +75,9 @@ inline unsigned char* bytes2Num (U32 &num, unsigned char *pstart) {
  *
  * This class class allows the user to implement a communication with some device in an easy, fast and natural way.
  * It handles the low level data-bytes, encrypting, packaging...
+ * If you want to send data you simply call the send functions.
+ * If you want to receive data then you first call NComSingle::receive() to put the message into the buffer and to
+ * get information about the message. After that you call a get** function to actually get the data.
  */
 class NComSingle {
 private:
@@ -107,7 +110,7 @@ public:
 	 *
 	 * The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	 *
-	 * @param b Data to sent.
+	 * @param b Data to send.
 	 * @param idx Special user message identifier between 0 and 255.
 	 * @return Length of sent data in bytes.
 	 */
@@ -125,7 +128,7 @@ public:
 	 *
 	 * The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	 *
-	 * @param num Number to sent.
+	 * @param num Number to send.
 	 * @param idx Special user message identifier between 0 and 255.
 	 * @return Length of sent data in bytes.
 	 */
@@ -143,7 +146,7 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param num Number to sent.
+	* @param num Number to send.
 	* @param idx Special user message identifier between 0 and 255.
 	* @return Length of sent data in bytes.
 	*/
@@ -161,7 +164,7 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param num Number to sent.
+	* @param num Number to send.
 	* @param idx Special user message identifier between 0 and 255.
 	* @return Length of sent data in bytes.
 	*/
@@ -182,7 +185,7 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param num Char to sent.
+	* @param num Char to send.
 	* @param idx Special user message identifier between 0 and 255.
 	* @return Length of sent data in bytes.
 	*/
@@ -200,7 +203,7 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param string Message-String to sent.
+	* @param string Message-String to send.
 	* @param idx Special user message identifier between 0 and 255.
 	* @return Length of sent data in bytes.
 	*/
@@ -294,16 +297,35 @@ public:
 
 	// this puts next message into the buffer and gives information about message
 	// user decides how to process data
+	/** \brief Receive message and get information about message.
+	 *
+	 * This function puts the in-message into the buffer and gives information about the message
+	 * The user should decide (based on info) how to get the data and then call a get** function.
+	 * If there is no message it will return 0.
+	 * 
+	 * @param idx returns special user message identifier between 0 and 255.  
+	 * @param datatype  The data type of the encoded data.
+	 * @param nmode The communication modes available in NXtpandedLib.
+	 * @return Length of received data in bytes. 0 if there is no message
+	 * 
+	*/
 	U32 receive(U8 &idx, NCom::comDatatype &datatype, NCom::comNModes &nmode) {
 		lastLen = com.receive(data, idx, datatype, nmode);
 		return lastLen;
 	}
 
-	// call this if you receive a message and you do nothing with it!
+	/** \brief Discard the received message.
+	 * 
+	 * Call this function if you receive a message with NComSingle::receive and you do nothing with it.
+	 * It will reset the the buffer.
+	*/
 	void discard() {
 		memset(data, 0, lastLen);
 	}
 
+	/** \brief Get received data as unsigned 32bit number.
+	 * @return Received number.
+	*/
 	U32 getDataU32() {
 		 U32 ret = 0;
 		 bytes2Num(ret, &data[NCom::data0ByteIdx]);
@@ -311,6 +333,9 @@ public:
 		 return ret;
 	}
 
+	/** \brief Get received data as signed 32bit number.
+	 * @return Received number.
+	*/
 	S32 getDataS32() {
 		S32 ret = 0;
 		bytes2Num(ret, &data[NCom::data0ByteIdx]);
@@ -318,12 +343,18 @@ public:
 		return ret;
 	}
 
+	/** \brief Get received data as boolean.
+	 * @return Received boolean.
+	*/
 	bool getDataBool() {
 		bool ret = (data[NCom::data0ByteIdx] > 0) ? true : false;
 		memset(data, 0, 3);
 		return ret;
 	}
 
+	/** \brief Get received data as floating-point-number.
+	* @return Received floating-point-number.
+	*/
 	float getDataFloat() {
 		floatUnion_t fu;
 		memcpy(fu.bytes, data+2, 4);
@@ -331,13 +362,19 @@ public:
 		memset(data, 0, 6);
 		return ret;
 	}
-
+	
+	/** \brief Get received data as signed 8-bit char.
+	 * @return Received char.
+	*/
 	char getDataChar() {
 		char ret = static_cast<char>(data[NCom::data0ByteIdx]);
 		memset(data, 0, 3);
 		return ret;
 	}
 
+	/** \brief Get received data as String.
+	 * @return Received string.
+	*/
 	NString getDataString() {
 		// TODO Dynamic buffer not 20!
 		NString ret(20);
@@ -350,6 +387,14 @@ public:
         return ret;
 	}
 
+	/** \brief Get received data as unsigned 32bit array.
+	 * 
+	 * The user must pass a NULL-Pointer. The array will be filled dynamically.
+	 * The user is responsible for deleting the array with delete[]!
+	 * 
+	 * @param dataPack Empty, NULL pointer which will be filled with the data.
+	 * @return Length of array.
+	*/
 	S32 getDataPackageU32(U32 *dataPack) {
 		if(dataPack != NULL) return -1;
         S16 numPackage = (lastLen-NCom::headerOverhead)/4;
@@ -367,6 +412,14 @@ public:
 	}
 
 	// TODO use smart pointer here!!!
+	/** \brief Get received data as signed 32bit array.
+	 * 
+	 * The user must pass a NULL-Pointer. The array will be filled dynamically.
+	 * The user is responsible for deleting the array with delete[]!
+	 * 
+	 * @param dataPack Empty, NULL pointer which will be filled with the data.
+	 * @return Length of array.
+	*/
 	S32 getDataPackageS32(S32 *dataPack) {
 		if(dataPack != NULL) return -1;
 		S16 numPackage = (lastLen-NCom::headerOverhead)/4;
