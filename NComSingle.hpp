@@ -185,7 +185,7 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param num Char to send.
+	* @param ch Char to send.
 	* @param idx Special user message identifier between 0 and 255.
 	* @return Length of sent data in bytes.
 	*/
@@ -248,8 +248,9 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param num *package Pointer to first element of data-array.
+	* @param package Pointer to first element of data-array.
 	* @param idx Special user message identifier between 0 and 255.
+	* @param len The length of the array to send.
 	* @return Length of sent data in bytes.
 	*/
 	U32 send(U32 *package, U8 idx = 0, U32 len = 0) {
@@ -273,8 +274,9 @@ public:
 	*
 	* The user may use the idx parameter to make the message unique so that the receiver knows what to do with this message.
 	*
-	* @param num *package Pointer to first element of data-array.
+	* @param package Pointer to first element of data-array.
 	* @param idx Special user message identifier between 0 and 255.
+	* @param len The length of the array to send.
 	* @return Length of sent data in bytes.
 	*/
 	U32 send(S32 *package, U8 idx = 0, U32 len = 0) {

@@ -1,7 +1,9 @@
 
 namespace nxpl {
 
-
+/**
+ * Reference counting class.
+ */
 class RefCount
 {
     private:

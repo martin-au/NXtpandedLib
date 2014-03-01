@@ -40,12 +40,6 @@ NLabel::NLabel(const char *text, S8 indent, S8 row, S8 charWidth) :
 	setField(indent, row, 1, charWidth);
 }
 
-template<typename T>
-NLabel::NLabel(const T num, const S8 indent, const S8 row, S8 numWidth)
- : label(new NString(numWidth)), somenew(true) {
-	setField(indent, row, 1, numWidth);
-	setNumber(num);
-}
 
 /*
 NLabel::NLabel(NLabel * const buddyOf, S8 charWidth) :
@@ -96,54 +90,6 @@ NLabel::~NLabel() {
 	delete[] label;
 }
 
-NString NLabel::getText() const {
-	return *label;
-}
-
-
-void NLabel::setText(const NString &text) {
-	if (text.size() > 0) {
-		*label = text;
-		somenew = true;
-	}
-}
-
-void NLabel::setText(const char *text) {
-	if (text) {
-		*label = text;
-		somenew = true;
-	}
-}
-
-template<typename T>
-void NLabel::setNumber(T number) {
-	label->clear();
-	label->append(number);
-	// i think this is better you see the overflow and then optimize your program
-	if (static_cast<S8>(label->size()) > fieldWidth()) {
-		label->clear();
-		for (S8 i = 0; i < this->fieldWidth(); ++i)
-			label->append('#');
-	}
-	somenew = true;
-}
-
-void NLabel::clear() {
-	label->clear();    // !const
-	somenew = true;
-	hide(false);
-}
-
-// its better to know the position at construction time!
-bool NLabel::setPosition(const S8 indent, const S8 row) {
-	hide();
-
-	setField(indent, row, 1, this->fieldWidth());
-	//if (buddy)
-	//	buddy->alignBuddy(buddyAlignment);
-	somenew = true;
-	return inLcd();
-}
 
 /*
 void NLabel::setBuddy(NLabel * const myBuddy, const NAlignment &align) const {

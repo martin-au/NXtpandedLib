@@ -8,6 +8,10 @@
 #ifndef UNCOPYABLE_HPP_
 #define UNCOPYABLE_HPP_
 
+/**
+ * \brief Derive from this class makes derived uncopyable.
+ * All standard copyconstrutors, copyassignments are disabled. Private inheritance is sufficient.
+ */
 class Uncopyable {
 protected:
 	Uncopyable() {}

@@ -15,9 +15,10 @@ extern "C" {
 
 namespace nxpl {
 
-///******************************************************************************
-// string!
 // to do: replace, erase
+/** \brief A basic, light and fast implementation of a C++ String.
+ * \sa http://en.wikipedia.org/wiki/String_%28C%2B%2B%29
+ */
 class NString {
 protected:
 	char* string; /**< String Buffer*/
@@ -40,15 +41,17 @@ protected:
 
 public:
 	static const S32 npos = -1;
+
 	/**
 	 * @brief Default Constructor
 	 */
 	NString();
+
 	/**
 	 * @brief Constructor with buffer size
 	 * @param inBufferlength The buffer size
-	 * When you know approximatly the buffer you will use
-	 * this constructor is the more appropriate
+	 * When you know approximately the buffer you will use
+	 * this constructor is the more appropriate.
 	 */
 	explicit NString(S32 inBufferlength);
 
@@ -62,10 +65,11 @@ public:
 	 * @param inString The original string
 	 */
 	explicit NString(const char* const inString);
+
 	/**
 	 * @brief Destructor
 	 */
-	~NString() { // !deleted virtual
+	~NString() {
 		if (string)
 			delete[] string;
 	}
@@ -78,6 +82,10 @@ public:
 		return (this->length);
 	}
 
+	/**
+	 * \brief Capacity of buffer.
+	 * @return Capacity.
+	 */
 	S32 capacity() const {
 		return (this->bufferlength);
 	}
@@ -101,9 +109,9 @@ public:
 	}
 
 	/**
-	 * @brief Get a char from the string
+	 * @brief Get a character from the string
 	 * @param in_index the char position
-	 * @return the char or BCharMax if index too large
+	 * @return the char or '?' if index too large or to negative.
 	 */
 	const char at(const S32 in_index) const {
 		if (0 <= in_index && in_index < length)
@@ -113,6 +121,12 @@ public:
 
 	// saver than a operator implementation!
 	// we do not give away handle to internal data with at!
+	/** \brief Copy character to position.
+	 *
+	 * @param in_index the character position
+	 * @param c character to set.
+	 * @return false if index too large or to negative.
+	 */
 	bool assign(const S32 in_index, char c) {
 		if(in_index >= 0 && in_index < this->length) {
 			this->string[in_index] = c;
@@ -121,14 +135,36 @@ public:
 		return false;
 	}
 
+	/** \brief Returns a newly constructed string object with its value initialized to a copy of a substring of this object.
+     * <br>
+     * The substring is the portion of the object that starts at character position pos and spans len characters (or until the end of the string, whichever comes first).
+	 *
+	 * @param pos Position of the first character to be copied as a substring.
+	 * @param len Position of the first character to be copied as a substring. A value of NString::npos indicates all characters until the end of the string.
+	 * @return A string object with a substring of this object or empty string if pos or len is out of range.
+	 */
 	NString substr(S32 pos = 0, S32 len = npos) const;
 
+	/**\brief Inserts string into the string right before the character indicated by pos (or p):
+	 *
+	 * @param pos Insertion point: The new contents are inserted before the character at position pos.
+	 * @param str Another string object.
+	 * @return This string. There is no error checking -> if pos is out of range it will return a not changed string.
+	 */
 	NString& insert(S32 pos, const NString& str);
 
 	// NString& erase(S32 pos = 0, S32 len = npos);
 
 	// NString& replace(S32 pos, S32 len, const NString& str);
 
+	/** \brief Searches the string for the first occurrence of str.
+     * When pos is specified, the search only includes characters at or after position pos,
+     * ignoring any possible occurrences that include characters before pos.
+	 *
+	 * @param str Another string with the subject to search for.
+	 * @param pos Position of the first character in the string to be considered in the search.
+	 * @return The position of the first character of the first match. If no matches were found, the function returns string::npos.
+	 */
 	S32 find(const NString& str, S32 pos = 0) const;
 
 	/**
@@ -139,10 +175,12 @@ public:
 	 */
 	bool addBuffer(const S32 in_requeriedSpace);
 
+	/** \brief Requests the string to reduce its capacity to fit its size.
+	 */
 	void shrinkToFit();
 
 	/**
-	 * @brief Append with char*
+	 * @brief Append with C-String.
 	 * @param inString The original string
 	 */
 	NString& append(const char * const inString);
@@ -170,14 +208,18 @@ public:
 	 */
 	const NString operator+(const NString& inString) const;
 	/**
-	 * @brief Append with NString
+	 * @brief Append with C-String
 	 * @param inString The original string
 	 */
 	const NString operator+(const char* const inString) const;
 	/**
-	 * @brief Get a char from the string
+	 * @brief Get a char from the string.
+	 *
+	 * This functions do not checks for errors. Use NString::at().
+	 * It should only be used for tested loops.
+	 *
 	 * @param in_index the char position
-	 * @return the char or BCharMax if index too large
+	 * @return The character at position in_index.
 	 */
 	const char NString::operator[](const S32 in_index) const {
 		//if (0 <= in_index && in_index < length)
@@ -191,7 +233,7 @@ public:
 	 */
 	NString& operator=(const NString & inString);
 	/**
-	 * @brief Set the string
+	 * @brief Set the C-String
 	 * @param inString the new string
 	 * @return the current string after modifying
 	 */
@@ -219,8 +261,11 @@ public:
 	}
 
 	/**
-	 * @brief To get the buffer
-	 * @return the string buffer of char
+	 * @brief Get the buffer. (C-String)
+	 *
+	 * This should be used only if a function needs a c-string.
+	 *
+	 * @return The string buffer.
 	 */
 	const char *data() const {
 		return this->string;
@@ -228,25 +273,25 @@ public:
 
 	/**
 	 * @brief Count the length of a string
+	 * The method count until '\0'
 	 * @param inString the string to test
 	 * @return the length
-	 * The method count until '\0'
 	 */
 	static S32 strlen(const char* const inString);
 
 	/**
-	 * @brief Count the length of a string
+	 * @brief Copy source string to destination string.
+	 * The method copy until '\0'
 	 * @param in_src the source
 	 * @param in_dest the destination
 	 * @return the length of the copy
-	 * The method copy until '\0'
 	 */
 	static S32 copy(const char* const in_src, char* const in_dest);
 
 	/**
 	 * @brief Add a string to another
 	 * @param inString the string to add
-	 * @return the string concat in in_string1
+	 * @return The resulting string.
 	 */
 	NString& operator+=(const NString& inString) {
 		append(inString);
@@ -256,7 +301,7 @@ public:
 	/**
 	 * @brief Add a string to another
 	 * @param inString the string to add
-	 * @return the string concat in in_string1
+	 * @return the resulting string.
 	 */
 	NString& operator+=(const char* inString) {
 		append(inString);
@@ -266,13 +311,19 @@ public:
 	/**
 	 * @brief Add a string to another
 	 * @param inString the string to add
-	 * @return the string concat in in_string1
+	 * @return the resulting string.
 	 */
 	NString& operator+=(const char inString) {
 		append(inString);
 		return *this;
 	}
 
+	/** \brief Put NString into ostream.
+	 *
+	 * @param os
+	 * @param str
+	 * @return
+	 */
 	friend NOstream& operator<<(NOstream &os, const NString& str) {
 		os << str.data();
 		return os;
@@ -312,6 +363,7 @@ public:
 		return *this;
 	}
 
+	/** @brief Append a value to the current string */
 	NString& append(const int in_value) {
 		append(static_cast<S32>(in_value));
 		return *this;
@@ -329,7 +381,7 @@ public:
 	}
 
 
-    /** @brief Append a value to the current string */
+    /** @brief Append a value to the current string and show as hex*/
 	NString& appendHex(const U32 in_value) {
 		if (in_value == 0u)
 			append("0x00");
@@ -341,7 +393,12 @@ public:
 	}
 
 
-    /** @brief Append a value to the current string */
+    /** @brief Append a value to the current string
+     *
+     *  Converting a float into a string is not really space efficient.
+     *  It will allocate the maximum possible length of a float string: NString::BFloatMaxlength
+     *  You may use NString::shrinkToFit() after this function to save memory.
+     */
 	NString& append(const float in_value) {
 		if (in_value < 0.0000001 && in_value > -0.0000001)
 			append("0.0");
@@ -352,6 +409,10 @@ public:
 		return *this;
 	}
 
+	/** \brief Set floating-point-precision
+	 *
+	 * @param places
+	 */
 	void setPrecision(U16 places) {
 		decplaces = places;
 	}

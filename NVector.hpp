@@ -29,52 +29,36 @@ extern "C" {
 #include "C:/cygwin/GNUARM/arm-elf/include/string.h"
 #include "C:/cygwin/nxtOSEK/ecrobot/c++/util/New.cpp"
 
-/**
-* @author Berenger
-* @version 0.5
-* @date 24 novembre 2009
-* @file NVector.hpp
-* @brief Basic vector based on a memory area
-*
-* This Vector used a memory area, so you have to use it as an array.
-* So it is easy and fast to put data at start/end position.
-* But it takes a long time to insert or remove value in the center arrea
-*
-* @must You must give the buffer size if you know it!
-*
-* @example NVector<S32> vec(100);
-* @example for(S32 i = 0 ; i < 10 ;++i) vec.pushBack(i);
-* @example
-* @example vec[0] = 99;
-* @example vec[2] = 100;
-* @example
-* @example vec.insert(0u,25);
-* @example vec.insert(5u,25);
-* @example
-* @example for(S32 i = 0 ; i < 5 ;++i) vec.popBack();
-*
-* @example for(NVector<S32>::iterator iter( vec.begin() ); iter != vec.end() ; ++iter){
-* @example  (*iter)+=5;
-* @example }
-*/
 
 namespace nxpl {
 
 // antibug
 const float _DefaultStart = 0.30; /**< Default start position in %*/
 
+/**
+ * First: This class is not from master-author of NXtpandendLib
+ * The vector interface is like std::vector so you can use std::vector documentation if you do not understand something
+ * from this "very light" documentation.
+ *
+ * This Vector used a memory area, so you have to use it as an array.
+ * So it is easy and fast to put data at start/end position.
+ * But it takes a long time to insert or remove value in the center arrea
+ *
+ * \note You must give the buffer size if you know it!
+ * \warning NVector may produce inefficient linking do to extern "C" problem.
+ */
 template<typename T>
 class NVector {
 protected:
-	T* buffer; /**< memory area*/
+	T* buffer; //**< memory area*/
 
-	S32 capacity; /**< memory capacity*/
-	static const S32 SizeOfT = sizeof(T); /**< size of the object*/
+	S32 capacity; //**< memory capacity*/
+	static const S32 SizeOfT = sizeof(T); //**< size of the object*/
 
-	S32 startIndex; /**< start index*/
-	S32 endIndex; /**< end inde*/
+	S32 startIndex; //**< start index*/
+	S32 endIndex; //**< end inde*/
 
-	static const S32 DefaultSize = 15; /**< Default size */
+	static const S32 DefaultSize = 15; //**< Default size */
 
 public:
 	/**
@@ -122,7 +106,7 @@ public:
 	}
 
 	/**
-	 *@brief set the buffer capacity
+	 *@brief request to change the buffer capacity
 	 *@param in_capacity to change the capacity
 	 */
 	void doSetCapacity(S32 in_capacity);
@@ -131,6 +115,11 @@ public:
 	// we return before we call the not inline function
 	// note that we do not allow change capacity to less then current cap
 	// use doSetCapacity for this
+	/**
+	 * @brief request to change the buffer capacity
+	 * This function will return immediately if the in_cpacity is not bigger then the current capacity.
+	 * @param in_capacity to change the capacity
+	 */
 	void setCapacity(S32 in_capacity) {
 		if (in_capacity <= this->capacity)
 			return;
@@ -149,6 +138,7 @@ public:
 
 	/**
 	 *@brief get a const reference of a given value
+	 *@warning Fast but no error checking!
 	 *@param inPosition the query position
 	 *@return the value
 	 */
@@ -158,24 +148,7 @@ public:
 
 	/**
 	 *@brief get a const reference of a given value
-	 *@param inPosition the query position
-	 *@return the value
-	 */
-	const T& at(const S32 inPosition) const {
-		return this->buffer[this->startIndex + inPosition];
-	}
-
-	/**
-	 *@brief get a const reference of a given value
-	 *@param inPosition the query position
-	 *@return the value
-	 */
-	T& operator[](const S32 inPosition) {
-		return this->buffer[this->startIndex + inPosition];
-	}
-
-	/**
-	 *@brief get a const reference of a given value
+	 *@warning Fast but no error checking!
 	 *@param inPosition the query position
 	 *@return the value
 	 */
@@ -211,8 +184,9 @@ public:
 
 	/**
 	 *@brief Get a value
+	 *@warning No error checking! Use the overload if you need error checking.
 	 *@param inPosition query position
-	 *@return the data at requiered position, or the last data if inPosition is too big
+	 *@return the data at required position, or the last data if inPosition is too big
 	 * You must be sure that there is data in the vector
 	 */
 	const T& value(const S32 inPosition) const {
@@ -222,8 +196,8 @@ public:
 	/**
 	 *@brief Get a value
 	 *@param inPosition query position
-	 *@param defaultValue defaulf value in case of bad inPosition
-	 *@return the data at requiered position, or the defaultValue if inPosition is too big or vector is empty
+	 *@param defaultValue default value in case of bad inPosition
+	 *@return the data at required position, or the defaultValue if inPosition is too big or vector is empty
 	 */
 	const T& value(const S32 inPosition, const T& defaultValue) const {
 		inPosition += this->startIndex;
@@ -258,6 +232,7 @@ public:
 
 	/**
 	 *@brief delete all, then size = 0
+	 * Tries to call the destructor of the object!
 	 */
 	void clear() {
 		while (this->startIndex != this->endIndex) {
@@ -268,18 +243,17 @@ public:
 	}
 
 	/**
-	 *@brief count the value
-	 *@param inValue the value to test
-	 *@return the value occured number
+	 * @brief Size of vector.
+	 * @return Number of elements in vector.
 	 */
 	S32 size() const {
 		return this->endIndex - this->startIndex;
 	}
 
 	/**
-	 *@brief count the value
+	 *@brief Count the occurrence of value.
 	 *@param inValue the value to test
-	 *@return the value occured number
+	 *@return the value occurred number
 	 */
 	S32 count(const T & inValue) const {
 		S32 counter = 0;
@@ -330,7 +304,7 @@ public:
 	}
 
 	/**
-	 *@brief test the last value
+	 *@brief find first occurrence of inValue.
 	 *@param inValue the value to test
 	 *@param inFrom the offset
 	 *@return the position of the first found inValue or size if not found
@@ -345,25 +319,27 @@ public:
 
 		return size();
 	}
+
 	/**
 	 *@brief insert a value at a certain position
+	 *@note Takes much process time!
 	 *@param inPosition where to insert
-	 *@param inValue the value to put
+	 *@param inValue the value to insert
 	 */
 	void insert(S32 inPosition, T inValue);
 
 	/**
-	 *@brief test the last value
+	 *@brief find last occurrence of inValue.
 	 *@param inValue the value to test
 	 *@param inFrom the offset
-	 *@return the position of the last found inValue or size if not found
+	 *@return the position of the first found inValue or size if not found
 	 */
 	S32 lastIndexOf(const T & inValue, S32 inFrom = 0) const;
 
 	/**
 	 *@brief create a subvector
-	 *@param inPosition
-	 *@param in_length
+	 *@param inPosition First element to copy.
+	 *@param in_length The number of elements to include in the copy.
 	 *@return the new vector
 	 */
 	NVector<T> subvector(S32 inPosition, S32 in_length = 0) const;
@@ -409,8 +385,8 @@ public:
 	}
 
 	/**
-	 *@brief removeAll value occurence
-	 *@param inValue the value to test
+	 *@brief removeAll value occurrence
+	 *@param inValue the value to remove
 	 *@return the number of value delete
 	 */
 	S32 removeAll(const T & inValue);
@@ -429,10 +405,11 @@ public:
 	bool removeOne(const T & inValue);
 
 	/**
-	 *@brief replace all value
-	 *@param inValue the value to delete
-	 *@return true if something has been deleted
-	 */
+	*@brief replace all occurrence of in_oldValue with in_newValue
+	* @param in_oldValue value to replace
+	* @param in_newValue new value to insert
+	*/
+
 	void replaceAll(const T & in_oldValue, const T & in_newValue) {
 		for (S32 index = this->startIndex; index != this->endIndex; ++index) {
 			if (this->buffer[index] == in_oldValue)
@@ -452,14 +429,14 @@ public:
 	}
 
 	/**
-	 *@brief swap to value
+	 *@brief swap to elements
 	 *@param i the first position
 	 *@param j the second position
 	 */
 	void swap(S32 i, S32 j);
 
 	/**
-	 *@brief test if two vector are different
+	 *@brief test if two vectors are different
 	 *@param other the vector to test
 	 *@return true if different
 	 */
@@ -554,14 +531,15 @@ public:
 		}
 		/**
 		 *@brief constructor with node
-		 *@param in_node the node
+		 *@param inVec vector
 		 */													//changed from start
 		iterator(NVector* inVec) :
 				vec(inVec), index(inVec->startIndex) {
 		}
 		/**
 		 *@brief constructor with node
-		 *@param in_node the node
+		 *@param inVec vector
+		 *@param inIndex
 		 */
 		iterator(NVector* inVec, const S32 inIndex) :
 				vec(inVec), index(inIndex) {
@@ -594,7 +572,7 @@ public:
 			return this->vec->buffer[this->index];
 		}
 		/**
-		 *@brief get adresse data pointed by the operator
+		 *@brief get address of data pointed by the operator
 		 *@return &data
 		 */
 		T* operator->() const {
@@ -653,8 +631,8 @@ public:
 		}
 
 		/**
-		 *@brief test if it is at the begining of vector
-		 *@return true if at the begining
+		 *@brief test if it is at the beginning of vector
+		 *@return true if at the beginning
 		 */
 		bool begin() {
 			return this->vec && this->vec->start == this->index;
@@ -667,17 +645,19 @@ public:
 			return this->vec && this->vec->end == this->index;
 		}
 
-		/**
+		/*
+/		//
 		 *@brief test if no data are pointed
 		 *@return true not data are pointed
-		 */
+		//
 		//bool null() { return !(this->vec); }
+		*/
 		friend class NVector;
 	};
 	friend class iterator;
 
 	/**
-	 *@class const iterator
+	 *const iterator type
 	 */
 	class const_iterator: public iterator {
 	protected:
@@ -690,14 +670,15 @@ public:
 	public:
 		/**
 		 *@brief constructor with node
-		 *@param in_node the node
+		 *@param inVec the node
 		 */
 		const_iterator(NVector<T> *inVec) :
 				iterator(inVec) {
 		}
 		/**
 		 *@brief constructor with node
-		 *@param in_node the node
+		 *@param inVec the node
+		 *@param inIndex
 		 */
 		const_iterator(NVector<T>* inVec, const S32 inIndex) :
 				iterator(inVec, inIndex) {

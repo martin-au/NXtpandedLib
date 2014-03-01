@@ -81,7 +81,7 @@ private:
 
 void NCircle::setPosition(const S8 centerX, const S8 centerY, const S8 radius) {
 	if(isVisible()) {
-		this->erase();
+		this->hide();
 	}
 	if (centerX != keep)
 		x(centerX - radius);

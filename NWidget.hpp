@@ -22,19 +22,22 @@ namespace nxpl {
 class NAlignment {
 private:
 	S8 val;
-public:
 	explicit NAlignment(S8 align) : val(align) {};
-
-	static NAlignment none()    { return NAlignment(0); }
-	static NAlignment right() 	{ return NAlignment(1); }
-	static NAlignment left() 	{ return NAlignment(-1); }
-	static NAlignment top() 	{ return NAlignment(-2); }
-	static NAlignment bottom() 	{ return NAlignment(2); }
+public:
+	static NAlignment none()    { return NAlignment(0); }  /**No alignment<*/
+	static NAlignment right() 	{ return NAlignment(1); }  /**Align right to object<*/
+	static NAlignment left() 	{ return NAlignment(-1); } /**Align left to object<*/
+	static NAlignment top() 	{ return NAlignment(-2); } /**Align top to object<*/
+	static NAlignment bottom() 	{ return NAlignment(2); }  /**Align bottom to object<*/
 
 	bool operator==(const NAlignment& rhs) const {
 		return (val == rhs.val);
 	}
 
+	/** \brief Get the id of Alignment.
+	 * Used for lib functions internally.
+	 * @return id
+	 */
 	inline S8 get() const { return val; }
 };
 
@@ -42,6 +45,18 @@ public:
 // Be aware: All coordinates are converted into pixel coordinates (100x64)
 // but never in other direction! If you set for example x, height then the functions indent, lines will return 0!
 // You can convert Text-Coordinates into pixel coordinates with data loss: see LcdConstants.hpp
+/** \brief Base class for lcd-widgets.
+ *
+ * The class holds the position of the widget and allows to manage the space of the lcd.
+ * Every derived class must set the field with NWidget::setField.
+ * Be aware: All coordinates are converted into pixel coordinates (100x64) but never in other direction!
+ * If you set for example height in pixels then the function lines will return 0
+ * You can convert Text-Coordinates into pixel coordinates with data loss: see LcdConstants.hpp
+ * <br>
+ * const NWidget means constant position but not constant visibility.
+ * <br>
+ * It also specifies the two pure virtual functions NWidget::show() and NWidget::hide() which every derived class must implement.
+ */
 class NWidget {
 
 private:
@@ -70,47 +85,89 @@ protected:
 	}
 	*/
 
-	// is const because visibility may change during show
+	/** \brief Set widget to visible/invisible.
+	 *
+	 * @param visible true if visible.
+	 */
 	void setVisibility(bool visible) const {
 		mVisible = visible;
 	}
-	// virtual functions would be better but to much overhead in embedded c++!
+
+	/** \brief Set x-Coordinate.
+	 *
+	 * @param setX X-Coordinate from left side in pixels.
+	 */
 	void x(S8 setX) {
 		mX = setX;
 	}
 
+	/** \brief Set y-Coordinate.
+	 *
+	 * @param setY Y-Coordinate from top in pixels.
+	 */
 	void y(S8 setY) {
 		mY = setY;
 	}
 
+	/** \brief Set height.
+	*
+	* @param setHeight Height in pixels.
+	*/
 	void height(S8 setHeight) {
 		mHeight = setHeight;
 	}
 
+	/** \brief Set width.
+	*
+	* @param setWidth Width in pixels.
+	*/
 	void width(S8 setWidth) {
 		mWidth = setWidth;
 	}
 
+	/** \brief Set indent.
+	*
+	* @param setIndent Indent in chars.
+	*/
 	void indent(S8 setIndent) {
 		mX = 1 + (setIndent * LCD::CHAR_WIDTH);
 		rowX = setIndent;
 	}
 
+	/** \brief Set row.
+	*
+	* @param setRow Row in rows.
+	*/
 	void row(S8 setRow) {
 		mY = setRow * LCD::DEPTH;
 		rowY = setRow;
 	}
 
+	/** \brief Set lines.
+	*
+	* @param setLines Number of lines.
+	*/
 	void lines(S8 setLines) {
 		mHeight = setLines * LCD::DEPTH;
 		rows = setLines;
 	}
 
+	/** \brief Set field width.
+	*
+	* @param setFieldWidth Field width in chars.
+	*/
 	void fieldWidth(S8 setFieldWidth) {
 		mWidth = setFieldWidth * LCD::CHAR_WIDTH;
 		textWidth = setFieldWidth;
 	}
 
+	/** \brief Set (text) field.
+	 *
+	 * @param indentX Indent in chars.
+	 * @param rowY Row in rows.
+	 * @param nrows Number of lines.
+	 * @param nchars  Field width in chars.
+	 */
 	void setField(S8 indentX, S8 rowY, S8 nrows, S8 nchars) {
 		indent(indentX);
 		row(rowY);
@@ -118,6 +175,13 @@ protected:
 		fieldWidth(nchars);
 	}
 
+	/** \brief Set pixel field.
+	 *
+	 * @param x X-Coordinate from left side in pixels.
+	 * @param y Y-Coordinate from top in pixels.
+	 * @param width Width in pixels.
+	 * @param height Height in pixels.
+	 */
 	void setPixelField(S8 x, S8 y, S8 width, S8 height) {
 		this->x(x);
 		this->y(y);
@@ -126,12 +190,21 @@ protected:
 	}
 
 public:
-	static const S8 keep = -1;
+	static const S8 keep = -1; //*<*/
 
 	NWidget() : mX(0), mY(0), mHeight(0), mWidth(0), rowX(0), rowY(), rows(0), textWidth(0), mVisible(0) {}
 	virtual ~NWidget() {}
 
+	/** \brief Make the widget visible.
+	 *
+	 * @param update If true update the display.
+	 */
 	virtual void show(bool update = false) const = 0;
+
+	/** \brief Make the widget invisible.
+	 *
+	 * @param update If true update the display.
+	 */
 	virtual void hide(bool update = false) const = 0;
 
 	S8 x() const {
@@ -172,10 +245,18 @@ public:
 		return textWidth;
 	}
 
+	/** \brief Checks if widget is visible.
+	 *
+	 * @return true if visible.
+	 */
 	bool isVisible() const {
 		return mVisible;
 	}
 
+	/** \brief Checks if field is in lcd.
+	 *
+	 * @return true if in lcd.
+	 */
 	bool inLcd() const {
 		return LCD::objectInLcd(x(), y(), height(), width());
 	}

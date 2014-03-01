@@ -12,6 +12,8 @@
 
 namespace nxpl {
 
+/** \brief A advanced timer for measurements.
+ */
 class NTimer {
 private:
 	ecrobot::Clock clk;
@@ -29,15 +31,40 @@ private:
 	}
 
 public:
+	/**
+	 * \brief Constructor.
+	 * Resets the timer to 0.
+	 */
 	NTimer() : clk(), time(0), tpause(0), started(false) {}
 	~NTimer() {}
 
+	/** \brief Start timer.
+	 */
 	void start();
+
+	/** \brief Stop timer.
+	 *
+	 * @return Relative time since first call of NTimer::start excluding all pauses.
+	 */
 	U32 stop();
+
+	/** \brief Reset timer to time 0.
+	 * After that the timer waits for next NTimer::start()
+	 */
 	void reset();
+
+	/** \brief Get last measured time.
+	 * A call to this function only makes sense after first NTimer::stop()
+	 * @return Relative time since first call of NTimer::start excluding all pauses.
+	 */
 	U32 getLast() const {
 		return time;
 	}
+
+	/** \brief Get the sum of all pauses since first call to NTimer::start()
+	 *
+	 * @return Sum of all pauses.
+	 */
 	U32 getPause() const {
 		if(!started && tpause > 0) {
 			return timeSinceStopped() + tpause - 1;
@@ -45,10 +72,18 @@ public:
 		return tpause;
 	}
 
+	/**
+	 * \brief Get the actual relative time since first NTimer::start() including all pauses.
+	 * @return Actual time.
+	 */
 	U32 now() const {
 		return clk.now();
 	}
 
+	/**
+	 * \brief Get the actual relative time since first NTimer::start() excluding all pauses.
+	 * @return Actual time excluding all pauses.
+	 */
 	U32 nowNoPause() const {
 		// Timer in running mode
 		if(started) {
@@ -61,6 +96,14 @@ public:
 		return 0;
 	}
 
+	/** \brief Wait time.
+	 *
+	 * If pause = true the waitTime will be calculated to pause.
+	 * Its better to use sleep in multithreaded environments because it lets the other tasks time to execute.
+	 *
+	 * @param waitTime Time to wait.
+	 * @param pause If true treat waiting as pause.
+	 */
 	void wait(U32 waitTime, bool pause = false) {
 		clk.wait(waitTime);
 		if(pause && started) {
@@ -68,6 +111,14 @@ public:
 		}
 	}
 
+	/** \brief Sleep task.
+	 *
+	 * If pause = true the sleepTime will be calculated to pause.
+	 * Sleep takes the calling task to sleeping mode which allows other task to execute.
+	 *
+	 * @param sleepTime Time to sleep.
+	 * @param pause If true treat sleeping as pause.
+	 */
 	void sleep(U32 sleepTime, bool pause = false) {
 		clk.sleep(sleepTime);
 		if(pause && started) {

@@ -50,46 +50,100 @@ private:
 	// responsible for text formatting...
 	void streamhandler(const char *str);
 public:
+	/** \brief Construct a console widget.
+	 *
+	 * In order to make ostream task save it needs a resource/mutex.
+	 * Please define the resource in oil file in every task where you use ostream.
+	 *
+	 * @param res See description.
+	 * @param startLine The first line of the console. (0 - 7)
+	 * @param rows The number of console lines.
+	 * @param indent The indent in chars from left.
+	 * @param width The width of the console in chars.
+	 */
 	explicit NOstream(mutex_t res,
 			  U8 startLine = 0,
 			  U8 rows = LCD::ROWS,
-			  U8 x = 0,
+			  U8 indent = 0,
 			  U8 width = LCD::LINE_WIDTH);
 	~NOstream();
 
+	/** \brief Copy data of buffer into lcd.
+	 *
+	 * Its recommended to use this not to often because it takes process time.
+	 * A good solution is a display update task which has cycle time of about 100 - 400 ms.
+	 * Remember the human eye is slow ;)
+	 *
+	 * @param update If true update the display.
+	 */
 	void flush(bool update = false) const;
 
+	/** Make console visible.
+	 *
+	 * This is the same as NOstream::flush().
+	 *
+	 * @param update If true update the display.
+	 */
 	virtual void show(bool update = false) const {
 		flush(update);
 	}
+
+	/** Make console invisible.
+	 *
+	 * @param update If true update the display.
+	 */
 	virtual void hide(bool update = false) const;
 
+	/**
+	 * \brief Get floating-point precision.
+	 * @return Number of places.
+	 */
 	U16 precision() const;
+
+	/** \brief Set floating-point precision.
+	 *
+	 * @param prec Number of places.
+	 * @return Number of places.
+	 */
 	U16 precision(U16 prec);
 
+	/** \brief Ostream manipulator: show next number as hex.
+	 *
+	 * @param stream
+	 * @return
+	 */
 	friend NOstream& hex(NOstream& stream);
+
+	/** \brief Ostream manipulator: end actual line and flush console.
+	 *
+	 * See NOstream::flush() on performance issue.
+	 * Use the endl-ascii-char to make "a not flushing endl"
+	 *
+	 * @param stream
+	 * @return
+	 */
 	friend NOstream& endl(NOstream& stream);
 
-	NOstream& operator<<(const char* str);
-	NOstream& operator<<(char str);
-	NOstream& operator<<(S32 num);
-	NOstream& operator<<(U32 num);
+	NOstream& operator<<(const char* str); /**<Put C-String into stream.*/
+	NOstream& operator<<(char str); /**<Put char into stream.*/
+	NOstream& operator<<(S32 num); /**<Put signed 32bit number into stream.*/
+	NOstream& operator<<(U32 num); /**<Put unsigned 32bit number into stream.*/
 
-	NOstream& operator<<(int num) {return operator<<(static_cast<S32>(num));}
-	NOstream& operator<<(S16 num) {return operator<<(static_cast<S32>(num));}
-	NOstream& operator<<(U16 num) {return operator<<(static_cast<U32>(num));}
-	NOstream& operator<<(S8 num)  {return operator<<(static_cast<S32>(num));}
-	NOstream& operator<<(U8 num)  {return operator<<(static_cast<U32>(num));}
+	NOstream& operator<<(int num) {return operator<<(static_cast<S32>(num));} /**<Put integer number into stream.*/
+	NOstream& operator<<(S16 num) {return operator<<(static_cast<S32>(num));} /**<Put signed 16bit number into stream.*/
+	NOstream& operator<<(U16 num) {return operator<<(static_cast<U32>(num));} /**<Put unsigned 32bit number into stream.*/
+	NOstream& operator<<(S8 num)  {return operator<<(static_cast<S32>(num));} /**<Put signed 8bit number into stream.*/
+	NOstream& operator<<(U8 num)  {return operator<<(static_cast<U32>(num));} /**<Put unsigned 16bit number into stream.*/
 
-	NOstream& operator<<(float num);
+	NOstream& operator<<(float num); /**<Put floating-point-number into stream.*/
 
-	NOstream& operator<<(bool b) {
+	NOstream& operator<<(bool b) { /**<Put boolean into stream. Converts bool into text form true/false*/
 		if(b) return *this << "true";
 		else  return *this << "false";
 	}
 
 	NOstream& operator<<(NOstream& stream) {return *this;}
-	NOstream& operator<<(NOstreamManipulator manip);
+	NOstream& operator<<(NOstreamManipulator manip); /**<Put manipulator into stream.*/
 };
 
 }
