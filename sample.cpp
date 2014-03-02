@@ -13,6 +13,7 @@ extern "C" {
 #include "kernel_id.h"
 #include "../../ecrobot/c/ecrobot_interface.h"
 #include "../../ecrobot/c/rtoscalls.h"
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
 // System
 DeclareEvent(EventSleep);

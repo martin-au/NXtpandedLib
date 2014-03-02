@@ -1,12 +1,13 @@
 
 #include "LcdDrawer.hpp"
+#include "..\..\..\GNUARM\include\c++\4.0.2\cstdlib" //abs
 
 namespace nxpl {
 
 void drawLine(NLcd lcd, S8 x0, S8 y0, S8 x1, S8 y1, DrawOpt op) {
 	// TODO: low level pixel functions use U8!
-	S8 height = abs(y1 - y0);
-	S8 width = abs(x1 - x0);
+	S8 height = std::abs(y1 - y0);
+	S8 width = std::abs(x1 - x0);
 
 	S8 ix = x0;
 	S8 iy = y0;

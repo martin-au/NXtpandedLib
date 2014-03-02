@@ -11,8 +11,6 @@ extern "C" {
 	#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
 }
 
-//for codecorrection
-#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
 #include "StringConvert.hpp"
 #include "NOstream.hpp"

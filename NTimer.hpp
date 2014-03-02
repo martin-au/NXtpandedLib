@@ -55,7 +55,11 @@ public:
 	/** \brief Reset timer to time 0.
 	 * After that the timer waits for next NTimer::start()
 	 */
-	void reset();
+	void reset() {
+		time = 0;
+		tpause = 0;
+		started = false;
+	}
 
 	/** \brief Get last measured time.
 	 * A call to this function only makes sense after first NTimer::stop()
@@ -160,12 +164,6 @@ U32 NTimer::stop() {
 	return time;
 }
 
-
-void NTimer::reset() {
-	time = 0;
-	tpause = 0;
-	started = false;
-}
 
 }
 

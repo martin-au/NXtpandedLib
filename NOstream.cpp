@@ -1,7 +1,7 @@
 
 #include "NOstream.hpp"
-#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/display.h"
-#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h"
+#include "../../../GNUARM/arm-elf/include/string.h" // strlen
 #include "StringConvert.hpp"
 
 namespace nxpl {
