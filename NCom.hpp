@@ -12,7 +12,7 @@
  *	\ingroup Communication
 */
 
-#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Usb.h"
+#include "../../ecrobot/c++/device/Usb.h"
 
 
 namespace nxpl {

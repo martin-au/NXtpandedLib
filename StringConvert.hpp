@@ -7,12 +7,10 @@
 */
 
 extern "C" {
-#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
+#include "../../toppers_osek/include/kernel.h"
 #include "kernel_id.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
+#include "../../ecrobot/c/ecrobot_interface.h"
 }
-
-#include "C:/cygwin/GNUARM/include/c++/4.0.2/tr1/type_traits"
 
 namespace nxpl {
 
@@ -83,25 +81,8 @@ S8 numToStr(float f, char* dest, U8 places = 2);
  */
 S8 numToHex(U32 value, char* dest);
 
-/**\brief Convert number to string.
- * The size of destination string must be big enough.
- * 12 chars should be enough for all 32 bit types.
- * You can pre calculate the resulting string size with nxpl::numDigits()+1 for nulltermination.
- *
- * @param value Number to convert.
- * @param dest Destination string.
- * @return Size of resulting string.
- */
-template<typename T>
-S8 numToStr(T value, char* dest) {
-	if(std::tr1::is_floating_point<T>::value) {
-		return numToStr(static_cast<float>(value), dest);
-	}
-	if (std::tr1::is_signed<T>::value)
-		return numToStr(static_cast<S32>(value), dest);
-	else
-		return numToStr(static_cast<U32>(value), dest);
-}
+
+
 
 }
 

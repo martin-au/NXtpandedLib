@@ -342,7 +342,7 @@ public:
 			append('0');
 		else {
 			addBuffer(numDigits(static_cast<S32>(in_value)));
-			length += numToStr(in_value, this->string + length);
+			length += numToStr(static_cast<S32>(in_value), this->string + length);
 		}
 		return *this;
 	}
@@ -352,7 +352,7 @@ public:
 			append('0');
 		else {
 			addBuffer(numDigits(static_cast<U32>(in_value)));
-			length += numToStr(in_value, this->string + length);
+			length += numToStr(static_cast<U32>(in_value), this->string + length);
 		}
 		return *this;
 	}

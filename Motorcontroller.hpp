@@ -15,13 +15,11 @@
 #include "Mutex.hpp"
 #include "Uncopyable.hpp"
 
-//#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Clock.h"
-//#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Port.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Motor.h"
+#include "../../ecrobot/c++/device/Motor.h"
 
 // Sleep
 extern "C" {
-	#include "C:/cygwin/nxtOSEK/ecrobot/c/rtoscalls.h"
+	#include "../../ecrobot/c/rtoscalls.h"
 }
 
 

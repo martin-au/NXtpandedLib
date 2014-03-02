@@ -12,7 +12,7 @@
  *	\ingroup Utilities
 */
 
-#include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Clock.h"
+#include "../../ecrobot/c++/device/Clock.h"
 
 namespace nxpl {
 

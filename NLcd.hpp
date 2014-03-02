@@ -12,9 +12,12 @@
  *	\ingroup NxtLcd
 */
 
+extern "C" {
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h"
+}
+
 //#include "Uncopyable.hpp"
 #include "LcdConstants.hpp"
-//#include <algorithm>
 
 // NULL
 #include <stddef.h>

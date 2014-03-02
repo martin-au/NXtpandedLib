@@ -9,16 +9,15 @@
 
 extern "C" {
 
-#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
+#include "../../toppers_osek/include/kernel.h"
 #include "kernel_id.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c/rtoscalls.h"
+#include "../../ecrobot/c/ecrobot_interface.h"
+#include "../../ecrobot/c/rtoscalls.h"
 
 // System
 DeclareEvent(EventSleep);
 DeclareEvent(EventSleepI2C);
 DeclareCounter(SysTimerCnt);
-
 // User
 DeclareResource(ostreamRes);
 DeclareResource(motorARes);
