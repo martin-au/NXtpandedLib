@@ -1,6 +1,10 @@
 #ifndef __NSTRING_H_
 #define __NSTRING_H_
 
+/** \file
+ *	\ingroup Utilities
+*/
+
 extern "C" {
 	#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
 	#include "kernel_id.h"

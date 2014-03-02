@@ -8,6 +8,10 @@
 #ifndef __MOTORCONTROLLER_HPP_
 #define __MOTORCONTROLLER_HPP_
 
+/** \file
+ *	\ingroup NxtIO
+*/
+
 #include "Mutex.hpp"
 #include "Uncopyable.hpp"
 

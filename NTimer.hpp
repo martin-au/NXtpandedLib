@@ -8,6 +8,10 @@
 #ifndef __NTIMER_HPP_
 #define __NTIMER_HPP_
 
+/** \file
+ *	\ingroup Utilities
+*/
+
 #include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Clock.h"
 
 namespace nxpl {

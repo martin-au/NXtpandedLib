@@ -8,6 +8,10 @@
 #ifndef __NCOM_HPP_
 #define __NCOM_HPP_
 
+/** \file
+ *	\ingroup Communication
+*/
+
 #include "C:/cygwin/nxtOSEK/ecrobot/c++/device/Usb.h"
 
 

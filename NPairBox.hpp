@@ -8,9 +8,13 @@
 #ifndef __NPAIRBOX_HPP_
 #define __NPAIRBOX_HPP_
 
+/** \file
+ *	\ingroup NxtLcd
+*/
+
 #include <C:/cygwin/GNUARM/include/c++/4.0.2/tr1/utility>
 
-#include "NWidget.hpp"
+#include "NAlignment.hpp"
 
 namespace nxpl {
 

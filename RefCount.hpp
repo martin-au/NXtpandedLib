@@ -1,4 +1,8 @@
 
+/** \file
+ *	\ingroup Utilities
+*/
+
 namespace nxpl {
 
 /**

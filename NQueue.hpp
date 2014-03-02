@@ -8,17 +8,22 @@
 #ifndef __NQUEUE_H_
 #define __NQUEUE_H_
 
+/** \file
+ *	\ingroup Utilities
+*/
+
 #include "stdlib"
 #include "Uncopyable.hpp"
 
-/**
+namespace nxpl {
+
+/** \brief Defines a general queue abstraction.
+*
 * This interface defines a general queue abstraction that uses
 * templates so that it can work with any element type.
 *
 * \sa http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29
 */
-namespace nxpl {
-
 template <typename T>
 class NQueue : private Uncopyable { // no copy functions at the moment.
 private:

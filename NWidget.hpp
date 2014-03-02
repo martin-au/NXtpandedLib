@@ -8,38 +8,16 @@
 #ifndef __NWIDGET_HPP_
 #define __NWIDGET_HPP_
 
+/** \file
+ *	\ingroup NxtLcd
+*/
 
 // for static const
 #include "NLcd.hpp"
 
 extern "C" int __cxa_pure_virtual(){return 0;}
 
-/*
- * TODO: Introduce polymorph with virtual ..?
- */
 namespace nxpl {
-
-class NAlignment {
-private:
-	S8 val;
-	explicit NAlignment(S8 align) : val(align) {};
-public:
-	static NAlignment none()    { return NAlignment(0); }  /**No alignment<*/
-	static NAlignment right() 	{ return NAlignment(1); }  /**Align right to object<*/
-	static NAlignment left() 	{ return NAlignment(-1); } /**Align left to object<*/
-	static NAlignment top() 	{ return NAlignment(-2); } /**Align top to object<*/
-	static NAlignment bottom() 	{ return NAlignment(2); }  /**Align bottom to object<*/
-
-	bool operator==(const NAlignment& rhs) const {
-		return (val == rhs.val);
-	}
-
-	/** \brief Get the id of Alignment.
-	 * Used for lib functions internally.
-	 * @return id
-	 */
-	inline S8 get() const { return val; }
-};
 
 // NWidget is designed as a base class which provides space managing functions
 // Be aware: All coordinates are converted into pixel coordinates (100x64)

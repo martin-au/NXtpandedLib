@@ -8,19 +8,25 @@
 #ifndef __NLCD_HPP_
 #define __NLCD_HPP_
 
-//#include "Uncopyable.hpp"
+/** \file
+ *	\ingroup NxtLcd
+*/
 
+//#include "Uncopyable.hpp"
 #include "LcdConstants.hpp"
 //#include <algorithm>
 
+// NULL
+#include <stddef.h>
+
 namespace nxpl {
 
-// functors for setPixel function
 struct PixelOn;
 struct PixelOff;
 struct PixelInvert;
 
-/**
+/** \brief Provides low level pixel functions.
+ *
  * NLcd is a very low level class
  * It is designed to direct access pixels of the lcd
  * Its high efficient so there is no range checking!!
@@ -31,34 +37,80 @@ private:
 	U8 *disp;
 public:
 
-	// use standard lcd of nxt
+	/** \brief Use standard lcd.
+	 * Constructs a lcd object which directly draws on the nxt lcd.
+	 */
 	NLcd() :
 			disp(display_get_buffer()) {
 	}
 
-	// bitmap constructor
+	/** \brief Bitmap constructor
+	 * Constructs an lcd object which draws on a bitmap with size width * depth.
+	 * @param width Width of the bitmap in pixels.
+	 * @param depth Depth of the bitmap in rows.
+	 */
 	NLcd(U32 width, U32 depth) :
 			disp(new U8[width * depth]) {
 	}
 
+	/**
+	 * \brief Deletes bitmap if you used bitmap constructor
+	 */
 	~NLcd() {
 		if (disp != display_get_buffer()) {
 			delete[] disp;
 		}
 	}
 
+	/** \brief Checks if there is an error.
+	 *
+	 * @return true if no error.
+	 */
 	bool noError() {
-		return (disp != 0);
+		return (disp != NULL);
 	}
 
-	/// fastest way to update pixel fields!
-	// for example a horizontal line   *******  <- mask is same for every one
-	inline void pixelMask(const U8 X, const U8 line, U8 const mask) {
+	/** \brief Set a pixel mask of size LCD::DEPTH.
+	 *
+	 * This sounds complicated but let me explain: <br>
+	 * The display array looks like this.  <br>
+	 * |||| < line 0 <br>
+	 * |||| < line 1 <br>
+	 * 0123 < x <br>
+	 * The mask is represented by | <br>
+	 * If we look closer to the mask we see that each mask consists of 8 pixels (LCD::DEPTH)<br>
+	 * The 8 pixels are represented by a unsigned 8 bit number<br>
+	 * So if the number is 1 the pixel mask looks like this: 0000 0001 first pixel ist set<br>
+	 * If the number is 20 the pixel mask looks like this: 0001 0100<br>
+	 *
+	 * \note This is the fastest way to update a set of pixels.
+	 *
+	 * @param X   The X-Coordinate from the left.
+	 * @param line The line from the top.
+	 * @param mask Pixelmask.
+	 */
+	inline void pixelMask(U8 X, U8 line, U8 mask) {
 		*(disp + (line * LCD::WIDTH + X)) = mask; // overlay! change to xor for no overlay?
 	}
 
+	/** \brief Copy bitmap array into bitmap handled by NLcd or directly to nxt lcd.
+	 *
+	 * @param data Bitmap array
+	 * @param width Width of bitmap
+	 * @param depth Depth of bitmap
+	 * @param x Offset-X-Coordinate in destination
+	 * @param y Offset-Y-Coordinate in destination
+	 */
 	void copyBitmap(const U8 *data, U32 width, U32 depth, U32 x, U32 y);
 
+	/** \brief Copy data handled by other NLcd into this NLcd.
+	 *
+	 * @param lcdBitmap Source to copy.
+	 * @param width Width of source bitmap.
+	 * @param depth Depth of source bitmap.
+	 * @param x Offset-X-Coordinate in destination
+	 * @param y Offset-Y-Coordinate in destination
+	 */
 	void copyNLcdBitmap(NLcd lcdBitmap, U32 width, U32 depth, U32 x, U32 y) {
 		copyBitmap(lcdBitmap.disp, width, depth, x, y);
 	}
@@ -68,7 +120,12 @@ public:
 	// set  = 0000 1000
 	// res  = 0100 1000
 
-	inline void pixelOn(const U8 X, const U8 Y) {
+	/**\brief Set pixel on.
+	 * Make pixel visible.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline void pixelOn(U8 X, U8 Y) {
 		/* Test for pixel write fails!
 		 if(!pixelInLcd(X, Y)) {
 		 cout << "fail" << endl;
@@ -86,7 +143,12 @@ public:
 	// set  = 0000 1000
 	// res  = 0100 0000
 
-	inline void pixelOff(const U8 X, const U8 Y) {
+	/**\brief Set pixel off.
+	 * Make pixel invisible.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline void pixelOff(U8 X, U8 Y) {
 		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) &=
 				~(1 << (Y % LCD::DEPTH));
 	}
@@ -96,41 +158,62 @@ public:
 	// set  = 0000 1001
 	// res  = 0100 0001
 
-	inline void invertPixel(const U8 X, const U8 Y) {
+	/**\brief Invert pixel.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline void invertPixel(U8 X, U8 Y) {
 		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) ^=
 				(1 << (Y % LCD::DEPTH));
 	}
 
-	inline bool getPixel(const U8 X, const U8 Y) const {
+	/**\brief Get pixel state.
+	 * \note This function takes more time than all other set functions.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline bool getPixel(U8 X, U8 Y) const {
 		U8 k = Y % LCD::DEPTH;
 		return ((*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X))) & (1 << k)) >> k;
 	}
 
-	// is this useful? put outside of lcd class?
+	/**
+	 * \brief Set pixel with functor
+	 * @param op Functor: NLcd::PixelOn, NLcd::PixelOff, NLcd::PixelInvert
+	 * @param X  X-Coordinate.
+	 * @param Y  Y-Coordinate.
+	 */
 	template<typename PixelOp>
 	inline void setPixel(PixelOp op, const U8 X, const U8 Y) {
 		op(*this, X, Y);
 	}
-};
 
+	/**
+	 * \brief Functor for NLcd::setPixel(PixelOp op, const U8 X, const U8 Y)
+	*/
+	struct PixelOn {
+		void operator()(NLcd& lcd, U8 x, U8 y) const {
+			lcd.pixelOn(x, y);
+		}
+	};
 
-// functors
-struct PixelOn {
-	void operator()(NLcd& lcd, U8 x, U8 y) const {
-		lcd.pixelOn(x, y);
-	}
-};
+	/**
+	 * \brief Functor for NLcd::setPixel(PixelOp op, const U8 X, const U8 Y)
+	*/
+	struct PixelOff {
+		void operator()(NLcd& lcd, U8 x, U8 y) const {
+			lcd.pixelOff(x, y);
+		}
+	};
 
-struct PixelOff {
-	void operator()(NLcd& lcd, U8 x, U8 y) const {
-		lcd.pixelOff(x, y);
-	}
-};
-
-struct PixelInvert {
-	void operator()(NLcd& lcd, U8 x, U8 y) const {
-		lcd.invertPixel(x, y);
-	}
+	/**
+	 * \brief Functor for NLcd::setPixel(PixelOp op, const U8 X, const U8 Y)
+	*/
+	struct PixelInvert {
+		void operator()(NLcd& lcd, U8 x, U8 y) const {
+			lcd.invertPixel(x, y);
+		}
+	};
 };
 
 

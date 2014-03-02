@@ -5,6 +5,10 @@
 #include "NLcd.hpp"
 #include "GuiTypes.hpp"
 
+/** \file
+ *	\ingroup NxtLcd
+*/
+
 namespace nxpl {
 
 /**

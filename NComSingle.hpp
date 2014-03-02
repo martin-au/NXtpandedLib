@@ -9,6 +9,10 @@
 #ifndef __NCOMSINGLE_HPP_
 #define __NCOMSINGLE_HPP_
 
+/** \file
+ *	\ingroup Communication
+*/
+
 #include "NCom.hpp"
 
 #include "NString.hpp"

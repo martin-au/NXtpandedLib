@@ -6,12 +6,14 @@
  */
 
 // NVector has problems with linking correctly in extern "C" block
-// C-Arrays are the way to go
-
+// C-Arrays are the way to go#
 
 #ifndef __NVECTOR_HPP_
 #define __NVECTOR_HPP_
 
+/** \file
+ *	\ingroup Utilities
+*/
 
 extern "C" {
 	#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
@@ -36,6 +38,8 @@ namespace nxpl {
 const float _DefaultStart = 0.30; /**< Default start position in %*/
 
 /**
+ * \brief Light, fast vector implementation just like std::vector.
+ *
  * First: This class is not from master-author of NXtpandendLib
  * The vector interface is like std::vector so you can use std::vector documentation if you do not understand something
  * from this "very light" documentation.
@@ -509,7 +513,6 @@ public:
 	}
 
 	/**
-	 *@class iterator
 	 *@brief vector iterator
 	 */
 	class iterator {
@@ -657,7 +660,7 @@ public:
 	friend class iterator;
 
 	/**
-	 *const iterator type
+	 *\brief Constant vector iterator
 	 */
 	class const_iterator: public iterator {
 	protected:

@@ -8,6 +8,10 @@
 #ifndef __OSTREAM_H_
 #define __OSTREAM_H_
 
+/** \file
+ *	\ingroup NxtLcd
+*/
+
 extern "C" {
 	#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
 	#include "kernel_id.h"
@@ -24,6 +28,14 @@ extern "C" {
 // TODO new function show because this is also a NWidget?
 namespace nxpl {
 
+/**
+ * \brief Create a console widget on the lcd which works with streams.
+ *
+ * This class provides a interface just like the std::ostream in standard C++
+ * Its main indent is to see what your application does. You simply create a global
+ * object called for example cout (like on computers) and then you can use it to make outputs
+ * anywhere in your code. This class is task save so you can use it in all your tasks.
+ */
 class NOstream : public NWidget, private Uncopyable
 {
 private:
@@ -66,7 +78,7 @@ public:
 			  U8 rows = LCD::ROWS,
 			  U8 indent = 0,
 			  U8 width = LCD::LINE_WIDTH);
-	~NOstream();
+	virtual ~NOstream();
 
 	/** \brief Copy data of buffer into lcd.
 	 *

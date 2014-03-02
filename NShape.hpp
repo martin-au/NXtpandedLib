@@ -8,12 +8,23 @@
 #ifndef __NSHAPE_HPP_
 #define __NSHAPE_HPP_
 
+/** \file
+ *	\ingroup NxtLcd
+*/
 
 // make pure virtual function work with nxtOSEK
 extern "C" int __cxa_pure_virtual(){return 0;}
 
 namespace nxpl {
 
+/**
+ * \brief Baseclass for all shapes.
+ *
+ * The class bundles together the NWidget class which is for positioning show/hide and
+ * the NLcd class which gives access to actual draw pixels on the lcd.
+ * For example it looks before every call to showImpl if the NLcd object is ok and if the object is in lcd.
+ * This makes all derived classes saver because we check before the actual call to the function if everything is ok.
+ */
 class NShape : public NWidget {
 protected:
 	// at the moment protected for my comfort

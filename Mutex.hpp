@@ -8,6 +8,9 @@
 #ifndef __MUTEX_HPP_
 #define __MUTEX_HPP_
 
+/** \file
+ *	\ingroup System
+*/
 
 extern "C" {
 	#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"

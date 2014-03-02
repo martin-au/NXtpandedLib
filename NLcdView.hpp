@@ -8,6 +8,10 @@
 #ifndef __NLCDVIEW_HPP_
 #define __NLCDVIEW_HPP_
 
+/** \file
+ *	\ingroup NxtLcd
+*/
+
 #include "NVector.hpp"
 #include "NWidget.hpp"
 #include "Uncopyable.hpp"

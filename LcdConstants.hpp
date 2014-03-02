@@ -1,8 +1,15 @@
 #ifndef __LCDCONSTANTS_HPP_
 #define __LCDCONSTANTS_HPP_
 
+/** \file
+ *	\ingroup NxtLcd
+*/
+
 // double nesting to avoid namespace pollution
 namespace nxpl {
+/**
+ * \brief Includes all constants and converter functions for the NXT lcd.
+ */
 namespace LCD {
 	const S8 WIDTH = 100;     /**<Lcd width in pixel*/
 	const S8 HEIGHT = 64; 	  /**<Lcd height in pixel*/

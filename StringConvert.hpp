@@ -2,6 +2,9 @@
 #ifndef __CONVERT_H_
 #define __CONVERT_H_
 
+/** \file
+ *	\ingroup Utilities
+*/
 
 extern "C" {
 #include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"

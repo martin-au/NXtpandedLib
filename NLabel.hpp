@@ -12,6 +12,10 @@
 #include "NWidget.hpp"
 #include "Uncopyable.hpp"
 
+/** \file
+ *	\ingroup NxtLcd
+*/
+
 namespace nxpl {
 
 /** \brief Label for NXT Display.
@@ -81,7 +85,7 @@ public:
 	 *
 	 * It will not update the display.
 	 */
-	~NLabel();
+	virtual ~NLabel();
 
 	/** \brief Set precision for floating-point-numbers.
 	 *

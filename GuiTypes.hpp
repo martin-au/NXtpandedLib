@@ -2,11 +2,16 @@
  * GuiTypes.hpp
  *
  *  Created on: 23.11.2013
- *      Author: Martin
+ *      Author: Martin Aumair
  */
+
 
 #ifndef __GUITYPES_HPP_
 #define __GUITYPES_HPP_
+
+/** \file
+ *	\ingroup NxtLcd
+*/
 
 namespace nxpl {
 
