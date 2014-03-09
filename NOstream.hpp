@@ -35,10 +35,13 @@ namespace nxpl {
  * Its main indent is to see what your application does. You simply create a global
  * object called for example cout (like on computers) and then you can use it to make outputs
  * anywhere in your code. This class is task save so you can use it in all your tasks.
+ *
+ * For all output streams: If line gets to long for display, console will auto line feed with an indent.
  */
 class NOstream : public NWidget, private Uncopyable
 {
 private:
+	static const U8 autoLineFeedIndent = 2;
 	// Actual cursor Line
 	U8 cursorLine;
 	mutable bool somenew;

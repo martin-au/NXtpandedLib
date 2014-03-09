@@ -129,10 +129,14 @@ void NOstream::streamhandler(const char *str) {
 	U16 k = 0;
 	U16 i = strlen(textBuffer[cursorLine]);
 	for (; str[k] != '\0'; j++) {
+		// if input is to long we write to new line
 		if ((i + j) >= fieldWidth()) {
-			// cutoff or line feed?
-			// textBuffer[cursorLine][fieldWidth()] = '\0';
-			break;
+			textBuffer[cursorLine][fieldWidth()] = '\0';
+			newline();
+			newLineSpace();
+			j = 0;
+			i = autoLineFeedIndent;
+			continue;
 		}
 		if (str[k] == '\n') {
 			textBuffer[cursorLine][i + j] = '\0';

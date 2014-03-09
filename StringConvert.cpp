@@ -100,8 +100,6 @@ S8 numToStr(float num, char* dest, U8 places) {
 		*p++ = '0';
 	} else {
 		char m;
-
-		places = 2;
 		for (m = 0; m < places; m++) {
 			frac_part = (frac_part << 3) + (frac_part << 1);
 
