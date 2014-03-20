@@ -12,9 +12,6 @@
  *	\ingroup NxtLcd
 */
 
-// make pure virtual function work with nxtOSEK
-extern "C" int __cxa_pure_virtual(){return 0;}
-
 namespace nxpl {
 
 /**
