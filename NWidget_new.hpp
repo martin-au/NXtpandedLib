@@ -41,16 +41,19 @@ private:
 	NWidget(NTextBox textBox) : box(textBox) {}
 	virtual ~NWidget() {}
 
+	virtual void showImpl() const {
+		showWidgetImpl();
+	}
+	virtual void hideImpl() const {hideWidgetImpl();}
+	virtual void showWidgetImpl() const = 0;
+	virtual void hideWidgetImpl() const = 0;
 public:
 	NTextBox textBox() const {
 		return NTextBox;
 	}
 
-	NTextBox & textBox() {
-		return &NTextBox;
-	}
-
 	void setTextBox(NTextBox textBox) {
+		this->hide(false); // Really important, otherwise we do not know where to clean!
 		box = textBox;
 	}
 };

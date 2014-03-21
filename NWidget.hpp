@@ -5,6 +5,7 @@
  *      Author: Martin
  */
 
+
 #ifndef __NWIDGET_HPP_
 #define __NWIDGET_HPP_
 
@@ -15,7 +16,7 @@
 // for static const
 #include "NLcd.hpp"
 
-extern "C" int __cxa_pure_virtual(){return 0;}
+//extern "C" int __cxa_pure_virtual(){return 0;}
 
 namespace nxpl {
 

@@ -49,15 +49,19 @@ void user_1ms_isr_type2(void){
 
 // C++ Includes, Globals
 
-#include "NOstream.hpp"
-nxpl::mutex_t streammtx(ostreamRes);
-nxpl::NOstream cout(streammtx);
+//#include "NOstream.hpp"
+// nxpl::mutex_t streammtx(ostreamRes);
+//nxpl::NOstream cout(streammtx);
+
+#include "NLabel_new.hpp"
 
 #include "NTimer.hpp"
 
+/*
 #include "NLabel.hpp"
 #include "NPairBox.hpp"
 #include "NLcdView.hpp"
+*/
 
 /*
 #include "NComSingle.hpp"
@@ -88,14 +92,23 @@ NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
 
 // 1000 ms cycle
 
-#include "NVector.hpp"
-
-nxpl::NVector<int> vec(3000);
-
 extern "C" {
 
 TASK(TaskMain) {
 	nxpl::NTimer timer;
+
+	timer.start();
+
+	nxpl::NLabel label1("TEST!", nxpl::NTextBox(nxpl::NCursor(5, 1), 5, 1));
+	label1.show(true);
+
+	timer.stop();
+
+	label1.setNumber(timer.getLast());
+	label1.show(true);
+
+	timer.reset();
+
 	/*
 	nxpl::NLabel label1("time:");
 	nxpl::NLabel label2;
@@ -122,6 +135,7 @@ TASK(TaskMain) {
 	box.show(true);
 	*/
 
+	/* view test
 	nxpl::NLabel label1("label1", 0, 0);
 	nxpl::NLabel label2(sizeof(label1), 0, 1);
 
@@ -145,6 +159,7 @@ TASK(TaskMain) {
 	view1.remove(&label1);
 
 	nxpl::NLcdView::swap(view2, view1, true);
+*/
 
 	/*
 	// 0 - os 25344
@@ -158,7 +173,7 @@ TASK(TaskMain) {
 	delete[] vec;
 	*/
 
-	cout.flush(true);
+	//cout.flush(true);
 
 	/* LABEL TEST
 	streammtx.acquire();

@@ -23,11 +23,12 @@
 namespace nxpl {
 
 class NTextBox {
-public:
+private:
 	NCursor baseLeftTop;
-	S8 charsInLineVal, linesVal;
+	U8 charsInLineVal, linesVal;
 
-	NTextBox(NCursor baseLeftTop, S16 charsInLine, S16 lines)
+public:
+	NTextBox(NCursor baseLeftTop, U8 charsInLine, U8 lines)
 	: baseLeftTop(baseLeftTop), charsInLineVal(charsInLine), linesVal(lines) {
 
 	}
@@ -37,7 +38,7 @@ public:
 	}
 
 	NCursor & base() {
-		return &baseLeftTop;
+		return baseLeftTop;
 	}
 
 	void setBase(NCursor base) {
@@ -48,7 +49,7 @@ public:
 		return charsInLineVal;
 	}
 
-	void setCharsInLine(S8 chars) const {
+	void setCharsInLine(U8 chars) {
 		charsInLineVal = chars;
 	}
 
@@ -56,7 +57,7 @@ public:
 		return linesVal;
 	}
 
-	void setLines(S8 lines) {
+	void setLines(U8 lines) {
 		linesVal = lines;
 	}
 };
