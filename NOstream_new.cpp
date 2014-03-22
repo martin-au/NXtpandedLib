@@ -49,7 +49,7 @@ void NOstream::textBoxValid() {
 
 // make sure that there is space for new line
 void NOstream::newLineSpace() {
-	if (cursorLine >= textBox().lines()) {
+	if (streamBuffer->cursorLine >= textBox().lines()) {
 		for (U8 i = 0; i < (textBox().lines()-1); ++i) {
 			strcpy(streamBuffer->buffer[i], streamBuffer->buffer[i + 1]);
 		}
@@ -58,7 +58,7 @@ void NOstream::newLineSpace() {
 	}
 }
 
-void NOstream::flush(bool update) const { // TODO Continue here
+void NOstream::showWidgetImpl() const {
 	if(!somenew) return;
 
 	LockGuard lock(mutex);
@@ -93,30 +93,20 @@ void NOstream::flush(bool update) const { // TODO Continue here
 	}
 	somenew = false;
 	display_goto_xy(save_x, save_y);
-	if(update) {
-		display_update();
-	}
-	setVisibility(true);
 }
 
-void NOstream::hide(bool update) const {
-	if(!inLcd()) return;
-
+void NOstream::hideWidgetImpl() const {
 	int save_x = display_get_x();
 	int save_y = display_get_y();
 
-	U8 last = indent() + fieldWidth();
-	for (U8 i = 0; i < lines(); ++i) {
-		for(U8 j = indent(); j < last; ++j) {
+	U8 last = textBox().base().indent() + textBox().charsInLine();
+	for (U8 i = 0; i < textBox().lines(); ++i) {
+		for(U8 j = textBox().base().indent(); j < last; ++j) {
 			display_goto_xy(j, i);
 			display_char(' ');
 		}
 	}
 	display_goto_xy(save_x, save_y);
-	if(update) {
-		display_update();
-	}
-	setVisibility(false);
 }
 
 U16 NOstream::precision() const {
@@ -136,11 +126,11 @@ void NOstream::streamhandler(const char *str) {
 	LockGuard lock(mutex);
 	U16 j = 0;
 	U16 k = 0;
-	U16 i = strlen(textBuffer[cursorLine]);
+	U16 i = strlen(streamBuffer->buffer[streamBuffer->cursorLine]);
 	for (; str[k] != '\0'; j++) {
 		// if input is to long we write to new line
-		if ((i + j) >= fieldWidth()) {
-			textBuffer[cursorLine][fieldWidth()] = '\0';
+		if ((i + j) >= textBox().charsInLine()) {
+			streamBuffer->buffer[streamBuffer->cursorLine][textBox().charsInLine()] = '\0';
 			newline();
 			newLineSpace();
 			j = 0;
@@ -148,17 +138,17 @@ void NOstream::streamhandler(const char *str) {
 			continue;
 		}
 		if (str[k] == '\n') {
-			textBuffer[cursorLine][i + j] = '\0';
+			streamBuffer->buffer[streamBuffer->cursorLine][i + j] = '\0';
 			newline();
 			newLineSpace();
 			j = 0;
 			i = 0;
 		} else {
-			textBuffer[cursorLine][i + j] = str[k];
+			streamBuffer->buffer[streamBuffer->cursorLine][i + j] = str[k];
 		}
 		k++;
 	}
-	textBuffer[cursorLine][i + j] = '\0';
+	streamBuffer->buffer[streamBuffer->cursorLine][i + j] = '\0';
 
 	somenew = true;
 }
@@ -184,9 +174,9 @@ NOstream& NOstream::operator<<(const char* str) {
 	return *this;
 }
 
-NOstream& NOstream::operator<<(char str) {
+NOstream& NOstream::operator<<(char ch) {
 	char tmp[2];
-	tmp[0] = str;
+	tmp[0] = ch;
 	tmp[1] = '\0';
 	streamhandler(tmp);
 	return *this;

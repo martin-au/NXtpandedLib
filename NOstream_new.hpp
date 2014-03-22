@@ -28,7 +28,7 @@ extern "C" {
 #include "Uncopyable.hpp"
 #include "Mutex.hpp"
 
-// TODO new function show because this is also a NWidget?
+
 namespace nxpl {
 
 /**
@@ -45,8 +45,6 @@ class NOstream : public NWidget, private Uncopyable
 {
 private:
 	static const U8 autoLineFeedIndent = 2;
-	// Actual cursor Line
-	U8 cursorLine;
 	mutable bool somenew;
 	bool nextHex;
 	U16 floatplaces;
@@ -66,10 +64,11 @@ private:
 	// Console buffer array
 	struct StreamBuffer {
 	public:
-		explicit StreamBuffer(U8 len, U8 rows) : currentLen(len), currentRows(rows) {
+		explicit StreamBuffer(U8 len, U8 rows) :
+				currentLen(len), currentRows(rows), cursorLine(0) {
 			buffer = new char *[rows];
 			for (int i = 0; i < rows + 1; i++) {
-				buffer[i] = new char[len+1]; // +1 for '\0'
+				buffer[i] = new char[len + 1]; // +1 for '\0'
 				strcpy(buffer[i], "");
 			}
 		}
@@ -84,6 +83,8 @@ private:
 		char **buffer;
 		U8 currentLen;
 		U8 currentRows;
+		// Actual cursor Line
+		U8 cursorLine;
 	};
 	StreamBuffer *streamBuffer;
 
@@ -91,7 +92,7 @@ private:
 	typedef NOstream& (*NOstreamManipulator)(NOstream&);
 
 	void newline() {
-		++cursorLine;
+		++(streamBuffer->cursorLine);
 	}
 	void newLineSpace();
 
@@ -99,9 +100,7 @@ private:
 	// responsible for text formatting...
 	void streamhandler(const char *str);
 
-	virtual void showWidgetImpl() const {
-		flush(update);
-	}
+	virtual void showWidgetImpl() const;
 	virtual void hideWidgetImpl() const;
 public:
 	/** \brief Construct a console widget.
@@ -127,7 +126,9 @@ public:
 	 *
 	 * @param update If true update the display.
 	 */
-	void flush(bool update = false) const;
+	void flush(bool update = false) const {
+		this->show(update);
+	}
 
 	/**
 	 * \brief Get floating-point precision.
@@ -160,7 +161,7 @@ public:
 	friend NOstream& endl(NOstream& stream);
 
 	NOstream& operator<<(const char* str); /**<Put C-String into stream.*/
-	NOstream& operator<<(char str); /**<Put char into stream.*/
+	NOstream& operator<<(char ch); /**<Put char into stream.*/
 	NOstream& operator<<(S32 num); /**<Put signed 32bit number into stream.*/
 	NOstream& operator<<(U32 num); /**<Put unsigned 32bit number into stream.*/
 

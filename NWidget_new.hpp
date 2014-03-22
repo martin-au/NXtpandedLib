@@ -44,7 +44,9 @@ private:
 	virtual void showImpl() const {
 		showWidgetImpl();
 	}
-	virtual void hideImpl() const {hideWidgetImpl();}
+	virtual void hideImpl() const {
+		hideWidgetImpl();
+	}
 	virtual void showWidgetImpl() const = 0;
 	virtual void hideWidgetImpl() const = 0;
 public:
@@ -53,8 +55,14 @@ public:
 	}
 
 	void setTextBox(NTextBox textBox) {
-		this->hide(false); // Really important, otherwise we do not know where to clean!
+		bool visible = this->isVisible();
+		if(visible) {
+			this->hide(false); // Really important, otherwise we do not know where to clean!
+		}
 		box = textBox;
+		if(visible) {
+			this->show(false);
+		}
 	}
 };
 
