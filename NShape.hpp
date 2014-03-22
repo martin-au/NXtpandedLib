@@ -1,15 +1,19 @@
 /*
- * NShape.hpp
+ * NShape_new.hpp
  *
- *  Created on: 23.11.2013
+ *  Created on: 20.03.2014
  *      Author: Martin
  */
 
-#ifndef __NSHAPE_HPP_
-#define __NSHAPE_HPP_
+#ifndef NSHAPE_NEW_HPP_
+#define NSHAPE_NEW_HPP_
 
-/** \file
- *	\ingroup NxtLcd
+#include "NGuiObject.hpp"
+#include "NLcd.hpp"
+
+/**
+ * \file
+ * \ingroup NxtLcd
 */
 
 namespace nxpl {
@@ -22,10 +26,25 @@ namespace nxpl {
  * For example it looks before every call to showImpl if the NLcd object is ok and if the object is in lcd.
  * This makes all derived classes saver because we check before the actual call to the function if everything is ok.
  */
-class NShape : public NWidget {
+class NShape : public NGuiObject {
 protected:
 	// at the moment protected for my comfort
 	mutable NLcd *lcd;
+
+private:
+	virtual void showShapeImpl() const = 0;
+	virtual void hideShapeImpl() const = 0;
+	// virtual void invertShapeImpl() const = 0;
+
+	virtual void showImpl() const {
+		if(lcd == 0) return;
+		showShapeImpl();
+	}
+
+	virtual void hideImpl() const {
+		if(lcd == 0) return;
+		hideShapeImpl();
+	}
 public:
 
 	NShape(NLcd *nlcd) : lcd(nlcd) {}
@@ -41,43 +60,7 @@ public:
 			return false;
 		}
 	}
-
-	virtual void show(bool update = false) const {
-		if(lcd == 0) return;
-		if (!inLcd()) return;
-		showImpl(update);
-		setVisibility(true);
-		if (update) {
-			display_update();
-		}
-	}
-
-	void hide(bool update = false) const {
-		if(lcd == 0) return;
-		if (!inLcd()) return;
-		eraseImpl(update);
-		setVisibility(false);
-		if (update) {
-			display_update();
-		}
-	}
-
-	void invert(bool update = false) const {
-		if(lcd == 0) return;
-		if (!inLcd()) return;
-		invertImpl(update);
-		setVisibility(!isVisible());
-		if (update) {
-			display_update();
-		}
-	}
-
-private:
-	virtual void showImpl(bool update) const = 0;
-	virtual void eraseImpl(bool update) const = 0;
-	virtual void invertImpl(bool update) const = 0;
 };
 
-}
 
-#endif /* __NSHAPE_HPP_ */
+#endif /* NSHAPE_NEW_HPP_ */

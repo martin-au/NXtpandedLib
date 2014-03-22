@@ -5,8 +5,8 @@
  *      Author: Martin
  */
 
-#ifndef UNCOPYABLE_HPP_
-#define UNCOPYABLE_HPP_
+#ifndef __UNCOPYABLE_HPP_
+#define __UNCOPYABLE_HPP_
 
 /** \file
  *	\ingroup Utilities

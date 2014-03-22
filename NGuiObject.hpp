@@ -8,7 +8,11 @@
 #ifndef __NGUIOBJECT_HPP_
 #define __NGUIOBJECT_HPP_
 
-extern "C" int __cxa_pure_virtual(){return 0;}
+extern "C" {
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h" // display_update
+}
+
+extern "C" int __cxa_pure_virtual() {return 0;}
 
 namespace nxpl {
 
@@ -18,9 +22,11 @@ private:
 	virtual void showImpl() const = 0;
 	virtual void hideImpl() const = 0;
 
-private:
+protected:
 	NGuiObject() : visible(false) {}
 	virtual ~NGuiObject() {}
+
+public:
 
 	/** \brief Make the object visible.
 	 *
@@ -53,9 +59,7 @@ private:
 	}
 };
 
-
-
 }
 
 
-#endif /* NGUIOBJECT_HPP_ */
+#endif /* __NGUIOBJECT_HPP_ */

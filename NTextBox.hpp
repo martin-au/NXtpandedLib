@@ -8,16 +8,6 @@
 #ifndef __NTEXTBOX_HPP_
 #define __NTEXTBOX_HPP_
 
-/*
- * NPixelBox.hpp
- *
- *  Created on: 19.03.2014
- *      Author: Martin
- */
-
-#ifndef __NPIXELBOX_HPP_
-#define __NPIXELBOX_HPP_
-
 #include "NCursor.hpp"
 
 namespace nxpl {
@@ -66,9 +56,4 @@ public:
 
 }
 
-
-#endif /* NPIXELBOX_HPP_ */
-
-
-
-#endif /* NTEXTBOX_HPP_ */
+#endif /* __NTEXTBOX_HPP_ */

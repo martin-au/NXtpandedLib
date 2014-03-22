@@ -53,7 +53,7 @@ void user_1ms_isr_type2(void){
 // nxpl::mutex_t streammtx(ostreamRes);
 //nxpl::NOstream cout(streammtx);
 
-#include "NLabel_new.hpp"
+#include "NLabel.hpp"
 
 #include "NTimer.hpp"
 

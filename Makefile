@@ -1,9 +1,8 @@
 # Target specific macros
 TARGET = mytest
 
-TARGET_CPP_SOURCES = sample.cpp \
-					 NString.cpp \
-					 NLabel_new.cpp		
+TARGET_CPP_SOURCES = \
+					 sample.cpp  
 	
 TOPPERS_OSEK_OIL_SOURCE = ./sample.oil 
 
@@ -18,6 +17,6 @@ C_OPTIMISATION_FLAGS = -Os
 O_PATH ?= build
 
 # makefile for NXtpandedLib
-# include /nxtOSEK/NXtpandedLib/NXtpandedLib.mak
+include /nxtOSEK/NXtpandedLib/NXtpandedLib.mak
 # makefile for C++(.cpp) build
 include /nxtOSEK/ecrobot/ecrobot++.mak

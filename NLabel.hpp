@@ -1,16 +1,18 @@
 /*
- * NLabel.hpp
+ * NLabel_new.hpp
  *
- *  Created on: 16.10.2013
+ *  Created on: 21.03.2014
  *      Author: Martin
  */
 
 #ifndef __NLABEL_HPP_
 #define __NLABEL_HPP_
 
-#include "NString.hpp"
 #include "NWidget.hpp"
+#include "NString.hpp"
 #include "Uncopyable.hpp"
+
+#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
 
 /** \file
  *	\ingroup NxtLcd
@@ -32,6 +34,18 @@ class NLabel: public NWidget, private Uncopyable {
 private:
 	NString *label;
 	bool somenew;
+
+	/** \brief Make the label visible.
+	 *
+	 * @param update If true update the display.
+	 */
+	virtual void showWidgetImpl() const;
+
+	/** \brief Make the label invisible.
+	 *
+	 * @param update If true update the display.
+	 */
+	virtual void hideWidgetImpl() const;
 public:
 	/** \brief Construct label object with positioning only.
 	 *
@@ -42,7 +56,10 @@ public:
 	 * @param row    Row of the lcd (0 - 7)
 	 * @param charWidth The width of the label in chars.
 	 */
-	explicit NLabel(S8 indent = 0, S8 row = 0, S8 charWidth = 5);
+	NLabel::NLabel(NTextBox box) :
+			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
+		textBox().setLines(1);
+	}
 
 	/** \brief Construct label object with position and string.
 	 *
@@ -54,7 +71,11 @@ public:
 	 * @param row    Row of the lcd (0 - 7)
 	 * @param charWidth The width of the label in chars.
 	 */
-	explicit NLabel(const NString &text, S8 indent = 0, S8 row = 0, S8 charWidth = 0);
+	explicit NLabel(const NString &text, NTextBox box) :
+			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
+		textBox().setLines(1);
+		setText(text);
+	}
 
 	/** Construct label object with position and C-String.
 	 *
@@ -66,7 +87,11 @@ public:
 	 * @param row Row of the lcd (0 - 7)
 	 * @param charWidth The width of the label in chars.
 	 */
-	explicit NLabel(const char *text, S8 indent = 0, S8 row = 0, S8 charWidth = 0);
+	explicit NLabel(char *text, NTextBox box) :
+			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
+		textBox().setLines(1);
+		setText(text);
+	}
 
 	/** \brief Construct label object with position and number.
 	 *
@@ -79,13 +104,20 @@ public:
 	 * @param numWidth The width of the label in chars.
 	 */
 	template<typename T>
-	NLabel(const T num, const S8 indent, const S8 row, S8 numWidth = 5);
+	NLabel(const T num, NTextBox box) :
+			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
+		textBox().setLines(1);
+		setNumber(num);
+	}
 
 	/** \brief Destructor clears the label from display.
 	 *
 	 * It will not update the display.
 	 */
-	virtual ~NLabel();
+	virtual ~NLabel() {
+		this->clear(); // TODO do not call virtual functions in destructors?
+		delete[] label;
+	}
 
 	/** \brief Set precision for floating-point-numbers.
 	 *
@@ -104,26 +136,29 @@ public:
 	}
 
 	/** \brief Set a label text.
-	 *
+	 * Text will be cut if its to long for the label
 	 * @param text Text to set.
 	 */
 	void setText(const NString &text) {
-		if(this->fieldWidth() == 0) this->fieldWidth(label->size());
-		if (text.size() > 0) {
+		if (text.size() > textBox().charsInLine()) {
+			*label = text.substr(0, textBox().charsInLine());
+		} else {
 			*label = text;
-			somenew = true;
 		}
+		somenew = true;
 	}
 
 	/** \brief Set a label text.
 	 *
 	 * @param text Text to set.
 	 */
-	void setText(const char *text) {
-		if(this->fieldWidth() == 0) this->fieldWidth(label->size());
+	void setText(char *text) {
 		if (text) {
-			*label = text;
 			somenew = true;
+			if (static_cast<U8>(strlen(text)) > textBox().charsInLine()) {
+				text[textBox().charsInLine()] = '\0';
+			}
+			*label = text;
 		}
 	}
 
@@ -147,7 +182,7 @@ public:
 	 *
 	 * @param text Text to set.
 	 */
-	NLabel& operator=(const char *text) {
+	NLabel& operator=(char *text) {
 		setText(text);
 		return *this;
 	}
@@ -169,60 +204,24 @@ public:
 		somenew = true;
 		hide(false);
 	}
-
-	/** Set position of the label on lcd.
-	 *
-	 * @param indent Indent in chars from the left side of the display. (0 - 15)
-	 * @param row Row of the lcd (0 - 7)
-	 * @return True if the position is on the lcd. (is visible)
-	 */
-	bool setPosition(const S8 indent, const S8 row) {
-		hide();
-
-		setField(indent, row, 1, this->fieldWidth());
-		//if (buddy)
-		//	buddy->alignBuddy(buddyAlignment);
-		somenew = true;
-		return inLcd();
-	}
-
-	/** \brief Make the label visible.
-	 *
-	 * @param update If true update the display.
-	 */
-	virtual void show(bool update = false) const;
-
-	/** \brief Make the label invisible.
-	 *
-	 * @param update If true update the display.
-	 */
-	virtual void hide(bool update = false) const;
 };
 
 // Must be declared here because of extern "C" problem
 
 template<typename T>
-NLabel::NLabel(const T num, const S8 indent, const S8 row, S8 numWidth)
- : label(new NString(numWidth)), somenew(true) {
-	setField(indent, row, 1, numWidth);
-	setNumber(num);
-}
-
-template<typename T>
 void NLabel::setNumber(T number) {
 	label->clear();
 	label->append(number);
-	// i think this is better you see the overflow and then optimize your program
-	if (static_cast<S8>(label->size()) > fieldWidth()) {
+	// i think this is better, you see the overflow and then optimize your program
+	if (static_cast<S8>(label->size()) > textBox().charsInLine()) {
 		label->clear();
-		for (S8 i = 0; i < this->fieldWidth(); ++i)
+		for (S8 i = 0; i < textBox().charsInLine(); ++i)
 			label->append('#');
 	}
-	if(this->fieldWidth() == 0) this->fieldWidth(label->size());
 	somenew = true;
 }
 
 
 }
 
-#endif /* NLABEL_HPP_ */
+#endif /* __NLABEL_HPP_ */

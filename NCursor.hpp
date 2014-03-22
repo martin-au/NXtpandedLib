@@ -8,7 +8,7 @@
 #ifndef __NCURSOR_HPP_
 #define __NCURSOR_HPP_
 
-#include "NOstream.hpp"
+#include "NString.hpp"
 
 namespace nxpl {
 
@@ -35,15 +35,35 @@ public:
 		lineVal = line;
 	}
 
-	NCursor operator+=(NCursor point) {
-		indentVal += point.indent();
-		lineVal += point.line();
+	void moveForward() {
+		indentVal++;
+	}
+
+	void moveBackward() {
+		indentVal--;
+	}
+
+	void moveNextLine() {
+		lineVal++;
+	}
+
+	void movePerviousLine() {
+		lineVal--;
+	}
+
+	NCursor operator+=(NCursor cursor) {
+		indentVal += cursor.indent();
+		lineVal += cursor.line();
 		return *this;
 	}
-	NCursor operator-=(NCursor point) {
-		indentVal -= point.indent();
-		lineVal -= point.line();
+	NCursor operator-=(NCursor cursor) {
+		indentVal -= cursor.indent();
+		lineVal -= cursor.line();
 		return *this;
+	}
+
+	NString asString() const {
+		return NString("HEY");
 	}
 };
 
@@ -64,9 +84,11 @@ const NCursor operator-(NCursor p1, NCursor p2) {
 	return NCursor(p1.indent() - p2.indent(), p2.line() - p2.line());
 }
 
+/*
 NOstream& operator<<(NOstream &stream, NCursor &point) {
 	return stream << '(' << point.indent() << "," << point.line() << ')';
 }
+*/
 
 }
 

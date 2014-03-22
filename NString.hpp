@@ -13,9 +13,10 @@ extern "C" {
 
 
 #include "StringConvert.hpp"
-#include "NOstream.hpp"
+//#include "NOstream.hpp"
 
 namespace nxpl {
+
 
 // to do: replace, erase
 /** \brief A basic, light and fast implementation of a C++ String.
@@ -326,10 +327,12 @@ public:
 	 * @param str
 	 * @return
 	 */
+	/*
 	friend NOstream& operator<<(NOstream &os, const NString& str) {
 		os << str.data();
 		return os;
 	}
+	*/
 
 	//******************************************************************************
 	// Converter for numbers -> should make things easier

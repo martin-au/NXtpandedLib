@@ -5,6 +5,8 @@
  *      Author: Martin
  */
 
+#define __NLINE_HPP_
+
 #ifndef __NLINE_HPP_
 #define __NLINE_HPP_
 
@@ -37,7 +39,6 @@ public:
 	 */
 	explicit NLine(NLcd *nlcd, S8 x0, S8 y0, S8 x1, S8 y1) :
 			NShape(nlcd) {
-		setPixelField(x0, y0, (x1 - x0), (y1 - y0));
 	}
 	/**
 	 * \brief Basic line constructor.

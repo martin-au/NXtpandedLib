@@ -1,12 +1,12 @@
 /*
- * NOstream
+ * NOstream.hpp
  *
- *  Created on: 30.09.2013
+ *  Created on: 21.03.2014
  *      Author: Martin
  */
 
-#ifndef __OSTREAM_H_
-#define __OSTREAM_H_
+#ifndef __NOSTREAM_HPP_
+#define __NOSTREAM_HPP_
 
 /** \file
  *	\ingroup NxtLcd
@@ -19,13 +19,15 @@ extern "C" {
 	#include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h"
 }
 
-#include "LcdConstants.hpp"
 
+#include "NString.hpp"
 #include "NWidget.hpp"
+#include "LcdConstants.hpp"
 #include "Uncopyable.hpp"
 #include "Mutex.hpp"
 
-// TODO new function show because this is also a NWidget?
+#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strcpy, strlen
+
 namespace nxpl {
 
 /**
@@ -38,32 +40,68 @@ namespace nxpl {
  *
  * For all output streams: If line gets to long for display, console will auto line feed with an indent.
  */
-class NOstream : public NWidget, private Uncopyable
-{
+class NOstream: public NWidget, private Uncopyable {
 private:
 	static const U8 autoLineFeedIndent = 2;
-	// Actual cursor Line
-	U8 cursorLine;
 	mutable bool somenew;
 	bool nextHex;
 	U16 floatplaces;
 
 	mutable mutex_t mutex;
 
+	void textBoxValid();
+
+	bool hasLinesChanged() const {
+		return streamBuffer->currentRows != textBox().lines();
+	}
+
+	bool hasCharsInLineChanged() const {
+		return streamBuffer->currentLen != textBox().charsInLine();
+	}
+
 	// Console buffer array
-	char **textBuffer;
+	struct StreamBuffer {
+	public:
+		explicit StreamBuffer(U8 len, U8 rows) :
+				currentLen(len), currentRows(rows), cursorLine(0) {
+			buffer = new char *[rows];
+			for (int i = 0; i < rows + 1; i++) {
+				buffer[i] = new char[len + 1]; // +1 for '\0'
+				strcpy(buffer[i], "");
+			}
+		}
+
+		~StreamBuffer() {
+			for (int i = 0; i < currentRows + 1; i++) {
+				delete[] buffer[i];
+			}
+			delete[] buffer;
+		}
+
+		char **buffer;
+		U8 currentLen;
+		U8 currentRows;
+		// Actual cursor Line
+		U8 cursorLine;
+	};
+	StreamBuffer *streamBuffer;
 
 	// allowing manipulators (endl, hex ...)
 	typedef NOstream& (*NOstreamManipulator)(NOstream&);
 
 	void newline() {
-		++cursorLine;
+		++(streamBuffer->cursorLine);
 	}
 	void newLineSpace();
 
 	// the only way to put data into the textBuffer
 	// responsible for text formatting...
 	void streamhandler(const char *str);
+
+	virtual void showWidgetImpl() const;
+	virtual void hideWidgetImpl() const;
+
+	virtual void textBoxChangedHandler();
 public:
 	/** \brief Construct a console widget.
 	 *
@@ -76,11 +114,8 @@ public:
 	 * @param indent The indent in chars from left.
 	 * @param width The width of the console in chars.
 	 */
-	explicit NOstream(mutex_t res,
-			  U8 startLine = 0,
-			  U8 rows = LCD::ROWS,
-			  U8 indent = 0,
-			  U8 width = LCD::LINE_WIDTH);
+	explicit NOstream(mutex_t res, NTextBox box = NTextBox(NCursor(), LCD::LINE_WIDTH, LCD::ROWS));
+
 	virtual ~NOstream();
 
 	/** \brief Copy data of buffer into lcd.
@@ -91,23 +126,9 @@ public:
 	 *
 	 * @param update If true update the display.
 	 */
-	void flush(bool update = false) const;
-
-	/** Make console visible.
-	 *
-	 * This is the same as NOstream::flush().
-	 *
-	 * @param update If true update the display.
-	 */
-	virtual void show(bool update = false) const {
-		flush(update);
+	void flush(bool update = false) const {
+		this->show(update);
 	}
-
-	/** Make console invisible.
-	 *
-	 * @param update If true update the display.
-	 */
-	virtual void hide(bool update = false) const;
 
 	/**
 	 * \brief Get floating-point precision.
@@ -140,7 +161,7 @@ public:
 	friend NOstream& endl(NOstream& stream);
 
 	NOstream& operator<<(const char* str); /**<Put C-String into stream.*/
-	NOstream& operator<<(char str); /**<Put char into stream.*/
+	NOstream& operator<<(char ch); /**<Put char into stream.*/
 	NOstream& operator<<(S32 num); /**<Put signed 32bit number into stream.*/
 	NOstream& operator<<(U32 num); /**<Put unsigned 32bit number into stream.*/
 
@@ -157,10 +178,16 @@ public:
 		else  return *this << "false";
 	}
 
+	NOstream& operator<<(const NString& str) {
+		return *this << str.data();
+	}
+
 	NOstream& operator<<(NOstream& stream) {return *this;}
 	NOstream& operator<<(NOstreamManipulator manip); /**<Put manipulator into stream.*/
 };
 
 }
 
-#endif /* __OSTREAM_H_ */
+
+
+#endif /* __NOSTREAM_HPP_ */
