@@ -34,6 +34,7 @@ public:
 	 */
 	void show(bool update = false) const {
 		visible = true;
+		showImpl();
 		if (update) {
 			display_update();
 		}
@@ -45,6 +46,7 @@ public:
 	 */
 	void hide(bool update = false) const {
 		visible = false;
+		hideImpl();
 		if (update) {
 			display_update();
 		}

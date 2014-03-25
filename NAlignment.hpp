@@ -11,6 +11,7 @@
 /** \file
  *	\ingroup NxtLcd
 */
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
 namespace nxpl {
 

@@ -1,12 +1,13 @@
 # Target specific macros
 TARGET = mytest
 
-TARGET_CPP_SOURCES = \
+TARGET_CPP_SOURCES = NPairBox.cpp \
 					 sample.cpp  
 	
 TOPPERS_OSEK_OIL_SOURCE = ./sample.oil 
 
-BUILD_MODE = ROM_ONLY
+#BUILD_MODE = ROM_ONLY
+BUILD_MODE = RXE_ONLY
 
 # GCC optimisation level
 #-Os optimisation for size

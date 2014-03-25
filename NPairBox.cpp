@@ -1,28 +1,33 @@
-
+/*
+ * NPairBox.cpp
+ *
+ *  Created on: 25.03.2014
+ *      Author: Martin
+ */
 
 #include "NPairBox.hpp"
 
 namespace nxpl {
 
-template<class T1, class T2>
-bool NPairBox<T1, T2>::align2Main(const NAlignment align) {
+void NPairBox::align2Main(NAlignment align) {
 	if (align == NAlignment::none()) {
-		return true;
+		return;
 	}
 
 	S8 adjustment = 0;
 	if (align == NAlignment::right() || align == NAlignment::left()) {
 		if (align == NAlignment::right())
-			adjustment = align.get() + main->fieldWidth() - 1; //!
+			adjustment = main->textBox().charsInLine(); //!
 		else {
-			adjustment = align.get() - sec->fieldWidth() - 1;
+			adjustment = -sec->textBox().charsInLine();
 		}
-		return sec->setPosition(main->indent() + adjustment, main->row());
+		sec->setPosition(NCursor(main->textBox().base().indent() + adjustment, main->textBox().base().line()));
 	} else if (align == NAlignment::top() || align == NAlignment::bottom()) {
 		adjustment = (align.get() > 0) ? (1) : (-1);
-		return sec->setPosition(main->indent(), main->row() + adjustment);
+		sec->setPosition(NCursor(main->textBox().base().indent(), main->textBox().base().line() + adjustment));
 	}
-	return false;
 }
 
 }
+
+

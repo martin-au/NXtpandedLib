@@ -13,7 +13,7 @@
 */
 
 #include "NVector.hpp"
-#include "NWidget.hpp"
+#include "NGuiObject.hpp"
 #include "Uncopyable.hpp"
 
 namespace nxpl {
@@ -23,11 +23,33 @@ namespace nxpl {
  * A view is simply a class which manages the show/hide methods of multiple widgets.
  * You can for example implement page switching by changing the actual view.
  */
-class NLcdView : private Uncopyable {
+class NLcdView : public NGuiObject, private Uncopyable {
 private:
-	NVector<const NWidget*> widgets;
-	static const U8 defaultWidgetsBuffer = 6;
+	NVector<const NGuiObject*> guiObjects;
+	static const U8 defaultGuiObjectsBuffer = 6;
 	bool emptySpots;
+
+	/** \brief Show all widgets.
+	 *
+	 * @param update If true update the display.
+	 */
+	virtual void showImpl() const {
+		for(U16 i=0; i < guiObjects.size(); i++) {
+			if(guiObjects[i] != static_cast<NGuiObject*>(NULL))
+				guiObjects[i]->show();
+		}
+	}
+
+	/** \brief Hide all widgets.
+	 *
+	 * @param update If true update the display.
+	 */
+	virtual void hideImpl() const {
+		for(U16 i=0; i < guiObjects.size(); i++) {
+			if(guiObjects[i] != static_cast<NGuiObject*>(NULL))
+				guiObjects[i]->hide();
+		}
+	}
 public:
 	/** Construct a view.
 	 *
@@ -35,7 +57,7 @@ public:
 	 *
 	 * @param widgetsbuffer The starting objects buffer.
 	 */
-	NLcdView(U8 widgetsbuffer = defaultWidgetsBuffer) : widgets(widgetsbuffer), emptySpots(false) {}
+	NLcdView(U8 guiObjectsbuffer = defaultGuiObjectsBuffer) : guiObjects(guiObjectsbuffer), emptySpots(false) {}
 	~NLcdView() {}
 
 	/** \brief Add widget to view.
@@ -44,61 +66,33 @@ public:
 	 *
 	 * @param myWidget Widget to add.
 	 */
-	void add(const NWidget *myWidget) {
+	void add(const NGuiObject *myGuiObject) {
 		// search for empty spot
 		if(emptySpots) {
-			S32 idxOfEmpty = widgets.indexOf(static_cast<NWidget*>(NULL));
-			if(idxOfEmpty != widgets.size()) {
-				widgets.set(idxOfEmpty, myWidget);
+			S32 idxOfEmpty = guiObjects.indexOf(static_cast<NGuiObject*>(NULL));
+			if(idxOfEmpty != guiObjects.size()) {
+				guiObjects.set(idxOfEmpty, myGuiObject);
 				return;
 			} else {
 				emptySpots = false;
 			}
 		}
-		widgets.pushBack(myWidget);
+		guiObjects.pushBack(myGuiObject);
 	}
 
 	/** \brief Remove widget to view.
 	 *
-	 * Remove/add use memory efficient.
+	 * Remove/add: use memory efficient.
 	 *
 	 * @param myWidget Widget to add.
 	 */
-	void remove(const NWidget *myWidget) {
+	void remove(const NWidget *myGuiObject) {
 		// expensive and deletes the object
 		// widgets.removeOne(&myWidget);
-		S32 idxOfWidget = widgets.indexOf(myWidget);
-		if(idxOfWidget != widgets.size()) {
-			widgets.set(idxOfWidget, static_cast<NWidget*>(NULL));
+		S32 idxOfWidget = guiObjects.indexOf(myGuiObject);
+		if(idxOfWidget != guiObjects.size()) {
+			guiObjects.set(idxOfWidget, static_cast<NGuiObject*>(NULL));
 			emptySpots = true;
-		}
-	}
-
-	/** \brief Show all widgets.
-	 *
-	 * @param update If true update the display.
-	 */
-	void show(bool update = false) const {
-		for(U16 i=0; i < widgets.size(); i++) {
-			if(widgets[i] != static_cast<NWidget*>(NULL))
-				widgets[i]->show();
-		}
-		if (update) {
-			display_update();
-		}
-	}
-
-	/** \brief Hide all widgets.
-	 *
-	 * @param update If true update the display.
-	 */
-	void hide(bool update = false) const {
-		for(U16 i=0; i < widgets.size(); i++) {
-			if(widgets[i] != static_cast<NWidget*>(NULL))
-				widgets[i]->hide();
-		}
-		if (update) {
-			display_update();
 		}
 	}
 

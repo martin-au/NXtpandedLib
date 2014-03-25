@@ -49,12 +49,14 @@ void user_1ms_isr_type2(void){
 
 // C++ Includes, Globals
 
-//#include "NOstream.hpp"
-// nxpl::mutex_t streammtx(ostreamRes);
-//nxpl::NOstream cout(streammtx);
+/*
+#include "NOstream.hpp"
+nxpl::mutex_t streammtx(ostreamRes);
+nxpl::NOstream cout(streammtx);
+*/
 
 #include "NLabel.hpp"
-
+#include "NPairBox.hpp"
 #include "NTimer.hpp"
 
 /*
@@ -97,17 +99,32 @@ extern "C" {
 TASK(TaskMain) {
 	nxpl::NTimer timer;
 
-	timer.start();
+	nxpl::NLabel labelHello("Hello", nxpl::NTextBox(nxpl::NCursor(6, 5), 5, 1));
+	nxpl::NLabel labelNumber(nxpl::NTextBox(nxpl::NCursor(0, 0), 5, 1));
+	nxpl::NPairBox box(&labelHello, &labelNumber);
 
-	nxpl::NLabel label1("TEST!", nxpl::NTextBox(nxpl::NCursor(5, 1), 5, 1));
-	label1.show(true);
-
-	timer.stop();
-
-	label1.setNumber(timer.getLast());
-	label1.show(true);
-
-	timer.reset();
+	int i = 0;
+	while(true) {
+		static_cast<nxpl::NLabel*>(box.sec)->setNumber(i);
+		switch(i) {
+		case 0:
+			box.align2Main(nxpl::NAlignment::top());
+			break;
+		case 1:
+			box.align2Main(nxpl::NAlignment::right());
+			break;
+		case 2:
+			box.align2Main(nxpl::NAlignment::bottom());
+			break;
+		case 3:
+			box.align2Main(nxpl::NAlignment::left());
+			break;
+		}
+		box.show(true);
+		timer.wait(1000);
+		++i;
+		if(i > 3) i = 0;
+	}
 
 	/*
 	nxpl::NLabel label1("time:");

@@ -68,6 +68,18 @@ public:
 			this->show(false);
 		}
 	}
+
+	void setPosition(NCursor position) {
+		bool visible = this->isVisible();
+		if(visible) {
+			this->hide(false); // Really important, otherwise we do not know where to clean!
+		}
+		box.setBase(position);
+		textBoxChangedHandler();
+		if(visible) {
+			this->show(false);
+		}
+	}
 };
 
 }
