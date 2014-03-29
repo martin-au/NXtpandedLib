@@ -4,9 +4,9 @@
 
 namespace nxpl {
 
-void drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
-	// TODO: low level pixel functions use U8!
-	if(!lcd.noError()) return;
+bool drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
+	if(!lcd.noError()) return false;
+	if(!pointInLcd(start) || !pointInLcd(end)) return false;
 
 	const S8 height = std::abs(end.y() - start.y());
 	const S8 width = std::abs(end.x() - start.x());
@@ -45,10 +45,13 @@ void drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
 			iy += sy;
 		}
 	}
+	return true;
 }
 
 
-void drawRectangle(NLcd &lcd, NPixelBox geometry, DrawOpt op) {
+bool drawRectangle(NLcd &lcd, NPixelBox geometry, DrawOpt op) {
+	if(!pixelBoxInLcd(geometry)) return false;
+
 	NPoint rightTop(geometry.base().x() + geometry.width(), geometry.base().y());
 	NPoint rightBottom(geometry.base().x() + geometry.width(), geometry.base().y() + geometry.height());
 	NPoint leftBottom(geometry.base().x(), geometry.base().y() + geometry.height());
@@ -57,11 +60,13 @@ void drawRectangle(NLcd &lcd, NPixelBox geometry, DrawOpt op) {
 	drawLine(lcd, rightTop.setY(rightTop.y() + 1), rightBottom, op);
 	drawLine(lcd, rightBottom.setX(rightBottom.x() - 1), leftBottom, op);
 	drawLine(lcd, leftBottom.setY(leftBottom.y()-1), geometry.base().setY(geometry.base().y()+1), op);
+	return true;
 }
 
 
-void drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op) {
-	drawRectangle(lcd, geometry, op);
+bool drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op) {
+	if(!drawRectangle(lcd, geometry, op)) return false;
+
 	S8 xlast = geometry.base().x() + geometry.width();
 	S8 ylast = geometry.base().y() + geometry.height();
 	for (S8 iy = geometry.base().y() + 1; iy < ylast; ++iy) {
@@ -83,10 +88,11 @@ void drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op) {
 			//lcd.pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
 		}
 	}
+	return true;
 }
 
 
-void drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
+bool drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -107,11 +113,20 @@ void drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 	S8 x = 0;
 	S8 y = radius;
 
+	NPoint right(center.x() + radius, center.y());
+	NPoint top(center.x(), center.y() - radius);
+	NPoint left(center.x() - radius, center.y());
+	NPoint bottom(center.x(), center.y() + radius);
+
+	if (!pointInLcd(right) || !pointInLcd(top) || !pointInLcd(left)
+			|| !pointInLcd(bottom))
+		return false;
+
 	// no casts at moment
-	(lcd.*fpPixelState)(center.x(), center.y() + radius);
-	(lcd.*fpPixelState)(center.x(), center.y() - radius);
-	(lcd.*fpPixelState)(center.x() + radius, center.y());
-	(lcd.*fpPixelState)(center.x() - radius, center.y());
+	(lcd.*fpPixelState)(right.x(), right.y());
+	(lcd.*fpPixelState)(top.x(), top.y());
+	(lcd.*fpPixelState)(left.x(), left.y());
+	(lcd.*fpPixelState)(bottom.x(), bottom.y());
 
 	while (x < y) {
 		if (f >= 0) {
@@ -132,37 +147,47 @@ void drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 		(lcd.*fpPixelState)(center.x() + y, center.y() - x);
 		(lcd.*fpPixelState)(center.x() - y, center.y() - x);
 	}
+	return true;
 }
 
-// TODO work here with functors?
-void drawCircleFilled(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
-	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
-	switch (op()) {
-	case DrawOpt::drawID:
-		fpPixelState = &NLcd::pixelOn;
-		break;
-	case DrawOpt::clearID:
-		fpPixelState = &NLcd::pixelOff;
-		break;
-	case DrawOpt::invertID:
-		fpPixelState = &NLcd::invertPixel;
-		break;
-	}
+bool drawCircleFilled(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
+	if(!drawCircle(lcd, center, radius, op)) return false;
 
 	for (int y = -radius; y <= radius; y++) {
 		for (int x = -radius; x <= radius; x++) {
-			if (x * x + y * y <= radius * radius)
-				(lcd.*fpPixelState)(center.x() + x, center.y() + y);
-			//lcd.pixelOn(centerX + x, centerY + y);
+			if (x * x + y * y <= radius * radius) {
+				switch (op()) {
+				case DrawOpt::drawID:
+					lcd.pixelOn(center.x() + x, center.y() + y);
+					break;
+				case DrawOpt::clearID:
+					lcd.pixelOff(center.x() + x, center.y() + y);
+					break;
+				case DrawOpt::invertID:
+					lcd.invertPixel(center.x() + x, center.y() + y);
+					break;
+				default:
+					lcd.pixelOn(center.x() + x, center.y() + y);
+				}
+				//lcd.pixelOn(centerX + x, centerY + y);
+			}
 		}
 	}
-
-	drawCircle(lcd, center, radius, op);
+	return true;
 }
 
 
-void drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
+bool drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
+	NPoint right(center.x() + a, center.y());
+	NPoint top(center.x(), center.y() - b);
+	NPoint left(center.x() - a, center.y());
+	NPoint bottom(center.x(), center.y() + b);
+
+	if (!pointInLcd(right) || !pointInLcd(top) || !pointInLcd(left)
+			|| !pointInLcd(bottom))
+		return false;
+
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -202,11 +227,14 @@ void drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 		(lcd.*fpPixelState)(center.x() + dx, center.y()); /* -> Spitze der Ellipse vollenden */
 		(lcd.*fpPixelState)(center.x() - dx, center.y());
 	}
+	return true;
 }
 
 
-// TODO work with functors
-void drawEllipseFilled(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
+
+bool drawEllipseFilled(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
+	if(!drawEllipse(lcd, center, a, b, op)) return false;
+
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -247,7 +275,7 @@ void drawEllipseFilled(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 			(lcd.*fpPixelState)(center.x() + x, center.y() + y);
 		}
 	}
-	drawEllipse(lcd, center, a, b, op);
+	return true;
 }
 
 }

@@ -18,6 +18,6 @@ C_OPTIMISATION_FLAGS = -Os
 O_PATH ?= build
 
 # makefile for NXtpandedLib
-include /nxtOSEK/NXtpandedLib/NXtpandedLib.mak
+include NXtpandedLib.mak
 # makefile for C++(.cpp) build
 include /nxtOSEK/ecrobot/ecrobot++.mak

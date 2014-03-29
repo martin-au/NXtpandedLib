@@ -49,11 +49,11 @@ void user_1ms_isr_type2(void){
 
 // C++ Includes, Globals
 
-/*
+
 #include "NOstream.hpp"
 nxpl::mutex_t streammtx(ostreamRes);
 nxpl::NOstream cout(streammtx);
-*/
+
 
 #include "NLabel.hpp"
 #include "NPairBox.hpp"
@@ -96,7 +96,29 @@ NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
 
 extern "C" {
 
+
 TASK(TaskMain) {
+	/*
+	nxpl::NTimer timer;
+	cout << "TaskMain start\n";
+	cout << systick_get_ms() << nxpl::endl;
+	display_update();
+
+
+	int k = 0;
+	for (int i = 0; i < 10000; i++) {
+		k = i * i / k;
+		timer.wait(1);
+	}
+
+	cout << "TaskMain end\n";
+	cout << systick_get_ms() << nxpl::endl;
+	display_update();
+	*/
+	TerminateTask();
+
+
+	/*
 	nxpl::NTimer timer;
 
 	nxpl::NLabel labelHello("Hello", nxpl::NTextBox(nxpl::NCursor(6, 5), 5, 1));
@@ -126,6 +148,7 @@ TASK(TaskMain) {
 		if(i > 3) i = 0;
 	}
 
+*/
 	/*
 	nxpl::NLabel label1("time:");
 	nxpl::NLabel label2;
@@ -337,6 +360,18 @@ TASK(TaskMain) {
 
 // 300 ms cycle
 TASK(Task2) {
+nxpl::NTimer timer;
+
+	cout << "Task2 start" << nxpl::endl;
+	//cout << systick_get_ms() << nxpl::endl;
+	display_update();
+	timer.wait(1000);
+	cout << "   " << nxpl::endl;
+	//cout << systick_get_ms() << nxpl::endl;
+
+	display_update();
+
+
 	/*
 	streammtx.acquire();
 	box.show(true);

@@ -12,8 +12,6 @@
  *	\ingroup NxtLcd
 */
 
-// TODO do not draw into void in lcd !
-
 namespace nxpl {
 
 /**
@@ -31,7 +29,7 @@ namespace nxpl {
  * @param y1   The y value for the end of the line.
  * @param op   The optional drawing options.
  */
-void drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw());
+bool drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw());
 
 /**
  * \brief Draw a rectangle.
@@ -49,7 +47,7 @@ void drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw())
  * @param h    The height of the rectangle.
  * @param op   The optional drawing options.
  */
-void drawRectangle(const NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
+bool drawRectangle(const NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
 
 /**
  * \brief Draw a filled rectangle.
@@ -67,7 +65,7 @@ void drawRectangle(const NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::dr
  * @param h    The height of the rectangle.
  * @param op   The optional drawing options.
  */
-void drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op = DrawOpt::draw());
+bool drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op = DrawOpt::draw());
 
 /** \brief Draw a circle.
  *
@@ -82,9 +80,9 @@ void drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op = Draw
  * @param radius   The radius of the circle.
  * @param op       	The optional drawing options.
  */
-void drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
+bool drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
 
-// TODO work here with functors?
+
 /** \brief Draw a filled circle.
  *
  * This function lets you draw a filled circle on the given lcd with its center at the specified x and y location, using the specified radius.
@@ -98,7 +96,7 @@ void drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw(
  * @param radius   The radius of the circle.
  * @param op       	The optional drawing options.
  */
-void drawCircleFilled(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
+bool drawCircleFilled(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
 
 /** \brief Draw an ellipse.
  *
@@ -114,9 +112,9 @@ void drawCircleFilled(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt:
  * @param b		   The y axis radius.
  * @param op       The optional drawing options.
  */
-void drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
+bool drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
-// TODO work with functors
+
 /** \brief Draw a filled ellipse.
  *
  * This function lets you draw a filled ellipse on the screen with its center at the specified x and y location, using the specified radii.
@@ -131,7 +129,7 @@ void drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::dra
  * @param b		   The y axis radius.
  * @param op       The optional drawing options.
  */
-void drawEllipseFilled(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
+bool drawEllipseFilled(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
 } // namespace
 

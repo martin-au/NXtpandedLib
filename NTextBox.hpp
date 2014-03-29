@@ -52,7 +52,9 @@ public:
 	}
 };
 
-
+bool textBoxInLcd(NTextBox box) {
+	return LCD::fieldInLcd(box.base().indent(), box.base().line(), box.lines(), box.charsInLine());
+}
 
 }
 

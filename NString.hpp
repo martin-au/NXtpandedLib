@@ -114,12 +114,12 @@ public:
 	/**
 	 * @brief Get a character from the string
 	 * @param in_index the char position
-	 * @return the char or '?' if index too large or to negative.
+	 * @return the char or char max 127 if index too large or to negative.
 	 */
 	const char at(const S32 in_index) const {
 		if (0 <= in_index && in_index < length)
 			return string[in_index];;
-		return '?';
+		return 127;
 	}
 
 	// saver than a operator implementation!

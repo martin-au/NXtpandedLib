@@ -9,6 +9,8 @@
 #define __NPOINT_HPP_
 
 #include "NString.hpp"
+#include "LcdConstants.hpp"
+#include "NCursor.hpp"
 
 namespace nxpl {
 
@@ -17,6 +19,12 @@ private:
 	S16 xVal, yVal;
 public:
 	NPoint(S16 x = 0, S16 y = 0) : xVal(x), yVal(y) {}
+
+	NPoint(NCursor cursor) :
+	  xVal(LCD::indentToPixelX(cursor.indent())),
+	  yVal(LCD::lineToPixelY(cursor.line())) {
+	}
+
 	~NPoint() {}
 
 	bool isNull() const {
@@ -66,6 +74,9 @@ public:
 	}
 };
 
+bool pointInLcd(NPoint p) {
+	return LCD::pixelInLcd(p.x(), p.y());
+}
 
 bool operator!=(NPoint p1, NPoint p2) {
 	return p1.x() != p2.x() && p1.y() != p2.y();

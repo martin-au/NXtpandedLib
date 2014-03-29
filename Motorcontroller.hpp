@@ -92,9 +92,9 @@ public:
 
 	/**
 	 * \brief Destructor calls Motorcontroller::controllerOff();
+	 * TODO test if there is a problem with sleep in destructor
 	 */
 	~Motorcontroller() {
-		// TODO Problem because we use Sleep
 		this->controllerOff();
 	}
 

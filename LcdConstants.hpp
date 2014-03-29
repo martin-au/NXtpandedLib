@@ -30,7 +30,7 @@ namespace LCD {
 	 * @param x  Pixel X-Coordinate (from left).
 	 * @return Indent measured in Chars.
 	 */
-	S8 pixelToIndent(S8 x) {
+	S8 pixelXToIndent(S8 x) {
 		return (x - 1) / LCD::CHAR_WIDTH;
 	}
 
@@ -41,7 +41,7 @@ namespace LCD {
 	 * @param y  Pixel Y-Coordinate (from top).
 	 * @return Line (0 - LCD::ROWS).
 	 */
-	S8 pixelToLine(S8 y) {
+	S8 pixelYToLine(S8 y) {
 		return y/LCD::DEPTH;
 	}
 
@@ -52,7 +52,7 @@ namespace LCD {
 	 * @param width  Width in pixels.
 	 * @return Number of chars.
 	 */
-	S8 pixelToTextWidth(S8 width) {
+	S8 pixelWidthToTextWidth(S8 width) {
 		return width/LCD::CHAR_WIDTH;
 	}
 
@@ -62,8 +62,12 @@ namespace LCD {
 	 * @param line (0 - LCD::ROWS)
 	 * @return Pixel Y-Coordinate.
 	 */
-	S8 lineToPixel(S8 line) {
+	S8 lineToPixelY(S8 line) {
 		return line*LCD::DEPTH;
+	}
+
+	S8 indentToPixelX(S8 indent) {
+		return indent * LCD::CHAR_WIDTH + 1;
 	}
 
     // <= height ok??
@@ -84,7 +88,7 @@ namespace LCD {
 	 * @param row (0 - LCD::ROWS)
 	 * @return true if cursor is in lcd.
 	 */
-	bool cursorInLcd(const S16 indent, const S16 row) {
+	bool cursorInLcd(S16 indent, S16 row) {
 		return ((indent >= 0) && (indent < LCD::LINE_WIDTH) && (row >= 0)
 				&& (row < LCD::ROWS));
 	}
@@ -111,7 +115,7 @@ namespace LCD {
 	 * @param width  Width in pixels.
 	 * @return true if all pixels are in lcd.
 	 */
-	bool objectInLcd(const S16 x, const S16 y, const S16 height, const S16 width) {
+	bool objectInLcd(S16 x, S16 y, S16 height, S16 width) {
 		return pixelInLcd(x, y) && pixelInLcd(x + width, y)
 				&& pixelInLcd(x, y + height) && pixelInLcd(x + width, y + height);
 	}

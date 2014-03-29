@@ -18,6 +18,7 @@ extern "C" {
 
 #include "Uncopyable.hpp"
 #include "LcdConstants.hpp"
+#include "NPoint.hpp"
 
 
 namespace nxpl {
@@ -139,6 +140,15 @@ public:
 				(1 << (Y % LCD::DEPTH));
 	}
 
+	/**\brief Set pixel on.
+	 * Make pixel visible.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline void pixelOn(NPoint p) {
+		pixelOn(p.x(), p.y());
+	}
+
 	// disp = 0100 0000
 	//        AND NOT
 	// set  = 0000 1000
@@ -152,6 +162,15 @@ public:
 	inline void pixelOff(U8 X, U8 Y) {
 		*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X)) &=
 				~(1 << (Y % LCD::DEPTH));
+	}
+
+	/**\brief Set pixel off.
+	 * Make pixel invisible.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline void pixelOff(NPoint p) {
+		pixelOff(p.x(), p.y());
 	}
 
 	// disp = 0100 1000
@@ -168,6 +187,14 @@ public:
 				(1 << (Y % LCD::DEPTH));
 	}
 
+	/**\brief Invert pixel.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline void invertPixel(NPoint p) {
+		invertPixel(p.x(), p.y());
+	}
+
 	/**\brief Get pixel state.
 	 * \note This function takes more time than all other set functions.
 	 * @param X X-Coordinate.
@@ -178,6 +205,15 @@ public:
 		return ((*(disp + ((Y / LCD::DEPTH) * LCD::WIDTH + X))) & (1 << k)) >> k;
 	}
 
+	/**\brief Get pixel state.
+	 * \note This function takes more time than all other set functions.
+	 * @param X X-Coordinate.
+	 * @param Y Y-Coordinate.
+	 */
+	inline bool getPixel(NPoint p) const {
+		return getPixel(p.x(), p.y());
+	}
+
 	/**
 	 * \brief Set pixel with functor
 	 * @param op Functor: NLcd::PixelOn, NLcd::PixelOff, NLcd::PixelInvert
@@ -185,8 +221,19 @@ public:
 	 * @param Y  Y-Coordinate.
 	 */
 	template<typename PixelOp>
-	inline void setPixel(PixelOp op, const U8 X, const U8 Y) {
+	inline void setPixel(PixelOp op, U8 X, U8 Y) {
 		op(*this, X, Y);
+	}
+
+	/**
+	 * \brief Set pixel with functor
+	 * @param op Functor: NLcd::PixelOn, NLcd::PixelOff, NLcd::PixelInvert
+	 * @param X  X-Coordinate.
+	 * @param Y  Y-Coordinate.
+	 */
+	template<typename PixelOp>
+	inline void setPixel(PixelOp op, NPoint p) {
+		op(*this, p);
 	}
 
 	/**
@@ -195,6 +242,10 @@ public:
 	struct PixelOn {
 		void operator()(NLcd& lcd, U8 x, U8 y) const {
 			lcd.pixelOn(x, y);
+		}
+
+		void operator()(NLcd& lcd, NPoint p) const {
+			lcd.pixelOn(p);
 		}
 	};
 
@@ -205,6 +256,10 @@ public:
 		void operator()(NLcd& lcd, U8 x, U8 y) const {
 			lcd.pixelOff(x, y);
 		}
+
+		void operator()(NLcd& lcd, NPoint p) const {
+			lcd.pixelOff(p);
+		}
 	};
 
 	/**
@@ -214,12 +269,16 @@ public:
 		void operator()(NLcd& lcd, U8 x, U8 y) const {
 			lcd.invertPixel(x, y);
 		}
+
+		void operator()(NLcd& lcd, NPoint p) const {
+			lcd.invertPixel(p);
+		}
 	};
 };
 
 
 void NLcd::copyBitmap(const U8 *data, U32 width, U32 depth, U32 x, U32 y) {
-	if (!LCD::objectInLcd(x, y, LCD::lineToPixel(depth), width)) {
+	if (!LCD::objectInLcd(x, y, LCD::lineToPixelY(depth), width)) {
 		return;
 	}
 	// copy full bitmap to display

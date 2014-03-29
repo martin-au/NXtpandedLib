@@ -9,6 +9,7 @@
 #define __NCURSOR_HPP_
 
 #include "NString.hpp"
+#include "LcdConstants.hpp"
 
 namespace nxpl {
 
@@ -75,6 +76,9 @@ public:
 	}
 };
 
+bool cursorInLcd(NCursor c) {
+	return LCD::cursorInLcd(c.indent(), c.line());
+}
 
 bool operator!=(NCursor p1, NCursor p2) {
 	return p1.indent() != p2.indent() && p1.line() != p2.line();

@@ -81,8 +81,6 @@ void NOstream::showWidgetImpl() const {
 		for(U8 j = 0; j < textBox().charsInLine(); ++j) {
 			if(streamBuffer->buffer[i][j] == '\0') {
 				lineEnd = true;
-				// jump over termination and continue with whitespace
-				continue;
 			}
 			display_goto_xy(j+textBox().base().indent(), i);
 			if(lineEnd) {

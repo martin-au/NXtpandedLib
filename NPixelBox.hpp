@@ -73,7 +73,9 @@ public:
 	}
 };
 
-
+bool pixelBoxInLcd(const NPixelBox &box) {
+	return LCD::objectInLcd(box.base().x(), box.base().y(), box.height(), box.width());
+}
 
 }
 
