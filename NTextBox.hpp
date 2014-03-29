@@ -27,9 +27,9 @@ public:
 		return baseLeftTop;
 	}
 
-	NCursor & base() {
-		return baseLeftTop;
-	}
+//	NCursor & base() {
+//		return baseLeftTop;
+//	}
 
 	void setBase(NCursor base) {
 		baseLeftTop = base;

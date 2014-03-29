@@ -10,15 +10,28 @@
 
 #include "NPoint.hpp"
 
+#include "..\..\..\GNUARM\include\c++\4.0.2\cstdlib" //abs
+
 namespace nxpl {
 
 class NPixelBox {
 public:
 	NPoint baseLeftTop;
-	S16 widthVal, heightVal;
+	U16 widthVal, heightVal;
 
-	NPixelBox(NPoint baseLeftTop, S16 width, S16 height)
-	: baseLeftTop(baseLeftTop), widthVal(width), heightVal(height) {
+	NPixelBox(NPoint base, U16 width, U16 height)
+	: baseLeftTop(base), widthVal(width), heightVal(height) {
+	}
+
+	/** diagonal to base means the point is right, bottom to base
+	 *
+	 * @param base
+	 * @param diagonalToBase
+	 */
+	NPixelBox(NPoint base, NPoint diagonalToBase)
+	: baseLeftTop(base),
+	  widthVal(std::abs(diagonalToBase.x()-base.x())),
+	  heightVal(std::abs(diagonalToBase.y()-base.y())) {
 
 	}
 
@@ -26,27 +39,36 @@ public:
 		return baseLeftTop;
 	}
 
-	NPoint & base()  {
-		return &baseLeftTop;
-	}
+//	NPoint & base()  {
+//		return &baseLeftTop;
+//	}
 
 	void setBase(NPoint base) {
 		baseLeftTop = base;
 	}
 
-	S16 width() const {
-		return width;
+	NPoint diagonalToBasePoint() const {
+		return baseLeftTop + NPoint(widthVal, heightVal);
 	}
 
-	void setWidth(S16 width) const {
+	void setDiagonalToBasePoint(NPoint p) {
+		  widthVal = std::abs(p.x()- baseLeftTop.x());
+		  heightVal = std::abs(p.y()- baseLeftTop.y());
+	}
+
+	U16 width() const {
+		return widthVal;
+	}
+
+	void setWidth(U16 width) {
 		widthVal = width;
 	}
 
-	S16 height() const {
+	U16 height() const {
 		return heightVal;
 	}
 
-	void setHeight(S16 height) {
+	void setHeight(U16 height) {
 		heightVal = height;
 	}
 };

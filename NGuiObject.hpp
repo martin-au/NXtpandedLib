@@ -26,6 +26,10 @@ protected:
 	NGuiObject() : visible(false) {}
 	virtual ~NGuiObject() {}
 
+	// for invert
+	void setVisibility(bool visibility) const {
+		visible = visibility;
+	}
 public:
 
 	/** \brief Make the object visible.

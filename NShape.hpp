@@ -5,8 +5,8 @@
  *      Author: Martin
  */
 
-#ifndef NSHAPE_NEW_HPP_
-#define NSHAPE_NEW_HPP_
+#ifndef __NSHAPE_NEW_HPP_
+#define __NSHAPE_NEW_HPP_
 
 #include "NGuiObject.hpp"
 #include "NLcd.hpp"
@@ -21,8 +21,7 @@ namespace nxpl {
 /**
  * \brief Baseclass for all shapes.
  *
- * The class bundles together the NWidget class which is for positioning show/hide and
- * the NLcd class which gives access to actual draw pixels on the lcd.
+ * The class bundles together the NLcd class which gives access to actual draw pixels on the lcd.
  * For example it looks before every call to showImpl if the NLcd object is ok and if the object is in lcd.
  * This makes all derived classes saver because we check before the actual call to the function if everything is ok.
  */
@@ -34,7 +33,7 @@ protected:
 private:
 	virtual void showShapeImpl() const = 0;
 	virtual void hideShapeImpl() const = 0;
-	// virtual void invertShapeImpl() const = 0;
+	virtual void invertShapeImpl() const = 0;
 
 	virtual void showImpl() const {
 		if(lcd == 0) return;
@@ -45,9 +44,15 @@ private:
 		if(lcd == 0) return;
 		hideShapeImpl();
 	}
+
+	virtual void invertImpl() const {
+		if(lcd == 0) return;
+		invertShapeImpl();
+		setVisibility(true);
+	}
 public:
 
-	NShape(NLcd *nlcd) : lcd(nlcd) {}
+	NShape(NLcd &nlcd) : lcd(&nlcd) {}
 	NShape() : lcd(0) {}
 	virtual ~NShape() {}
 
@@ -63,4 +68,4 @@ public:
 };
 
 
-#endif /* NSHAPE_NEW_HPP_ */
+#endif /* __NSHAPE_NEW_HPP_ */

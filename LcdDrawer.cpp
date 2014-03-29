@@ -4,15 +4,17 @@
 
 namespace nxpl {
 
-void drawLine(NLcd lcd, S8 x0, S8 y0, S8 x1, S8 y1, DrawOpt op) {
+void drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
 	// TODO: low level pixel functions use U8!
-	S8 height = std::abs(y1 - y0);
-	S8 width = std::abs(x1 - x0);
+	if(!lcd.noError()) return;
 
-	S8 ix = x0;
-	S8 iy = y0;
-	S8 sx = ix < x1 ? 1 : -1;
-	S8 sy = iy < y1 ? 1 : -1;
+	const S8 height = std::abs(end.y() - start.y());
+	const S8 width = std::abs(end.x() - start.x());
+
+	S8 ix = start.x();
+	S8 iy = start.y();
+	const S8 sx = ix < end.x() ? 1 : -1;
+	const S8 sy = iy < end.y() ? 1 : -1;
 	S16 err = width + (-height), e2;
 
 	for (;;) {
@@ -31,7 +33,7 @@ void drawLine(NLcd lcd, S8 x0, S8 y0, S8 x1, S8 y1, DrawOpt op) {
 		}
 
 		//lcd.pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
-		if (ix == x1 && iy == y1)
+		if (ix == end.x() && iy == end.y())
 			break;
 		e2 = 2 * err;
 		if (e2 > (-height)) {
@@ -46,21 +48,25 @@ void drawLine(NLcd lcd, S8 x0, S8 y0, S8 x1, S8 y1, DrawOpt op) {
 }
 
 
-void drawRectangle(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op) {
-	drawLine(lcd, x0, y0, x0 + w, y0, op);
-	drawLine(lcd, x0 + w, y0 + 1, x0 + w, y0 + h, op);
-	drawLine(lcd, x0 + w - 1, y0 + h, x0, y0 + h, op);
-	drawLine(lcd, x0, y0 + h - 1, x0, y0, op);
+void drawRectangle(NLcd &lcd, NPixelBox geometry, DrawOpt op) {
+	NPoint rightTop(geometry.base().x() + geometry.width(), geometry.base().y());
+	NPoint rightBottom(geometry.base().x() + geometry.width(), geometry.base().y() + geometry.height());
+	NPoint leftBottom(geometry.base().x(), geometry.base().y() + geometry.height());
+
+	drawLine(lcd, geometry.base(), rightTop, op);
+	drawLine(lcd, rightTop.setY(rightTop.y() + 1), rightBottom, op);
+	drawLine(lcd, rightBottom.setX(rightBottom.x() - 1), leftBottom, op);
+	drawLine(lcd, leftBottom.setY(leftBottom.y()-1), geometry.base().setY(geometry.base().y()+1), op);
 }
 
 
-void drawRectangleFilled(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op) {
-	drawRectangle(lcd, x0, y0, w, h, op);
-	S8 xlast = x0 + w;
-	S8 ylast = y0 + h;
-	for (S8 iy = y0 + 1; iy < ylast; ++iy) {
+void drawRectangleFilled(NLcd &lcd, const NPixelBox &geometry, DrawOpt op) {
+	drawRectangle(lcd, geometry, op);
+	S8 xlast = geometry.base().x() + geometry.width();
+	S8 ylast = geometry.base().y() + geometry.height();
+	for (S8 iy = geometry.base().y() + 1; iy < ylast; ++iy) {
 		// straight line
-		for (S8 ix = x0 + 1; ix < xlast; ++ix) {
+		for (S8 ix = geometry.base().x() + 1; ix < xlast; ++ix) {
 			switch (op()) {
 			case DrawOpt::drawID:
 				lcd.pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
@@ -80,7 +86,7 @@ void drawRectangleFilled(NLcd lcd, S8 x0, S8 y0, S8 w, S8 h, DrawOpt op) {
 }
 
 
-void drawCircle(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op) {
+void drawCircle(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -102,10 +108,10 @@ void drawCircle(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op) {
 	S8 y = radius;
 
 	// no casts at moment
-	(lcd.*fpPixelState)(centerX, centerY + radius);
-	(lcd.*fpPixelState)(centerX, centerY - radius);
-	(lcd.*fpPixelState)(centerX + radius, centerY);
-	(lcd.*fpPixelState)(centerX - radius, centerY);
+	(lcd.*fpPixelState)(center.x(), center.y() + radius);
+	(lcd.*fpPixelState)(center.x(), center.y() - radius);
+	(lcd.*fpPixelState)(center.x() + radius, center.y());
+	(lcd.*fpPixelState)(center.x() - radius, center.y());
 
 	while (x < y) {
 		if (f >= 0) {
@@ -117,19 +123,19 @@ void drawCircle(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op) {
 		ddF_x += 2;
 		f += ddF_x + 1;
 
-		(lcd.*fpPixelState)(centerX + x, centerY + y);
-		(lcd.*fpPixelState)(centerX - x, centerY + y);
-		(lcd.*fpPixelState)(centerX + x, centerY - y);
-		(lcd.*fpPixelState)(centerX - x, centerY - y);
-		(lcd.*fpPixelState)(centerX + y, centerY + x);
-		(lcd.*fpPixelState)(centerX - y, centerY + x);
-		(lcd.*fpPixelState)(centerX + y, centerY - x);
-		(lcd.*fpPixelState)(centerX - y, centerY - x);
+		(lcd.*fpPixelState)(center.x() + x, center.y() + y);
+		(lcd.*fpPixelState)(center.x() - x, center.y() + y);
+		(lcd.*fpPixelState)(center.x() + x, center.y() - y);
+		(lcd.*fpPixelState)(center.x() - x, center.y() - y);
+		(lcd.*fpPixelState)(center.x() + y, center.y() + x);
+		(lcd.*fpPixelState)(center.x() - y, center.y() + x);
+		(lcd.*fpPixelState)(center.x() + y, center.y() - x);
+		(lcd.*fpPixelState)(center.x() - y, center.y() - x);
 	}
 }
 
 // TODO work here with functors?
-void drawCircleFilled(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op) {
+void drawCircleFilled(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -147,16 +153,16 @@ void drawCircleFilled(NLcd lcd, S8 centerX, S8 centerY, S8 radius, DrawOpt op) {
 	for (int y = -radius; y <= radius; y++) {
 		for (int x = -radius; x <= radius; x++) {
 			if (x * x + y * y <= radius * radius)
-				(lcd.*fpPixelState)(centerX + x, centerY + y);
+				(lcd.*fpPixelState)(center.x() + x, center.y() + y);
 			//lcd.pixelOn(centerX + x, centerY + y);
 		}
 	}
 
-	drawCircle(lcd, centerX, centerY, radius, op);
+	drawCircle(lcd, center, radius, op);
 }
 
 
-void drawEllipse(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op) {
+void drawEllipse(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -176,10 +182,10 @@ void drawEllipse(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op) {
 	S32 err = b2 - (2 * b - 1) * a2, e2; /* Fehler im 1. Schritt */
 
 	do {
-		(lcd.*fpPixelState)(centerX + dx, centerY + dy); /* I. Quadrant */
-		(lcd.*fpPixelState)(centerX - dx, centerY + dy); /* II. Quadrant */
-		(lcd.*fpPixelState)(centerX - dx, centerY - dy); /* III. Quadrant */
-		(lcd.*fpPixelState)(centerX + dx, centerY - dy); /* IV. Quadrant */
+		(lcd.*fpPixelState)(center.x() + dx, center.y() + dy); /* I. Quadrant */
+		(lcd.*fpPixelState)(center.x() - dx, center.y() + dy); /* II. Quadrant */
+		(lcd.*fpPixelState)(center.x() - dx, center.y() - dy); /* III. Quadrant */
+		(lcd.*fpPixelState)(center.x() + dx, center.y() - dy); /* IV. Quadrant */
 
 		e2 = 2 * err;
 		if (e2 < (2 * dx + 1) * b2) {
@@ -193,14 +199,14 @@ void drawEllipse(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op) {
 	} while (dy >= 0);
 
 	while (dx++ < a) { /* fehlerhafter Abbruch bei flachen Ellipsen (b=1) */
-		(lcd.*fpPixelState)(centerX + dx, centerY); /* -> Spitze der Ellipse vollenden */
-		(lcd.*fpPixelState)(centerX - dx, centerY);
+		(lcd.*fpPixelState)(center.x() + dx, center.y()); /* -> Spitze der Ellipse vollenden */
+		(lcd.*fpPixelState)(center.x() - dx, center.y());
 	}
 }
 
 
 // TODO work with functors
-void drawEllipseFilled(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op) {
+void drawEllipseFilled(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
@@ -223,7 +229,7 @@ void drawEllipseFilled(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op)
 // do the horizontal diameter
 	for (int x = -a; x <= a; x++)
 		//lcd.pixelOn(centerX + x, centerY);
-		(lcd.*fpPixelState)(centerX + x, centerY);
+		(lcd.*fpPixelState)(center.x() + x, center.y());
 
 // now do both halves at the same time, away from the diameter
 	for (int y = 1; y <= b; y++) {
@@ -237,11 +243,11 @@ void drawEllipseFilled(NLcd lcd, S8 centerX, S8 centerY, S8 a, S8 b, DrawOpt op)
 		for (int x = -x0; x <= x0; x++) {
 			//lcd.pixelOn(centerX + x, centerY - y);
 			//lcd.pixelOn(centerX + x, centerY + y);
-			(lcd.*fpPixelState)(centerX + x, centerY - y);
-			(lcd.*fpPixelState)(centerX + x, centerY + y);
+			(lcd.*fpPixelState)(center.x() + x, center.y() - y);
+			(lcd.*fpPixelState)(center.x() + x, center.y() + y);
 		}
 	}
-	drawEllipse(lcd, centerX, centerY, a, b, op);
+	drawEllipse(lcd, center, a, b, op);
 }
 
 }

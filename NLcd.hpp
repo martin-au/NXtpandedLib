@@ -16,11 +16,9 @@ extern "C" {
 #include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h"
 }
 
-//#include "Uncopyable.hpp"
+#include "Uncopyable.hpp"
 #include "LcdConstants.hpp"
 
-// NULL
-#include <stddef.h>
 
 namespace nxpl {
 
@@ -35,7 +33,7 @@ struct PixelInvert;
  * Its high efficient so there is no range checking!!
  * If you write for example on pixel x 101 y 65 anything could happen!
  */
-class NLcd {
+class NLcd : private Uncopyable {
 private:
 	U8 *disp;
 public:
@@ -70,7 +68,7 @@ public:
 	 * @return true if no error.
 	 */
 	bool noError() {
-		return (disp != NULL);
+		return (disp != 0);
 	}
 
 	/** \brief Set a pixel mask of size LCD::DEPTH.
@@ -114,7 +112,7 @@ public:
 	 * @param x Offset-X-Coordinate in destination
 	 * @param y Offset-Y-Coordinate in destination
 	 */
-	void copyNLcdBitmap(NLcd lcdBitmap, U32 width, U32 depth, U32 x, U32 y) {
+	void copyNLcdBitmap(const NLcd &lcdBitmap, U32 width, U32 depth, U32 x, U32 y) {
 		copyBitmap(lcdBitmap.disp, width, depth, x, y);
 	}
 

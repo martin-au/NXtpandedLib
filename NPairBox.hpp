@@ -29,6 +29,8 @@ namespace nxpl {
  */
 struct NPairBox : public NGuiObject {
 private:
+	NAlignment alignment;
+
 	virtual void showImpl() const {
 		main->show();
 		sec->show();
@@ -48,7 +50,7 @@ public:
 	 * @param secWidget
 	 */
 	NPairBox(NWidget *mainWidget, NWidget *secWidget) :
-			main(mainWidget), sec(secWidget) {
+		alignment(NAlignment::none()), main(mainWidget), sec(secWidget) {
 	}
 
 	/** \brief Constructor with positioning.
@@ -60,8 +62,8 @@ public:
 	 * @param align The alignment of the secondary widget.
 	 */
 	NPairBox(NWidget *mainWidget, NWidget *secWidget, NCursor position, NAlignment align) :
-			main(mainWidget), sec(secWidget) {
-		setPosition(position, align);
+		alignment(NAlignment::none()), main(mainWidget), sec(secWidget) {
+		setPosition(position);
 	}
 
 	/** \brief Constructor with aligning.
@@ -71,7 +73,7 @@ public:
 	 * @param align The alignment of the secondary widget.
 	 */
 	NPairBox(NWidget *mainWidget, NWidget *secWidget, NAlignment align) :
-			main(mainWidget), sec(secWidget) {
+		alignment(NAlignment::none()), main(mainWidget), sec(secWidget) {
 		align2Main(align);
 	}
 
@@ -84,9 +86,9 @@ public:
 	 * @param align   The alignment of the secondary widget.
 	 * @return		  True if position is in lcd.
 	 */
-	void setPosition(NCursor position, NAlignment align) {
+	void setPosition(NCursor position) {
 		main->setPosition(position);
-		align2Main(align);
+		align2Main(alignment);
 	}
 
 	/** \brief Align secondary object to main object.

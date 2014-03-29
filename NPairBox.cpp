@@ -11,6 +11,7 @@ namespace nxpl {
 
 void NPairBox::align2Main(NAlignment align) {
 	if (align == NAlignment::none()) {
+		alignment = align;
 		return;
 	}
 
@@ -26,6 +27,7 @@ void NPairBox::align2Main(NAlignment align) {
 		adjustment = (align.get() > 0) ? (1) : (-1);
 		sec->setPosition(NCursor(main->textBox().base().indent(), main->textBox().base().line() + adjustment));
 	}
+	alignment = align;
 }
 
 }

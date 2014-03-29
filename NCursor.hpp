@@ -63,7 +63,15 @@ public:
 	}
 
 	NString asString() const {
-		return NString("HEY");
+		const U8 countDigits = 4;
+		const U8 countChars = 3;
+		NString ret(countChars+countDigits);
+		ret.append('(');
+		ret.append(indentVal);
+		ret.append(',');
+		ret.append(lineVal);
+		ret.append(')');
+		return ret;
 	}
 };
 

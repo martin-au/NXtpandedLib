@@ -8,7 +8,7 @@
 #ifndef __NPOINT_HPP_
 #define __NPOINT_HPP_
 
-#include "NOstream.hpp"
+#include "NString.hpp"
 
 namespace nxpl {
 
@@ -20,7 +20,7 @@ public:
 	~NPoint() {}
 
 	bool isNull() const {
-		return NPoint(0, 0) == *this;
+		return xVal == 0 && yVal == 0;
 	}
 
 	S16 x() const {
@@ -31,12 +31,14 @@ public:
 		return this->yVal;
 	}
 
-	void setX(S16 x) {
+	NPoint setX(S16 x) {
 		xVal = x;
+		return *this;
 	}
 
-	void setY(S16 y) {
+	NPoint setY(S16 y) {
 		yVal = y;
+		return *this;
 	}
 
 	NPoint operator+=(NPoint point) {
@@ -48,6 +50,19 @@ public:
 		xVal -= point.x();
 		yVal -= point.y();
 		return *this;
+	}
+
+	NString asString() const {
+		const U8 countDigits
+			= numDigits(static_cast<S32>(xVal))+ numDigits(static_cast<S32>(yVal));
+		const U8 numChars = 3;
+		NString ret(numChars+countDigits);
+		ret.append('(');
+		ret.append(xVal);
+		ret.append(',');
+		ret.append(yVal);
+		ret.append(')');
+		return ret;
 	}
 };
 
@@ -68,9 +83,11 @@ const NPoint operator-(NPoint p1, NPoint p2) {
 	return NPoint(p1.x() - p2.x(), p2.y() - p2.y());
 }
 
+/*
 NOstream& operator<<(NOstream &stream, NPoint &point) {
 	return stream << '(' << point.x() << "," << point.y() << ')';
 }
+*/
 
 }
 
