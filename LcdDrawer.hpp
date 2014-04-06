@@ -47,7 +47,7 @@ bool drawLine(NLcd &lcd, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw())
  * @param h    The height of the rectangle.
  * @param op   The optional drawing options.
  */
-bool drawRectangle(const NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
+bool drawRectangle(NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
 
 /**
  * \brief Draw a filled rectangle.

@@ -67,5 +67,6 @@ public:
 	}
 };
 
+}
 
 #endif /* __NSHAPE_NEW_HPP_ */

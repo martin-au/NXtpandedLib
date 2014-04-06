@@ -94,10 +94,16 @@ NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
 
 // 1000 ms cycle
 
+#include "NRectangle.hpp"
+
 extern "C" {
 
 
 TASK(TaskMain) {
+	nxpl::NLcd lcd;
+	nxpl::NRectangle rect(lcd, nxpl::NPixelBox(nxpl::NPoint(0,0), 10, 10));
+
+	rect.show(true);
 	/*
 	nxpl::NTimer timer;
 	cout << "TaskMain start\n";
@@ -360,6 +366,7 @@ TASK(TaskMain) {
 
 // 300 ms cycle
 TASK(Task2) {
+	/*
 nxpl::NTimer timer;
 
 	cout << "Task2 start" << nxpl::endl;
@@ -371,7 +378,7 @@ nxpl::NTimer timer;
 
 	display_update();
 
-
+*/
 	/*
 	streammtx.acquire();
 	box.show(true);

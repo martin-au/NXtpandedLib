@@ -9,8 +9,7 @@
 #define __NPIXELBOX_HPP_
 
 #include "NPoint.hpp"
-
-#include "..\..\..\GNUARM\include\c++\4.0.2\cstdlib" //abs
+#include "../../../GNUARM/arm-elf/include/stdlib.h"
 
 namespace nxpl {
 
@@ -30,8 +29,8 @@ public:
 	 */
 	NPixelBox(NPoint base, NPoint diagonalToBase)
 	: baseLeftTop(base),
-	  widthVal(std::abs(diagonalToBase.x()-base.x())),
-	  heightVal(std::abs(diagonalToBase.y()-base.y())) {
+	  widthVal(abs(diagonalToBase.x()-base.x())),
+	  heightVal(abs(diagonalToBase.y()-base.y())) {
 
 	}
 
@@ -52,8 +51,8 @@ public:
 	}
 
 	void setDiagonalToBasePoint(NPoint p) {
-		  widthVal = std::abs(p.x()- baseLeftTop.x());
-		  heightVal = std::abs(p.y()- baseLeftTop.y());
+		  widthVal = abs(p.x()- baseLeftTop.x());
+		  heightVal = abs(p.y()- baseLeftTop.y());
 	}
 
 	U16 width() const {
