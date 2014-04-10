@@ -24,6 +24,20 @@ namespace nxpl {
 class NLine : public NShape {
 private:
 	NPoint start_, end_;
+
+	void showShapeImpl() const {
+		drawLine(lcd, start_, end_, DrawOpt::draw());
+	}
+
+
+	void hideShapeImpl() const {
+		drawLine(lcd, start_, end_, DrawOpt::clear());
+	}
+
+
+	void invertShapeImpl() const {
+		drawLine(lcd, start_, end_, DrawOpt::invert());
+	}
 public:
 	/**
 	 * \brief Construct line object on given lcd.
@@ -86,21 +100,6 @@ public:
 	 */
 	NPoint start() const {
 		return start_;
-	}
-
-private:
-	void showImpl(bool update) const {
-		nxpl::drawLine(*lcd, start_, end_, DrawOpt::draw());
-	}
-
-
-	void eraseImpl(bool update) const {
-		nxpl::drawLine(*lcd, start_, end_, DrawOpt::clear());
-	}
-
-
-	void invertImpl(bool update) const {
-		nxpl::drawLine(*lcd, start_, end_, DrawOpt::invert());
 	}
 };
 

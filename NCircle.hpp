@@ -14,7 +14,7 @@
 
 #include "NShape.hpp"
 #include "LcdDrawer.hpp"
-#include "NPoint.hpp"
+
 
 namespace nxpl {
 
@@ -25,18 +25,16 @@ private:
 	NPoint center_;
 	U8 r;
 
-	//void rasterCircleFill(void (NLcd::*fpPixelState)(U8, U8)) const;
-
-	void showImpl(bool update) const {
-		nxpl::drawCircle(*lcd, center_, r, DrawOpt::draw());
+	void showShapeImpl() const {
+		nxpl::drawCircle(lcd, center_, r, DrawOpt::draw());
 	}
 
-	void eraseImpl(bool update) const {
-		nxpl::drawCircle(*lcd, center_, r, DrawOpt::clear());
+	void hideShapeImpl() const {
+		nxpl::drawCircle(lcd, center_, r, DrawOpt::clear());
 	}
 
-	void invertImpl(bool update) const {
-		nxpl::drawCircle(*lcd, center_, r, DrawOpt::invert());
+	void invertShapeImpl() const {
+		nxpl::drawCircle(lcd, center_, r, DrawOpt::invert());
 	}
 public:
 
@@ -98,18 +96,16 @@ private:
 	NPoint center_;
 	U8 r;
 
-	//void rasterCircleFill(void (NLcd::*fpPixelState)(U8, U8)) const;
-
-	void showImpl(bool update) const {
-		nxpl::drawCircleFilled(*lcd, center_, r, DrawOpt::draw());
+	void showShapeImpl() const {
+		drawCircleFilled(lcd, center_, r, DrawOpt::draw());
 	}
 
-	void eraseImpl(bool update) const {
-		nxpl::drawCircleFilled(*lcd, center_, r, DrawOpt::clear());
+	void hideShapeImpl() const {
+		drawCircleFilled(lcd, center_, r, DrawOpt::clear());
 	}
 
-	void invertImpl(bool update) const {
-		nxpl::drawCircleFilled(*lcd, center_, r, DrawOpt::invert());
+	void invertShapeImpl() const {
+		drawCircleFilled(lcd, center_, r, DrawOpt::invert());
 	}
 public:
 

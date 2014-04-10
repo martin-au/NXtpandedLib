@@ -75,8 +75,9 @@ void NOstream::showWidgetImpl() const {
 	int save_y = display_get_y();
 
 	// for every line
+	bool lineEnd = false;
 	for (U8 i = 0; i < textBox().lines(); ++i) {
-		bool lineEnd = false;
+		lineEnd = false;
 		// for every char in line
 		for(U8 j = 0; j < textBox().charsInLine(); ++j) {
 			if(streamBuffer->buffer[i][j] == '\0') {
@@ -123,27 +124,37 @@ void NOstream::streamhandler(const char *str) {
 	// j..idx iterator of destination string
 	// k..idx iterator of source string
 	LockGuard lock(mutex);
-	U16 j = 0;
-	U16 k = 0;
-	U16 i = strlen(streamBuffer->buffer[streamBuffer->cursorLine]);
-	for (; str[k] != '\0'; j++) {
+	S16 j = 0;
+	S16 k = 0;
+	S16 i = strlen(streamBuffer->buffer[streamBuffer->cursorLine]);
+	for (; str[k] != '\0'; ++j) {
 		// if input is to long we write to new line
 		if ((i + j) >= textBox().charsInLine()) {
-			streamBuffer->buffer[streamBuffer->cursorLine][textBox().charsInLine()] = '\0';
+			streamBuffer->buffer[streamBuffer->cursorLine][i + j] = '\0';
 			newline();
 			newLineSpace();
 			j = 0;
-			i = autoLineFeedIndent;
-			continue;
+			i = autoLineFeedIndent; // make auto line feed visible with indent
+			// clear first to chars in line!
+			streamBuffer->buffer[streamBuffer->cursorLine][0] = ' ';
+			streamBuffer->buffer[streamBuffer->cursorLine][1] = ' ';
 		}
 		if (str[k] == '\n') {
 			streamBuffer->buffer[streamBuffer->cursorLine][i + j] = '\0';
 			newline();
 			newLineSpace();
-			j = 0;
+			j = -1; // so we start at begin with next iteration
 			i = 0;
 		} else {
 			streamBuffer->buffer[streamBuffer->cursorLine][i + j] = str[k];
+			/*
+			display_goto_xy(1, 7);
+			display_char(streamBuffer->buffer[streamBuffer->cursorLine][i + j]);
+			display_goto_xy(5, 7);
+			display_int(i+j, 2);
+			display_update();
+			systick_wait_ms(1000);
+			*/
 		}
 		k++;
 	}
