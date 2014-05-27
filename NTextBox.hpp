@@ -18,7 +18,7 @@ private:
 	U8 charsInLineVal, linesVal;
 
 public:
-	NTextBox(NCursor baseLeftTop, U8 charsInLine, U8 lines)
+	NTextBox(NCursor baseLeftTop = NCursor(0, 0), U8 charsInLine = 1, U8 lines = 1)
 	: baseLeftTop(baseLeftTop), charsInLineVal(charsInLine), linesVal(lines) {
 
 	}

@@ -34,8 +34,8 @@ namespace nxpl {
  */
 class Motorcontroller {
 private:
-	//static const S32 nxtMotorPorts = NUM_PORT_M;
 	ecrobot::Motor* mot;
+	mutex_t &controlMtx;
 
 	//long M_DELAY;
 	S16  	 M_SCALE;
@@ -55,6 +55,11 @@ private:
 	S32      mp;
 	S32      me;
 
+	void stopAtCurrentPos(S16 pwr, bool waitStop) {
+		S32 posNow = getRelPos();
+		moveAbs(posNow, pwr, waitStop);
+	}
+
 public:
 
 	/**
@@ -66,18 +71,20 @@ public:
 	 * Its mainly for holding the motor in position. High amax-> high overshooting.
 	 * Vmax is the maximum Velocity that will be achieved.
 	 * High vmax -> smoother breaking, no overshooting.
+	 * Same mutex should be used on all motors.
 	 *
 	 * @param motor The motor which should be controlled.
+	 * @param controlMutex Mutex for controlling all Motors
 	 * @param paraAmax Control-parameter maximum Acceleration.
 	 * @param paraVmax Control-parameter maximum Velocity.
 	*/
-	Motorcontroller(ecrobot::Motor *motor, S16 paraAmax, S16 paraVmax)
+	Motorcontroller(ecrobot::Motor *motor, mutex_t &controlMutex, S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
 		: mot(motor),
+		  controlMtx(controlMutex),
 		  M_SCALE(12),
 		  amax(paraAmax),
 		  vmax(paraVmax),
-		  phigh(87),
-		  //mmot(0),
+		  phigh(initialMotorPwr),
 		  mon(0),
 		  mgo(0),
 		  mup(0),
@@ -91,11 +98,10 @@ public:
 	}
 
 	/**
-	 * \brief Destructor calls Motorcontroller::controllerOff();
-	 * TODO test if there is a problem with sleep in destructor
+	 * \brief You should use controllerOff() and/or stopAtCurrentPosition before destructing!
 	 */
 	~Motorcontroller() {
-		this->controllerOff();
+		// this->controllerOff();
 	}
 
 	/**
@@ -108,17 +114,13 @@ public:
 	 * \param paraAmax Control-parameter maximum Acceleration.
 	*/
 	void setAmax(S16 paraAmax) {
-		// GetResource
 		amax = paraAmax;
-		// ReleaseResource
 	}
 
 	/**
-	 \brief Set control parameter for one motor.
-
-	 * Vmax represents the maximum Acceleration that will be achieved
-	 * when the motor is stationary and the maximum power is applied.
-	 * Its mainly for holding the motor in position. High amax-> high overshooting.
+	 * \brief Set control parameter for one motor.
+	 * Vmax is the maximum Velocity that will be achieved.
+	 * High vmax -> smoother breaking, no overshooting.
 	 *
 	 * \param paraVmax Control-parameter maximum Velocity.
 	 */
@@ -129,11 +131,13 @@ public:
 	/**
 	 * \brief Turns the controller on.
 	 *
-	 * Note that Motorcontroller will be started automatically when calling a move funtion.
+	 * Note that Motorcontroller will be started automatically when calling a move function.
      * Its mainly for saving process time with controllerOff/On.
 	 */
 	void controllerOn() {
+		controlMtx.acquire();
 		mon = true;
+		controlMtx.release();
 	}
 
 	/**
@@ -141,9 +145,21 @@ public:
 	 *
 	 * Waits until motor is on setpoint then brake the motor.
 	 * Controller intern regulation parameters are reseted.
+	 * Motor rotation count is not reseted!
 	 */
 	void controllerOff();
 
+	/** \brief Checks if motor is on setpoint.
+	 *
+	 * @return true if motor is on setpoint.
+	 */
+	bool moveDone() const {
+	   bool go;
+	   controlMtx.acquire();
+	   go = mgo;
+	   controlMtx.release();
+	   return go;
+	}
 
 	/** \brief Wait until motor is on setpoint.
 	*
@@ -153,23 +169,8 @@ public:
 	   bool go;
 	   do {
 	      Sleep(1);
-	      //Shedule();
-	      //Acquire(motor_mtx);
-	      go = mgo;
-	      //Release(motor_mtx);
+	      go = moveDone();
 	   } while (go);
-	}
-
-	/** \brief Checks if motor is on setpoint.
-	 *
-	 * @return true if motor is on setpoint.
-	 */
-	bool moveDone() const {
-	   bool go;
-	   //Acquire(motor_mtx);
-	   go = mgo;
-	   //Release(motor_mtx);
-	   return go;
 	}
 
 	/** \brief Move motor relative.
@@ -186,7 +187,7 @@ public:
 
 	/** \brief Move motor absolute.
 	 *
-	 * Move absolute means move motor to give position on a circle 0° - 360°
+	 * Move absolute means move motor to give position from absolute 0° position.
 	 * If you pass pwr 0 it will take the last used motorpower.
 	 *
 	 * @param pos  Angle in degrees.
@@ -198,9 +199,9 @@ public:
 	/** \brief Move motor.
 	 *
 	 * Move motor with given power. This will turn the controller off.
-	 * The direction is regulated with the sign.
+	 * The direction is regulated with the sign of pwr.
 	 *
-	 * @param pwr  The maximum allowed motor PWM power. (0 - 100)
+	 * @param pwr  The maximum allowed motor PWM power. (-100 to 100)
 	 */
 	void move(S16 pwr) {
 		this->controllerOff();
@@ -213,10 +214,66 @@ public:
 	 *
 	 * @param brake If true set brake else set floating mode.
 	 */
-	void stop(bool brake) {
+	void off(bool brake) {
 		this->controllerOff();
 		mot->setBrake(brake);
 		mot->setPWM(0);
+	}
+
+	/** \brief Stops the Motor softly at current position
+	 *
+	 * Cancels the actual move to any setpoint by stopping
+	 * the motor softly at the actual position.
+	 * Use moveDone() to see if motor is stopped.
+	 *
+	 * @param waitStop Wait until motor is stopped (blocking)
+	 */
+	void stopAtCurrentPosition(bool waitStop) {
+		stopAtCurrentPos(30, waitStop);
+	}
+
+	/** \brief Emergency-Stops the Motor at current position
+	 *
+	 * Cancels the actual move to any setpoint by stopping
+	 * the motor hardly/aggressive at the actual position.
+	 * Use moveDone() to see if motor is stopped or use waitStop for blocking function.
+	 * You may use this function in the task where process is running to check for out of range!
+	 *
+	 * @param waitStop Wait until motor is stopped (blocking)
+	 */
+	void emergencyStop(bool waitStop) {
+		stopAtCurrentPos(87, waitStop);
+	}
+
+	/** \brief Get motor absolute position
+	 *
+	 * The absolute position for the motor is between 0° - 359°
+	 *
+	 * @return absolute position
+	 */
+	S32 getAbsPos() const;
+
+	/** \brief Get motor relative position
+	 *
+	 * The relative position is the angle count from 0-Position to actual position.
+	 *
+	 * @return relativ position
+	 */
+	S32 getRelPos() const {
+		return mot->getCount();
+	}
+
+	/** \brief Reset position(counter)
+	 *
+	 *  This will reset the position of the motor.
+	 *  The actual position is now the new zero-position.
+	 *  Use this function to give your motor initial position or
+	 *  if you moved the motor after controllerOff(), otherwise motorcontroller
+	 *  will try to reach last known set-point!
+	 */
+	void resetPos() {
+		controllerOff();
+		mot->reset();
 	}
 
 	/**

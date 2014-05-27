@@ -18,7 +18,7 @@ public:
 	NPoint baseLeftTop;
 	U16 widthVal, heightVal;
 
-	NPixelBox(NPoint base, U16 width, U16 height)
+	NPixelBox(NPoint base = NPoint(0, 0), U16 width = 1, U16 height = 1)
 	: baseLeftTop(base), widthVal(width), heightVal(height) {
 	}
 
@@ -37,10 +37,6 @@ public:
 	NPoint base() const {
 		return baseLeftTop;
 	}
-
-//	NPoint & base()  {
-//		return &baseLeftTop;
-//	}
 
 	void setBase(NPoint base) {
 		baseLeftTop = base;

@@ -1,10 +1,11 @@
 # Target specific macros
 TARGET = mytest
 
-TARGET_CPP_SOURCES = NPairBox.cpp \
-					 sample.cpp  
+TARGET_CPP_SOURCES = \
+					 NPairBox.cpp \
+					 sample_.cpp  
 	
-TOPPERS_OSEK_OIL_SOURCE = ./sample.oil 
+TOPPERS_OSEK_OIL_SOURCE = ./_sample.oil 
 
 #BUILD_MODE = ROM_ONLY
 BUILD_MODE = RXE_ONLY

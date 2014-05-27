@@ -5,12 +5,6 @@
  *	\ingroup Utilities
 */
 
-extern "C" {
-	#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
-	#include "kernel_id.h"
-	#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
-}
-
 
 #include "StringConvert.hpp"
 //#include "NOstream.hpp"

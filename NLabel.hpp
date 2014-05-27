@@ -12,7 +12,7 @@
 #include "NString.hpp"
 #include "Uncopyable.hpp"
 
-#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strlen
+#include "../../../GNUARM/arm-elf/include/string.h" // strlen
 
 /** \file
  *	\ingroup NxtLcd

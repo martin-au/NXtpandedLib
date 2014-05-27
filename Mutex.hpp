@@ -18,7 +18,7 @@ extern "C" {
 	#include "../../ecrobot/c/ecrobot_interface.h"
 }
 
-#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 #include "Uncopyable.hpp"
 #include "RefCount.hpp"
 

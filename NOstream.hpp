@@ -26,7 +26,7 @@ extern "C" {
 #include "Uncopyable.hpp"
 #include "Mutex.hpp"
 
-#include "C:/cygwin/GNUARM/arm-elf/include/string.h" // strcpy, strlen
+#include "../../../GNUARM/arm-elf/include/string.h" // strcpy, strlen
 
 namespace nxpl {
 

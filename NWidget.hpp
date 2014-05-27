@@ -60,12 +60,12 @@ public:
 	void setTextBox(NTextBox textBox) {
 		bool visible = this->isVisible();
 		if(visible) {
-			this->hide(false); // Really important, otherwise we do not know where to clean!
+			hide(false); // Really important, otherwise we do not know where to clean!
 		}
 		box = textBox;
 		textBoxChangedHandler();
 		if(visible) {
-			this->show(false);
+			show(false);
 		}
 	}
 

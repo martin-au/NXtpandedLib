@@ -16,20 +16,20 @@
 */
 
 extern "C" {
-	#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
+	#include "../../toppers_osek/include/kernel.h"
 	#include "kernel_id.h"
-	#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
+	#include "../../ecrobot/c/ecrobot_interface.h"
 }
 
 //for codecorrection
-#include "C:/cygwin/nxtOSEK/lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
 
 // NULL
-#include <stddef.h>
+#include "../../../GNUARM/lib/gcc/arm-elf/4.0.2/include/stddef.h"
 // memcpy
-#include "C:/cygwin/GNUARM/arm-elf/include/string.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c++/util/New.cpp"
+#include "../../../GNUARM/arm-elf/include/string.h"
+#include "../../ecrobot/c++/util/New.cpp"
 
 
 namespace nxpl {
@@ -165,8 +165,8 @@ public:
 	 *@param inValue the value to append
 	 */
 	void append(const T & inValue) {
-		new ((void*) &this->buffer[this->endIndex++]) T(inValue);
-
+		//new ((void*) &this->buffer[this->endIndex++]) T(inValue);
+		this->buffer[this->endIndex++] = inValue;
 		if (this->endIndex == this->capacity) {
 			setCapacity(static_cast<S32>(this->capacity * 1.5));
 		}
@@ -181,8 +181,11 @@ public:
 			setCapacity(this->capacity + other.size());
 
 		for (S32 index = other.startIndex; index < other.endIndex; ++index) {
+			/*
 			new ((void*) &this->buffer[++this->endIndex]) T(
 					other.buffer[index]);
+			*/
+			this->buffer[++this->endIndex] = other.buffer[index];
 		}
 	}
 

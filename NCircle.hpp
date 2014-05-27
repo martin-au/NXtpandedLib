@@ -26,15 +26,15 @@ private:
 	U8 r;
 
 	void showShapeImpl() const {
-		nxpl::drawCircle(lcd, center_, r, DrawOpt::draw());
+		nxpl::drawCircle(*lcd, center_, r, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		nxpl::drawCircle(lcd, center_, r, DrawOpt::clear());
+		nxpl::drawCircle(*lcd, center_, r, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		nxpl::drawCircle(lcd, center_, r, DrawOpt::invert());
+		nxpl::drawCircle(*lcd, center_, r, DrawOpt::invert());
 	}
 public:
 
@@ -97,15 +97,15 @@ private:
 	U8 r;
 
 	void showShapeImpl() const {
-		drawCircleFilled(lcd, center_, r, DrawOpt::draw());
+		drawCircleFilled(*lcd, center_, r, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		drawCircleFilled(lcd, center_, r, DrawOpt::clear());
+		drawCircleFilled(*lcd, center_, r, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		drawCircleFilled(lcd, center_, r, DrawOpt::invert());
+		drawCircleFilled(*lcd, center_, r, DrawOpt::invert());
 	}
 public:
 

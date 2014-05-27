@@ -26,17 +26,17 @@ private:
 	NPoint start_, end_;
 
 	void showShapeImpl() const {
-		drawLine(lcd, start_, end_, DrawOpt::draw());
+		drawLine(*lcd, start_, end_, DrawOpt::draw());
 	}
 
 
 	void hideShapeImpl() const {
-		drawLine(lcd, start_, end_, DrawOpt::clear());
+		drawLine(*lcd, start_, end_, DrawOpt::clear());
 	}
 
 
 	void invertShapeImpl() const {
-		drawLine(lcd, start_, end_, DrawOpt::invert());
+		drawLine(*lcd, start_, end_, DrawOpt::invert());
 	}
 public:
 	/**

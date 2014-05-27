@@ -7,6 +7,8 @@
 
 #include "Motorcontroller.hpp"
 
+#include "..\..\..\GNUARM\include\c++\4.0.2\cstdlib" // abs
+
 namespace nxpl {
 
 
@@ -14,8 +16,9 @@ void Motorcontroller::controllerOff() {
    bool on;
    do {
       on = false;
-      if (mon) {
-         if(mgo) {
+      controlMtx.acquire();
+      if (mon) {   // controller is on
+         if(mgo) { // motor is not at target position
             on = true;
          } else {
             mot->setBrake(true);
@@ -26,6 +29,7 @@ void Motorcontroller::controllerOff() {
             mp  = 0;
          }
       }
+      controlMtx.release();
       Sleep(1);
    } while (on);
 }
@@ -34,21 +38,21 @@ void Motorcontroller::controllerOff() {
 // will set the controller to on!
 void Motorcontroller::moveRel(S32 pos, S16 pwr, bool waitMove, S32 off) {
    pos = -pos;
-   //Acquire(motor_mtx);
+   controlMtx.acquire();
    if(pwr > 0)
       phigh = pwr;
    mtx += -M_SCALE*(pos+off);
    mup = (mtx > mx);
    mon = true;
    mgo = true;
-   //Release(motor_mtx);
+   controlMtx.release();
    if (off != 0) {
      this->waitMove();
-     //Acquire(motor_mtx);
+     controlMtx.acquire();
      mtx -= -M_SCALE*off;
      mup = (mtx > mx);
      mgo = true;
-     //Release(motor_mtx);
+     controlMtx.release();
    }
    if(waitMove)
       this->waitMove();
@@ -59,19 +63,28 @@ void Motorcontroller::moveRel(S32 pos, S16 pwr, bool waitMove, S32 off) {
 void Motorcontroller::moveAbs(S32 pos, S16 pwr, bool waitMove) {
    pos = -pos;
    if(pwr > 0) {
-	  // Acquire(motor_mtx);
+	  controlMtx.acquire();
       phigh = pwr;
    	  mtx = -M_SCALE*pos;
    	  mup = (mtx > mx);
    	  mon = true;
    	  mgo = true;
-   	  //Release(motor_mtx);
+   	  controlMtx.release();
    	  if(waitMove) {
    		  this->waitMove();
    	  }
    }
 }
 
+
+S32 Motorcontroller::getAbsPos() const {
+	S32 relCount = mot->getCount();
+	S32 fullTurns = abs(relCount / 360);
+	S32 absCount = relCount;
+	if(relCount > 359) absCount = relCount - 360 * fullTurns;
+	else if(relCount < 0) absCount = 360 * (fullTurns + 1) + relCount;
+	return (absCount != 360) ? absCount : 0;
+}
 
 
 // please let the motor time to settle!
@@ -84,24 +97,24 @@ void Motorcontroller::resetMotorPos(S16 pwr) {
    if(pwr < -50)
       pwr = -50;
 
-   //Acquire(motor_mtx);
-   mon = false;
+   //controlMtx.acquire();
+   //mon = false;
+   controllerOff();
    //Release(motor_mtx);
    mot->setPWM(pwr);
    mot->setBrake(true);
    tachoNow = mot->getCount();
    do {
-      Sleep(25);
+      Sleep(50-pwr/2);
       tachoPrev = tachoNow;
       tachoNow = mot->getCount();
    } while(tachoNow != tachoPrev);
-   mot->setPWM(0);
    mot->reset();
 }
 
 
-
 void Motorcontroller::process() {
+	LockGuard lock(controlMtx);
 	// if motor controller is on
 	if (mon) {
 		bool rev = false;

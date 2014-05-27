@@ -52,7 +52,7 @@ void user_1ms_isr_type2(void){
 
 #include "NOstream.hpp"
 nxpl::mutex_t streammtx(ostreamRes);
-nxpl::NOstream cout(streammtx);
+//nxpl::NOstream cout(streammtx);
 
 
 #include "NLabel.hpp"
@@ -94,23 +94,60 @@ NPairBox<NLabel, NLabel>  box(&label2, &label1, 2, 2, NAlignment::right());
 
 // 1000 ms cycle
 
+/*
+#include "NLcdView.hpp"
+#include "NRectangle.hpp"
+#include "NCircle.hpp"
+#include "NLine.hpp"
+*/
 
 extern "C" {
 
+using namespace nxpl;
 
 TASK(TaskMain) {
 
-	cout << "start test\n";
 
-	cout.flush(true);
-	systick_wait_ms(2000);
-	cout << "0123456_0123456_0123456\n";
 
-	cout.flush(true);
-	systick_wait_ms(2000);
-	cout << "end test\n" << nxpl::endl;
 
-	cout.flush(true);
+	/*
+	NLabel test("(test)", NTextBox(NCursor(5, 0), 7));
+	test.show(true);
+
+	NLabel toRight(">>", NTextBox(NCursor(14, 3), 2));
+	NLabel toLeft("<<", NTextBox(NCursor(0, 3), 2));
+	NLabel lastSite("(main)", NTextBox(NCursor(5, 3), 7));
+
+	NOstream cout(streammtx, NTextBox(NCursor(3, 0), 14, 8));
+
+	NLcd lcd;
+	NRectangleFilled rectangle(lcd, NPixelBox(NPoint(20, 20), 30, 30));
+
+	NLcdView mainSite(5);
+	mainSite.add(&toRight);
+	mainSite.add(&toLeft);
+	mainSite.add(&lastSite);
+
+	NLcdView rightSite(2);
+	rightSite.add(&toLeft);
+	rightSite.add(&cout);
+
+	NLcdView leftSite(2);
+	leftSite.add(&toRight);
+	leftSite.add(&rectangle);
+
+	NTimer timer;
+
+	const S8 mainSiteId = 0;
+	const S8 leftSiteId = -1;
+	const S8 rightSiteId = 1;
+
+	mainSite.show(true);
+	test.show(true);
+	int site = mainSiteId;
+	*/
+
+
 
 	/*
 	nxpl::NTimer timer;

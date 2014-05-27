@@ -34,7 +34,7 @@ CPU ATMEL_AT91SAM7S256
       RESOURCEPROPERTY = STANDARD;
   };
   
-  RESOURCE motorARes
+  RESOURCE motorRes
   {
       RESOURCEPROPERTY = STANDARD;
   };
@@ -47,7 +47,7 @@ CPU ATMEL_AT91SAM7S256
     ACTIVATION = 1;
     SCHEDULE = FULL;
     RESOURCE = ostreamRes;
-    RESOURCE = motorARes;
+    RESOURCE = motorRes;
     STACKSIZE = 512;
     EVENT = EventSleep;
     EVENT = EventSleepI2C;
@@ -61,7 +61,7 @@ CPU ATMEL_AT91SAM7S256
     ACTIVATION = 1;
     SCHEDULE = FULL;
     RESOURCE = ostreamRes;
-    RESOURCE = motorARes;
+    RESOURCE = motorRes;
     STACKSIZE = 512;
     EVENT = EventSleep;
     EVENT = EventSleepI2C;
@@ -103,7 +103,7 @@ CPU ATMEL_AT91SAM7S256
     AUTOSTART = TRUE
     {
         ALARMTIME = 1;
-        CYCLETIME = 3000; /* Task is executed every 10msec */
+        CYCLETIME = 10; /* Task is executed every 10msec */
         APPMODE = appmode1;
     };
   };
