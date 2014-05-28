@@ -128,6 +128,14 @@ public:
 		vmax = paraVmax;
 	}
 
+	void isControllerOn() const {
+		bool on = false;
+		controlMtx.acquire();
+		on = mon;
+		controlMtx.release();
+		return on;
+	}
+
 	/**
 	 * \brief Turns the controller on.
 	 *
@@ -143,9 +151,9 @@ public:
 	/**
 	 * \brief Turns the controller off.
 	 *
-	 * Waits until motor is on setpoint then brake the motor.
-	 * Controller intern regulation parameters are reseted.
-	 * Motor rotation count is not reseted!
+	 * -Motor is set to braking mode.<br>
+	 * -Controller intern regulation parameters are reseted.<br>
+	 * -Motor rotation count is not reseted!<br>
 	 */
 	void controllerOff();
 
@@ -158,7 +166,7 @@ public:
 	   controlMtx.acquire();
 	   go = mgo;
 	   controlMtx.release();
-	   return go;
+	   return !go;
 	}
 
 	/** \brief Wait until motor is on setpoint.
@@ -169,7 +177,7 @@ public:
 	   bool go;
 	   do {
 	      Sleep(1);
-	      go = moveDone();
+	      go = !moveDone();
 	   } while (go);
 	}
 
@@ -261,6 +269,16 @@ public:
 	 */
 	S32 getRelPos() const {
 		return mot->getCount();
+	}
+
+	/** \brief Get actual motor power(PWM)
+	 *
+	 * Returns actual motor PWM used to control the motor.
+	 *
+	 * @return PWM
+	 */
+	S32 getMotorPWM() const {
+		return mp;
 	}
 
 	/** \brief Reset position(counter)

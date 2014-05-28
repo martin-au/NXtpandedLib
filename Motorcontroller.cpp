@@ -13,25 +13,17 @@ namespace nxpl {
 
 
 void Motorcontroller::controllerOff() {
-   bool on;
-   do {
-      on = false;
-      controlMtx.acquire();
-      if (mon) {   // controller is on
-         if(mgo) { // motor is not at target position
-            on = true;
-         } else {
-            mot->setBrake(true);
-            mot->setPWM(0);
-            mon = false;
-            mv  = 0;
-            ma  = 0;
-            mp  = 0;
-         }
-      }
-      controlMtx.release();
-      Sleep(1);
-   } while (on);
+	controlMtx.acquire();
+	if (mon) {   // controller is on
+		mgo = false;
+		mon = false;
+		mv = 0;
+		ma = 0;
+		mp = 0;
+		mot->setBrake(true);
+		mot->setPWM(0);
+	}
+	controlMtx.release();
 }
 
 
