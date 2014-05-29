@@ -13,17 +13,25 @@ namespace nxpl {
 
 
 void Motorcontroller::controllerOff() {
-	controlMtx.acquire();
-	if (mon) {   // controller is on
-		mgo = false;
-		mon = false;
-		mv = 0;
-		ma = 0;
-		mp = 0;
-		mot->setBrake(true);
-		mot->setPWM(0);
-	}
-	controlMtx.release();
+   bool on;
+   do {
+      on = false;
+      controlMtx.acquire();
+      if (mon) {   // controller is on
+         if(mgo) { // motor is not at target position
+            on = true;
+         } else {
+            mot->setBrake(true);
+            mot->setPWM(0);
+            mon = false;
+            mv  = 0;
+            ma  = 0;
+            mp  = 0;
+         }
+      }
+      controlMtx.release();
+      Sleep(1);
+   } while (on);
 }
 
 
@@ -89,15 +97,16 @@ void Motorcontroller::resetMotorPos(S16 pwr) {
    if(pwr < -50)
       pwr = -50;
 
-   //controlMtx.acquire();
-   //mon = false;
-   controllerOff();
+   controlMtx.acquire();
+   mon = false;
+   controlMtx.release();
+   //controllerOff();
    //Release(motor_mtx);
    mot->setPWM(pwr);
    mot->setBrake(true);
    tachoNow = mot->getCount();
    do {
-      Sleep(50-pwr/2);
+      systick_wait_ms(50-pwr/2);
       tachoPrev = tachoNow;
       tachoNow = mot->getCount();
    } while(tachoNow != tachoPrev);
@@ -199,6 +208,13 @@ void Motorcontroller::process() {
 		mv = v;
 		ma = a;
 		me = e;
+
+#ifdef NXPL_MOTORCONTROLLER_EVENTS_ON
+		if(waitForEvent && !mgo) {
+			SetEvent(idOfWaitingForMoveDoneEventTask, moveDoneEvent);
+			waitForEvent = false;
+		}
+#endif
 	}
 }
 

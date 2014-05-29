@@ -8,6 +8,8 @@
 #ifndef __MOTORCONTROLLER_HPP_
 #define __MOTORCONTROLLER_HPP_
 
+//#define NXPL_MOTORCONTROLLER_EVENTS_ON
+
 /** \file
  *	\ingroup NxtIO
 */
@@ -55,6 +57,12 @@ private:
 	S32      mp;
 	S32      me;
 
+    #ifdef NXPL_MOTORCONTROLLER_EVENTS_ON
+	bool waitForEvent;
+	TaskType idOfWaitingForMoveDoneEventTask;
+	const EventMaskType &moveDoneEvent;
+	#endif
+
 	void stopAtCurrentPos(S16 pwr, bool waitStop) {
 		S32 posNow = getRelPos();
 		moveAbs(posNow, pwr, waitStop);
@@ -62,6 +70,7 @@ private:
 
 public:
 
+#ifndef NXPL_MOTORCONTROLLER_EVENTS_ON
 	/**
 	 * \brief Construct and initialize the motorcontroller control parameters.
 	 *
@@ -97,6 +106,45 @@ public:
 		mot->setBrake(true);
 	}
 
+#else
+	/**
+	 * \brief Construct and initialize the motorcontroller control parameters.
+	 *
+	 * Set control parameters for given motor.
+	 * Amax represents the maximum Acceleration that will be achieved
+	 * when the motor is stationary and the maximum power is applied.
+	 * Its mainly for holding the motor in position. High amax-> high overshooting.
+	 * Vmax is the maximum Velocity that will be achieved.
+	 * High vmax -> smoother breaking, no overshooting.
+	 * Same mutex should be used on all motors.
+	 *
+	 * @param motor The motor which should be controlled.
+	 * @param controlMutex Mutex for controlling all Motors
+	 * @param paraAmax Control-parameter maximum Acceleration.
+	 * @param paraVmax Control-parameter maximum Velocity.
+	*/
+	Motorcontroller(ecrobot::Motor *motor, mutex_t &controlMutex, const EventMaskType &userMoveDoneEvent,S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
+		: mot(motor),
+		  controlMtx(controlMutex),
+		  M_SCALE(12),
+		  amax(paraAmax),
+		  vmax(paraVmax),
+		  phigh(initialMotorPwr),
+		  mon(0),
+		  mgo(0),
+		  mup(0),
+		  mtx(0),
+		  mx(0),
+		  mv(0),
+		  ma(0),
+		  mp(0),
+		  me(0),
+		  waitForEvent(false),
+		  moveDoneEvent(userMoveDoneEvent) {
+		mot->setBrake(true);
+	}
+#endif
+
 	/**
 	 * \brief You should use controllerOff() and/or stopAtCurrentPosition before destructing!
 	 */
@@ -128,14 +176,6 @@ public:
 		vmax = paraVmax;
 	}
 
-	void isControllerOn() const {
-		bool on = false;
-		controlMtx.acquire();
-		on = mon;
-		controlMtx.release();
-		return on;
-	}
-
 	/**
 	 * \brief Turns the controller on.
 	 *
@@ -151,9 +191,9 @@ public:
 	/**
 	 * \brief Turns the controller off.
 	 *
-	 * -Motor is set to braking mode.<br>
-	 * -Controller intern regulation parameters are reseted.<br>
-	 * -Motor rotation count is not reseted!<br>
+	 * Waits until motor is on setpoint then brake the motor.
+	 * Controller intern regulation parameters are reseted.
+	 * Motor rotation count is not reseted!
 	 */
 	void controllerOff();
 
@@ -172,14 +212,24 @@ public:
 	/** \brief Wait until motor is on setpoint.
 	*
 	* This function is a blocking function. This means it will return when the motor is on setpoint.
+	* Sleep is used for waiting: see ecrbot API what you have to implement in oil file!
 	*/
 	void waitMove() const {
-	   bool go;
 	   do {
-	      Sleep(1);
-	      go = !moveDone();
-	   } while (go);
+	     Sleep(1);
+	   } while (!moveDone());
 	}
+
+#ifdef NXPL_MOTORCONTROLLER_EVENTS_ON
+	void waitMoveEvent() {
+		GetTaskID(&idOfWaitingForMoveDoneEventTask);
+		controlMtx.acquire();
+		waitForEvent = true;
+		controlMtx.release();
+		WaitEvent(moveDoneEvent);
+		ClearEvent(moveDoneEvent);
+	}
+#endif
 
 	/** \brief Move motor relative.
 	 *
@@ -269,16 +319,6 @@ public:
 	 */
 	S32 getRelPos() const {
 		return mot->getCount();
-	}
-
-	/** \brief Get actual motor power(PWM)
-	 *
-	 * Returns actual motor PWM used to control the motor.
-	 *
-	 * @return PWM
-	 */
-	S32 getMotorPWM() const {
-		return mp;
 	}
 
 	/** \brief Reset position(counter)
