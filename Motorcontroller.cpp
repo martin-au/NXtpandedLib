@@ -13,25 +13,17 @@ namespace nxpl {
 
 
 void Motorcontroller::controllerOff() {
-   bool on;
-   do {
-      on = false;
-      controlMtx.acquire();
-      if (mon) {   // controller is on
-         if(mgo) { // motor is not at target position
-            on = true;
-         } else {
-            mot->setBrake(true);
-            mot->setPWM(0);
-            mon = false;
-            mv  = 0;
-            ma  = 0;
-            mp  = 0;
-         }
-      }
-      controlMtx.release();
-      Sleep(1);
-   } while (on);
+	LockGuard lock(controlMtx);
+	if (mon) {   // controller is on
+		mgo = false;
+		mot->setBrake(true);
+		mot->setPWM(0);
+		mon = false;
+		mreset = false;
+		mv = 0;
+		ma = 0;
+		mp = 0;
+	}
 }
 
 
@@ -86,10 +78,30 @@ S32 Motorcontroller::getAbsPos() const {
 	return (absCount != 360) ? absCount : 0;
 }
 
-
+#ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
 // please let the motor time to settle!
-void Motorcontroller::resetMotorPos(S16 pwr) {
-   S32 tachoNow, tachoPrev;
+void Motorcontroller::resetMotorPos(S16 pwr, bool waitReset) {
+	// power limit, anything above would be dangerous.
+	// user may change this if motor is under heavy load
+	if (pwr > 50)
+		pwr = 50;
+	if (pwr < -50)
+		pwr = -50;
+
+	controllerOff();
+	controlMtx.acquire();
+	mot->setPWM(pwr);
+	mot->setBrake(true);
+	mx = mot->getCount();
+	mreset = true;
+	mgo = true;
+	controlMtx.release();
+
+	if(waitReset) {
+		waitMove();
+	}
+	/*
+	S32 tachoNow, tachoPrev;
 
    // power limiting (anything above this level would be dangerous)
    if(pwr > 50)
@@ -111,13 +123,36 @@ void Motorcontroller::resetMotorPos(S16 pwr) {
       tachoNow = mot->getCount();
    } while(tachoNow != tachoPrev);
    mot->reset();
+   */
 }
-
+#endif
 
 void Motorcontroller::process() {
 	LockGuard lock(controlMtx);
-	// if motor controller is on
-	if (mon) {
+#ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
+	if(mreset) {
+	   S32 lastTime = mv;
+	   S32 nowTime = systick_get_ms();
+	   S32 motorPwr = mot->getPWM();
+
+	   if((nowTime - lastTime) > (40 - motorPwr/2)) {
+		   S32 lastCount = mx;
+		   S32 nowCount = mot->getCount();
+		   if(lastCount !=  nowCount) {
+			   mx = nowCount;
+		   } else {
+		      mreset = false;
+		      mgo = false;
+		      mx = 0;
+		      mv = 0;
+		      mot->reset();
+		   }
+	   }
+	   mv = nowTime;
+	} else if (mon) {
+#else
+	if(mon)	{
+#endif
 		bool rev = false;
 		//S8 mot = mc.mmot[m];
 		S32 x = mx;

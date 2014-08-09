@@ -14,8 +14,7 @@ extern "C" {
 
 namespace nxpl {
 
-// the functions should be used to calculate the resulting string size before
-// actual converting. Remember to let space for the '\0' char!!
+
 /**
  * \brief Get number of digits in a number.
  * The sign is treated as digit.
@@ -42,7 +41,7 @@ inline S8 numDigits(U32 num) {
 /**\brief Convert number to string.
  * The size of destination string must be big enough.
  * 12 chars should be enough for all 32 bit types.
- * You can pre calculate the resulting string size with nxpl::numDigits()+1 for nulltermination.
+ * You can pre calculate the resulting string size with nxpl::numDigits()+1 (+1 for nulltermination)
  *
  * @param value Number to convert.
  * @param dest Destination string.

@@ -8,7 +8,8 @@
 #ifndef __MOTORCONTROLLER_HPP_
 #define __MOTORCONTROLLER_HPP_
 
-//#define NXPL_MOTORCONTROLLER_EVENTS_ON
+#define NXPL_MOTORCONTROLLER_EVENTS_ON
+#define NXPL_MOTORCONTROLLER_STALL_RESET_ON
 
 /** \file
  *	\ingroup NxtIO
@@ -50,6 +51,9 @@ private:
 	bool     mon;
 	bool     mgo;
 	bool     mup;
+#ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
+	bool     mreset;
+#endif
 	S32      mtx;
 	S32      mx;
 	S32      mv;
@@ -97,6 +101,7 @@ public:
 		  mon(0),
 		  mgo(0),
 		  mup(0),
+		  mreset(0),
 		  mtx(0),
 		  mx(0),
 		  mv(0),
@@ -120,6 +125,7 @@ public:
 	 *
 	 * @param motor The motor which should be controlled.
 	 * @param controlMutex Mutex for controlling all Motors
+	 * @param userMoveDoneEvent this event will be set if moveIsDone, see Motorcontroller::waitMoveEvent()
 	 * @param paraAmax Control-parameter maximum Acceleration.
 	 * @param paraVmax Control-parameter maximum Velocity.
 	*/
@@ -133,6 +139,7 @@ public:
 		  mon(0),
 		  mgo(0),
 		  mup(0),
+		  mreset(0),
 		  mtx(0),
 		  mx(0),
 		  mv(0),
@@ -212,7 +219,7 @@ public:
 	/** \brief Wait until motor is on setpoint.
 	*
 	* This function is a blocking function. This means it will return when the motor is on setpoint.
-	* Sleep is used for waiting: see ecrbot API what you have to implement in oil file!
+	* Sleep is used for waiting: see ecrobot API what you have to implement in oil file!
 	*/
 	void waitMove() const {
 	   do {
@@ -282,7 +289,7 @@ public:
 	 *
 	 * Cancels the actual move to any setpoint by stopping
 	 * the motor softly at the actual position.
-	 * Use moveDone() to see if motor is stopped.
+	 * Use moveDone()/waitMove()/waitMoveEvent() to see if motor is stopped.
 	 *
 	 * @param waitStop Wait until motor is stopped (blocking)
 	 */
@@ -334,16 +341,21 @@ public:
 		mot->reset();
 	}
 
+#ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
 	/**
 	 * \brief Reset the motor position.
 	 *
 	 * Reset the motor by turning the shaft until stalling.
 	 * Be aware of using this function. The position is used as absolute 0 position.
+	 * This function use process(). <br>
+	 * Check with moveDone()/waitMove()/waitMoveEvent() if motor is reseted.
 	 *
 	 * @param pwr Output power, from -50 to +50, use the sign for direction.
+	 * @param if true this functions is blocking until move is done.
 	 *
 	*/
-	void resetMotorPos(S16 pwr);
+	void resetMotorPos(S16 pwr, bool waitReset);
+#endif
 
 	/** \brief Control-Algorithm process.
 	 *
