@@ -213,3 +213,11 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#os
+toppers_jsp/
+toppers_osek/
+
+#doks
+NXtpandedLib/Documentation/
+ecrobot/c++/html

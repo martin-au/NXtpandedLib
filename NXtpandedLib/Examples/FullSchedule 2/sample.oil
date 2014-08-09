@@ -1,0 +1,88 @@
+#include "implementation.oil"
+
+CPU ATMEL_AT91SAM7S256
+{
+  OS LEJOS_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = FALSE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = FALSE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  /* Definition of application mode */
+  APPMODE appmode1{}; 
+
+  EVENT EventSleep
+  {
+    MASK = AUTO;
+  };
+  
+  EVENT EventSleepI2C
+  {
+    MASK = AUTO;
+  };
+
+  RESOURCE OstreamResource
+  {
+     RESOURCEPROPERTY = STANDARD;
+  };
+
+  /* Definition of TaskMain */
+  TASK TaskMain
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    RESOURCE = OstreamResource;
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+  };
+  
+   TASK Task2
+   {
+    AUTOSTART = FALSE;
+    PRIORITY = 2; 
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    RESOURCE = OstreamResource;
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+  };
+  
+  COUNTER SysTimerCnt
+  {
+    MINCYCLE = 1;
+    MAXALLOWEDVALUE = 10000;
+    TICKSPERBASE = 1; /* One tick is equal to 1msec */
+  };
+  
+  
+    /* Definition of Task2 execution timing */
+  ALARM cyclic_alarm1
+  {
+    COUNTER = SysTimerCnt;
+    ACTION = ACTIVATETASK
+    {
+      TASK = Task2;
+    };
+    AUTOSTART = TRUE
+    {
+      ALARMTIME = 1;
+      CYCLETIME = 2500; /* Task1 is executed every 2,5 sec */
+      APPMODE = appmode1;
+    }; 
+  };
+};
+

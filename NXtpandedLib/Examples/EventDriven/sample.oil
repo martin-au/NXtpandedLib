@@ -1,0 +1,86 @@
+#include "implementation.oil"
+
+CPU ATMEL_AT91SAM7S256
+{
+  OS LEJOS_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = FALSE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = FALSE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  /* Definition of application mode */
+  APPMODE appmode1{}; 	
+
+  /* System Events */	
+  EVENT EventSleep
+  {
+    MASK = AUTO;
+  };
+  
+  EVENT EventSleepI2C
+  {
+    MASK = AUTO;
+  };
+  
+  /*User Events*/
+  EVENT PressButtonEvent{
+    MASK = AUTO;
+  };
+  
+  
+  RESOURCE OstreamResource
+  {
+     RESOURCEPROPERTY = STANDARD;
+  };
+
+  /* Definition of TaskMain */
+  TASK EventDispatcher
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    RESOURCE = OstreamResource;
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+    EVENT = PressButtonEvent;
+  };
+  
+    /* Definition of TaskMain */
+  TASK EventCallback
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    RESOURCE = OstreamResource;
+    EVENT = EventSleep;
+    EVENT = EventSleepI2C;
+    EVENT = PressButtonEvent;
+  };
+  
+  
+  
+  COUNTER SysTimerCnt
+  {
+    MINCYCLE = 1;
+    MAXALLOWEDVALUE = 10000;
+    TICKSPERBASE = 1; /* One tick is equal to 1msec */
+  };
+};
+

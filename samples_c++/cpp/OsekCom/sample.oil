@@ -1,0 +1,115 @@
+#include "implementation.oil"
+
+CPU ARM
+{
+  OS EPLABO_OSEK
+  {
+    STATUS = EXTENDED;
+    STARTUPHOOK = TRUE;
+    ERRORHOOK = FALSE;
+    SHUTDOWNHOOK = TRUE;
+    PRETASKHOOK = FALSE;
+    POSTTASKHOOK = FALSE;
+    USEGETSERVICEID = FALSE;
+    USEPARAMETERACCESS = FALSE;
+    USERESSCHEDULER = FALSE;
+  };
+
+  /* Definition of application mode */
+  APPMODE appmode1{}; 
+
+  /* Definition of OSEK_Task_Background */
+  TASK OSEK_Task_1
+  {
+    AUTOSTART = TRUE
+    {
+      APPMODE = appmode1;
+    };
+    PRIORITY = 1; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    MESSAGE = SendMsg;
+    EVENT = EventSleepI2C;
+    EVENT = EventSleep;
+  };
+
+  TASK OSEK_Task_2
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 2; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    MESSAGE = RcvMsg;
+  };
+
+  TASK OSEK_Task_3
+  {
+    AUTOSTART = FALSE;
+    PRIORITY = 2; /* lowest priority */
+    ACTIVATION = 1;
+    SCHEDULE = FULL;
+    STACKSIZE = 512;
+    MESSAGE = RcvMsg2;
+  };
+
+   COM MYCOM {
+		COMERRORHOOK = FALSE;
+		COMUSEGETSERVICEID = TRUE;
+		COMUSEPARAMETERACCESS = TRUE;
+		COMSTARTCOMEXTENSION = FALSE;
+		COMAPPMODE = "COMAPP";
+    };
+
+
+  MESSAGE SendMsg
+ {
+    MESSAGEPROPERTY = SEND_STATIC_INTERNAL {
+	CDATATYPE="MSG1";
+    };
+ };
+  MESSAGE SendMsg2
+ {
+    MESSAGEPROPERTY = SEND_STATIC_INTERNAL {
+	CDATATYPE="MSG1";
+    };
+ };
+  MESSAGE SendMsg3
+ {
+    MESSAGEPROPERTY = SEND_STATIC_INTERNAL {
+	CDATATYPE="MSG1";
+    };
+ };
+  MESSAGE RcvMsg
+ {
+    MESSAGEPROPERTY = RECEIVE_UNQUEUED_INTERNAL {
+	SENDINGMESSAGE=SendMsg;
+	FILTER=ALWAYS;
+    };
+    NOTIFICATION=ACTIVATETASK {
+	TASK=OSEK_Task_2;
+    };
+ };
+  MESSAGE RcvMsg2
+ {
+    MESSAGEPROPERTY = RECEIVE_UNQUEUED_INTERNAL {
+	SENDINGMESSAGE=SendMsg2;
+	FILTER=ALWAYS;
+    };
+    NOTIFICATION=ACTIVATETASK {
+	TASK=OSEK_Task_3;
+    };
+ };
+
+  EVENT EventSleepI2C
+  {
+    MASK = AUTO;
+  };
+
+  EVENT EventSleep
+  {
+    MASK = AUTO;
+  };
+};
+
