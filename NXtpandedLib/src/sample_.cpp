@@ -55,7 +55,7 @@ nxpl::mutex_t streammtx(ostreamRes);
 nxpl::NOstream cout(streammtx);
 
 
-#include "NTimer.hpp";
+#include "NTimer.hpp"
 #include "Motorcontroller.hpp"
 
 nxpl::mutex_t motorControlMtx(motorRes);
@@ -73,7 +73,7 @@ TASK(TaskMain) {
 	NTimer timer;
 
 	cout << "Reset now\n";
-	motorA.resetMotorPos(30);
+	motorA.resetMotorPos(30, true);
 	cout << "1.Abs: " << motorA.getAbsPos() << "\n";
 	cout << "1.Rel: " << motorA.getRelPos() << "\n";
 

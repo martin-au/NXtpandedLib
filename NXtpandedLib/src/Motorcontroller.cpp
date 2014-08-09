@@ -19,7 +19,9 @@ void Motorcontroller::controllerOff() {
 		mot->setBrake(true);
 		mot->setPWM(0);
 		mon = false;
+#ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
 		mreset = false;
+#endif
 		mv = 0;
 		ma = 0;
 		mp = 0;

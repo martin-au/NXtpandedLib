@@ -8,7 +8,7 @@
 #ifndef __MOTORCONTROLLER_HPP_
 #define __MOTORCONTROLLER_HPP_
 
-#define NXPL_MOTORCONTROLLER_EVENTS_ON
+// #define NXPL_MOTORCONTROLLER_EVENTS_ON
 #define NXPL_MOTORCONTROLLER_STALL_RESET_ON
 
 /** \file
@@ -101,7 +101,9 @@ public:
 		  mon(0),
 		  mgo(0),
 		  mup(0),
+#ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
 		  mreset(0),
+#endif
 		  mtx(0),
 		  mx(0),
 		  mv(0),

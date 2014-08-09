@@ -84,19 +84,18 @@ public:
 	void setPWM(S8 pwm);
 
 	/**
+	 * Get current PWM value.
+	 * @param -
+	 * @return PWM set value
+	 */
+	inline S8 getPWM(void) const { return mPWM; }
+
+	/**
 	 * Set brake.
 	 * @param brake true:brake/false:float
 	 * @return -
 	 */
 	void setBrake(bool brake);
-
-protected:
-	/**
-	 * Get motor connected port.
-	 * @param -
-	 * @return Motor connected port
-	 */
-	inline ePortM getPort(void) const { return mPort; }
 
 	/**
 	 * Get brake status.
@@ -106,11 +105,11 @@ protected:
 	inline bool getBrake(void) const { return mBrake; }
 
 	/**
-	 * Get current PWM value.
+	 * Get motor connected port.
 	 * @param -
-	 * @return PWM set value
+	 * @return Motor connected port
 	 */
-	inline S8 getPWM(void) const { return mPWM; }
+	inline ePortM getPort(void) const { return mPort; }
 
 private:
    ePortM mPort;
