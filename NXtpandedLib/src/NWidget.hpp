@@ -49,6 +49,7 @@ private:
 
 protected:
 	NWidget(NTextBox textBox) : box(textBox) {}
+
 	virtual ~NWidget() {}
 
 	virtual void textBoxChangedHandler() {}
@@ -69,6 +70,8 @@ public:
 		}
 	}
 
+	// top-level functions for easy use
+
 	void setPosition(NCursor position) {
 		bool visible = this->isVisible();
 		if(visible) {
@@ -79,6 +82,18 @@ public:
 		if(visible) {
 			this->show(false);
 		}
+	}
+
+	void setPosition(S8 indent, S8 line) {
+		setPosition(NCursor(indent, line));
+	}
+
+	void setIndent(S8 indent) {
+		setPosition(NCursor(indent, box.base().line()));
+	}
+
+	void setLine(S8 line) {
+		setPosition(NCursor(box.base().indent(), line));
 	}
 };
 

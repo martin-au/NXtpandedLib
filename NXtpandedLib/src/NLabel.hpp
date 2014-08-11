@@ -56,6 +56,20 @@ public:
 	 * @param row    Row of the lcd (0 - 7)
 	 * @param charWidth The width of the label in chars.
 	 */
+	NLabel::NLabel() :
+			NWidget(NTextBox()), label(new NString(textBox().charsInLine())), somenew(true) {
+		textBox().setLines(1);
+	}
+
+	/** \brief Construct label object with positioning only.
+	 *
+	 * If charWidth is 0 the fieldWidth will be set to the size of the first passed string/number.
+	 * Its recommenced to set charWidth explicit to get no unexpected results.
+	 *
+	 * @param indent Indent in chars from the left side of the display. (0 - 15)
+	 * @param row    Row of the lcd (0 - 7)
+	 * @param charWidth The width of the label in chars.
+	 */
 	NLabel::NLabel(NTextBox box) :
 			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
 		textBox().setLines(1);

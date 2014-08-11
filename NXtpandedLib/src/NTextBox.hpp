@@ -23,6 +23,11 @@ public:
 
 	}
 
+	NTextBox(S8 indent, S8 line, U8 charsInLine = 1, U8 lines = 1)
+	: baseLeftTop(indent, line), charsInLineVal(charsInLine), linesVal(lines) {
+
+	}
+
 	NCursor base() const {
 		return baseLeftTop;
 	}
@@ -33,6 +38,14 @@ public:
 
 	void setBase(NCursor base) {
 		baseLeftTop = base;
+	}
+
+	void setIndent(S8 indent) {
+		baseLeftTop.setIndent(indent);
+	}
+
+	void setLine(S8 line) {
+		baseLeftTop.setLine(line);
 	}
 
 	S16 charsInLine() const {
