@@ -221,3 +221,7 @@ toppers_osek/
 #doks
 NXtpandedLib/Documentation/
 ecrobot/c++/html
+
+#private
+Projects/
+
