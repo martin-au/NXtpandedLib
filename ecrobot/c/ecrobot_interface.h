@@ -7,7 +7,7 @@
 #include "aic.h"
 #include "AT91SAM7.h"
 #include "uart.h"
-#include "systick.h"
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/systick.h"
 #include "nxt_avr.h"
 #include "twi.h"
 #include "platform_hooks.h"
