@@ -7,34 +7,13 @@ extern "C" {
 #include "../../../ecrobot/c/ecrobot_interface.h"
 }
 
-DeclareCounter(SysTimerCnt);
-DeclareResource(OstreamResource);
-
 // C++ Includes and objects should be defined here.
 // fix this paths also
-#include "../../../NXtpandedLib/src/NOstream.hpp"
 #include "../../../NXtpandedLib/src/NLabel.hpp"
 
-// for code correction
-#include "../../../NXtpandedLib/src/NTextBox.hpp"
-#include "../../../NXtpandedLib/src/NCursor.hpp"
-
-nxpl::mutex_t ostreamMtx(OstreamResource);
-nxpl::NOstream cout(ostreamMtx);
-
 extern "C" {
-// startup/shutdown hooks
-void ecrobot_device_initialize(void);
-void ecrobot_device_terminate(void);
 
-// nxtOSEK hook to be invoked from an ISR in category 2
-void user_1ms_isr_type2(void){
-	StatusType ercd;
-
-	ercd = SignalCounter(SysTimerCnt); /* Increment OSEK Alarm Counter */
-	if (ercd != E_OK) {
-	    ShutdownOS(ercd);
-	}
+void user_1ms_isr_type2(void) {
 }
 
 using namespace nxpl;
@@ -49,12 +28,18 @@ TASK(TaskMain)
 	cursor.moveNextLine();
 	box.setBase(cursor);
 
+	// get the cursor directly from the box
 	NLabel label2(box.base().asString(), box);
 
 	label1.show();
 	label2.show(true);
 
-	TerminateTask();
+
+	systick_wait_ms(10000);
+
+	// Shutdown Program
+	StatusType ercd = E_OK;
+	ShutdownOS(ercd);
 }
 
 }
