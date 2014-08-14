@@ -14,7 +14,7 @@
 */
 
 #include "NShape.hpp"
-#include "LcdDrawer.hpp"
+#include "GuiTypes.hpp"
 
 namespace nxpl {
 
@@ -26,18 +26,42 @@ private:
 	NPoint start_, end_;
 
 	void showShapeImpl() const {
-		drawLine(*lcd, start_, end_, DrawOpt::draw());
+		draw(*lcd, start_, end_, DrawOpt::draw());
 	}
 
 
 	void hideShapeImpl() const {
-		drawLine(*lcd, start_, end_, DrawOpt::clear());
+		draw(*lcd, start_, end_, DrawOpt::clear());
 	}
 
 
 	void invertShapeImpl() const {
-		drawLine(*lcd, start_, end_, DrawOpt::invert());
+		draw(*lcd, start_, end_, DrawOpt::invert());
 	}
+
+public:
+	/**
+	 * \brief Draw a line.
+	 *
+	 * This function lets you draw a line on the given lcd from x0, y0 to x1, y1.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param x0   The x value for the start of the line.
+	 * @param y0   The y value for the start of the line.
+	 * @param x1   The x value for the end of the line.
+	 * @param y1   The y value for the end of the line.
+	 * @param op   The optional drawing options.
+	 * @param lcd  The lcd for drawing the line.
+	 */
+	static bool draw(NLcd &lcd, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw());
+
+	static inline bool draw(NPoint start, NPoint end, DrawOpt op = DrawOpt::draw()) {
+		NLcd lcd;
+		return draw(lcd, start, end, op);
+	}
+
 public:
 	/**
 	 * \brief Construct line object on given lcd.

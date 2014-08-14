@@ -13,7 +13,7 @@
 */
 
 #include "NShape.hpp"
-#include "LcdDrawer.hpp"
+#include "GuiTypes.hpp"
 
 
 namespace nxpl {
@@ -26,16 +26,39 @@ private:
 	U8 r;
 
 	void showShapeImpl() const {
-		nxpl::drawCircle(*lcd, center_, r, DrawOpt::draw());
+		draw(*lcd, center_, r, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		nxpl::drawCircle(*lcd, center_, r, DrawOpt::clear());
+		draw(*lcd, center_, r, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		nxpl::drawCircle(*lcd, center_, r, DrawOpt::invert());
+		draw(*lcd, center_, r, DrawOpt::invert());
 	}
+
+public:
+
+	/** \brief Draw a circle.
+	 *
+	 * This function lets you draw a circle on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param lcd      The lcd for drawing the circle.
+	 * @param centerX  The x value for the center of the circle.
+	 * @param centerY  The y value for the center of the circle.
+	 * @param radius   The radius of the circle.
+	 * @param op       	The optional drawing options.
+	 */
+	bool static draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
+
+	bool static inline draw(NPoint center, S8 radius, DrawOpt op = DrawOpt::draw()) {
+		NLcd lcd;
+		return draw(lcd, center, radius, op);
+	}
+
 public:
 
 	/** \brief Construct a circle object.
@@ -97,16 +120,40 @@ private:
 	U8 r;
 
 	void showShapeImpl() const {
-		drawCircleFilled(*lcd, center_, r, DrawOpt::draw());
+		draw(*lcd, center_, r, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		drawCircleFilled(*lcd, center_, r, DrawOpt::clear());
+		draw(*lcd, center_, r, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		drawCircleFilled(*lcd, center_, r, DrawOpt::invert());
+		draw(*lcd, center_, r, DrawOpt::invert());
 	}
+
+public:
+
+	/** \brief Draw a filled circle.
+	 *
+	 * This function lets you draw a filled circle on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param lcd      The lcd for drawing the circle.
+	 * @param centerX  The x value for the center of the circle.
+	 * @param centerY  The y value for the center of the circle.
+	 * @param radius   The radius of the circle.
+	 * @param op       	The optional drawing options.
+	 */
+	static bool draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
+
+	static inline bool draw(NPoint center, S8 radius, DrawOpt op = DrawOpt::draw()) {
+		NLcd lcd;
+		return draw(lcd, center, radius, op);
+	}
+
+
 public:
 
 	/** \brief Construct a circle object.

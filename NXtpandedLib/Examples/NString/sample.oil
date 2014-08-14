@@ -37,12 +37,5 @@ CPU ATMEL_AT91SAM7S256
     STACKSIZE = 512;
     RESOURCE = OstreamResource;
   };
-  
-  COUNTER SysTimerCnt
-  {
-    MINCYCLE = 1;
-    MAXALLOWEDVALUE = 10000;
-    TICKSPERBASE = 1; /* One tick is equal to 1msec */
-  };
 };
 

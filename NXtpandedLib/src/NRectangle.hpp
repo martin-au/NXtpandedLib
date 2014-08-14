@@ -13,8 +13,8 @@
 */
 
 #include "NShape.hpp"
-#include "LcdDrawer.hpp"
 #include "NPixelBox.hpp"
+#include "GuiTypes.hpp"
 
 namespace nxpl {
 
@@ -26,16 +26,42 @@ private:
 	NPixelBox geometry_;
 
 	void showShapeImpl() const {
-		nxpl::drawRectangle(*lcd, geometry_, DrawOpt::draw());
+		draw(*lcd, geometry_, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		nxpl::drawRectangle(*lcd, geometry_, DrawOpt::clear());
+		draw(*lcd, geometry_, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		nxpl::drawRectangle(*lcd, geometry_, DrawOpt::invert());
+		draw(*lcd, geometry_, DrawOpt::invert());
 	}
+
+public:
+
+	/**
+	 * \brief Draw a rectangle.
+	 *
+	 * This function lets you draw a rectangle on the given lcd at x, y with the
+	 * specified width and height.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param lcd  The lcd for drawing the rectangle.
+	 * @param x0   The x value for the top left corner of the rectangle.
+	 * @param y0   The y value for the top left corner of the rectangle.
+	 * @param w    The width of the rectangle.
+	 * @param h    The height of the rectangle.
+	 * @param op   The optional drawing options.
+	 */
+	static bool draw(NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
+
+	static inline bool draw(NPixelBox geometry, DrawOpt op = DrawOpt::draw()) {
+		NLcd lcd;
+		return draw(lcd, geometry, op);
+	}
+
 public:
 	/**
 	 * \brief Construct rectangle object on given lcd.
@@ -81,16 +107,41 @@ private:
 	NPixelBox geometry_;
 
 	void showShapeImpl() const {
-		nxpl::drawRectangleFilled(*lcd, geometry_, DrawOpt::draw());
+		draw(*lcd, geometry_, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		nxpl::drawRectangleFilled(*lcd, geometry_, DrawOpt::clear());
+		draw(*lcd, geometry_, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		nxpl::drawRectangleFilled(*lcd, geometry_, DrawOpt::invert());
+		draw(*lcd, geometry_, DrawOpt::invert());
 	}
+
+public:
+	/**
+	 * \brief Draw a filled rectangle.
+	 *
+	 * This function lets you draw a filled rectangle on the given lcd at x, y with the
+	 * specified width and height.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param lcd  The lcd for drawing the rectangle.
+	 * @param x0   The x value for the top left corner of the rectangle.
+	 * @param y0   The y value for the top left corner of the rectangle.
+	 * @param w    The width of the rectangle.
+	 * @param h    The height of the rectangle.
+	 * @param op   The optional drawing options.
+	 */
+	static bool draw(NLcd &lcd, const NPixelBox &geometry, DrawOpt op = DrawOpt::draw());
+
+	static inline bool draw(const NPixelBox &geometry, DrawOpt op = DrawOpt::draw()) {
+		NLcd lcd;
+		return draw(lcd, geometry, op);
+	}
+
 public:
 	/**
 	 * \brief Construct rectangle object on given lcd.

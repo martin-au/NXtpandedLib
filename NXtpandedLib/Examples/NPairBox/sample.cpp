@@ -40,11 +40,15 @@ using namespace nxpl;
 
 TASK(TaskMain)
 {
-	NLabel indicator(NTextBox(NCursor(8, 5), 1, 1));
-	NLabel indicatorText("Value:", NTextBox(NCursor(0, 0), 6, 1));
+	// A number indicator and the text label which shows the name of the number
+	NLabel indicator(NTextBox(NCursor(8, 5), 1));
+	NLabel indicatorText("Value:", NTextBox(NCursor(0, 0), 6));
 
+	// pair them together, first parameter is the main widget
+	// the main widget specifies the position of the pair
 	NPairBox pairBox1(&indicator, &indicatorText);
 
+	// now show all align options for the second widget
 	NTimer timer;
 	U8 i = 0;
 	while(true) {

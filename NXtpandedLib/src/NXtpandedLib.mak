@@ -7,8 +7,11 @@ ifndef NXTPANDEDLIB_SOURCES
 		NString.cpp \
 		NOstream.cpp \
 		NLabel.cpp \
-		LcdDrawer.cpp	\
 		NCom.cpp \
 		NComSingle.cpp \
-		Motorcontroller.cpp
+		Motorcontroller.cpp \
+		NLine.cpp \
+		NRectangle.cpp \
+		NCircle.cpp \
+		NEllipse.cpp 
 endif

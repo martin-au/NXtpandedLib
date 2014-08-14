@@ -7,7 +7,6 @@ extern "C" {
 #include "../../../ecrobot/c/ecrobot_interface.h"
 }
 
-DeclareCounter(SysTimerCnt);
 DeclareResource(OstreamResource);
 
 // C++ Includes and objects should be defined here.
@@ -25,12 +24,6 @@ void ecrobot_device_terminate(void);
 
 // nxtOSEK hook to be invoked from an ISR in category 2
 void user_1ms_isr_type2(void){
-	StatusType ercd;
-
-	ercd = SignalCounter(SysTimerCnt); /* Increment OSEK Alarm Counter */
-	if (ercd != E_OK) {
-	    ShutdownOS(ercd);
-	}
 }
 
 TASK(TaskMain)
