@@ -101,15 +101,49 @@ public:
 	//void setPosition(S8 x0 = keep, S8 y0 = keep, S8 x1 = keep, S8 y1 = keep);
 
 	void setStart(NPoint startP) {
+		bool visible = isVisible();
 		if(startP != start_)
 			this->hide();
 		start_ = startP;
+		if(visible)
+			show();
+	}
+
+	void setStartX(S16 x) {
+		bool visible = isVisible();
+		start_.setX(x);
+		if(visible)
+			show();
+	}
+
+	void setStartY(S16 y) {
+		bool visible = isVisible();
+		start_.setY(y);
+		if(visible)
+			show();
 	}
 
 	void setEnd(NPoint endP) {
+		bool visible = isVisible();
 		if(endP != end_)
 			this->hide();
 		end_ = endP;
+		if(visible)
+			show();
+	}
+
+	void setEndX(S16 x) {
+		bool visible = isVisible();
+		end_.setX(x);
+		if(visible)
+			show();
+	}
+
+	void setEndY(S16 y) {
+		bool visible = isVisible();
+		end_.setY(y);
+		if(visible)
+			show();
 	}
 
 	/** \brief Calculates the x-coordinate of end point.

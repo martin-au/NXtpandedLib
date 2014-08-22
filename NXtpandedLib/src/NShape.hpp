@@ -51,7 +51,6 @@ private:
 		setVisibility(true);
 	}
 public:
-
 	NShape(NLcd &nlcd) : lcd(&nlcd) {}
 	NShape() : lcd(0) {}
 	virtual ~NShape() {}

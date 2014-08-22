@@ -10,6 +10,7 @@ ifndef NXTPANDEDLIB_SOURCES
 		NCom.cpp \
 		NComSingle.cpp \
 		Motorcontroller.cpp \
+		NGenericPixelMatrix.cpp \
 		NLine.cpp \
 		NRectangle.cpp \
 		NCircle.cpp \

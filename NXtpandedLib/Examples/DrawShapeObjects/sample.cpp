@@ -1,18 +1,15 @@
 /* sample.cpp for TOPPERS/ATK(OSEK) */ 
 
 extern "C" {
-#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
+#include "../../../toppers_osek/include/kernel.h"
 #include "kernel_id.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
 }
 
-DeclareTask(TaskMain);
-
 // C++ Includes and objects should be defined here.
-#include "../../../NXtpandedLib/src/NLine.hpp"
-#include "../../../NXtpandedLib/src/NRectangle.hpp"
-#include "../../../NXtpandedLib/src/NCircle.hpp"
-#include "../../../NXtpandedLib/src/NTimer.hpp"
+#include "../../src/NLine.hpp"
+#include "../../src/NRectangle.hpp"
+#include "../../src/NCircle.hpp"
+#include "../../src/NTimer.hpp"
 
 extern "C" {
 // startup/shutdown hooks
@@ -27,32 +24,34 @@ using namespace nxpl;
 
 TASK(TaskMain)
 {
-	NLcd lcd;
+	NLcd lcd; // our objects should be on nxt lcd
 
+	// base rectangle (base point, width, height)
 	NRectangleFilled rectangle(lcd, NPixelBox(NPoint(25, 16), 30, 30));
+
+	// see how everything is coupled to the base rectangle
 	NPoint m(rectangle.geometry().base().x() + rectangle.geometry().width()/2,
 			 rectangle.geometry().base().y() + rectangle.geometry().height()/2);
-	NCircleFilled innerC(lcd, m, rectangle.geometry().width()/2);
 
-	NPoint diagP(NPoint(rectangle.geometry().base().x() + rectangle.geometry().width(),
-			     rectangle.geometry().base().y() +rectangle.geometry().height()));
+	NCircleFilled innerC(lcd, m, rectangle.width()/2);
+
+	NPoint diagP(NPoint(rectangle.baseX() + rectangle.width(),
+						rectangle.baseY() + rectangle.height()));
+
 	NLine diag1(lcd, rectangle.geometry().base(), diagP);
 
+	// now let the objects move
 	NTimer timer;
 	bool flip = true;
 	while(true) {
 		if(flip) {
-			NPixelBox newBox = rectangle.geometry();
-			newBox.base().setX(25);
-			rectangle.setGeometry(newBox);
+			rectangle.setBaseX(25);
 
 			rectangle.show();
 			innerC.hide();
 			diag1.show(true);
 		} else {
-			NPixelBox newBox = rectangle.geometry();
-			newBox.base().setX(65);
-			rectangle.setGeometry(newBox);
+			rectangle.setBaseX(65);
 
 			rectangle.hide();
 			innerC.show();

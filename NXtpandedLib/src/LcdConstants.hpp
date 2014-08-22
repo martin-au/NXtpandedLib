@@ -18,7 +18,7 @@ namespace LCD {
 
 	// text constants
 	const S8 LINE_WIDTH = 16; /**<Line with in chars*/
-	const S8 ROWS = DEPTH;    /**<Rows of NXT lcd*/
+	const S8 ROWS = HEIGHT / DEPTH;    /**<Rows of NXT lcd*/
 
 	const S8 CHAR_WIDTH = 6;  /**<Width of one char on the the lcd in pixel*/
 	const S8 CHAR_HEIGHT = 8; /**<Height of one char on the the lcd in pixel*/

@@ -1,15 +1,15 @@
 /* sample.cpp for TOPPERS/ATK(OSEK) */ 
 
 extern "C" {
-#include "C:/cygwin/nxtOSEK/toppers_osek/include/kernel.h"
+#include "../../../toppers_osek/include/kernel.h"
 #include "kernel_id.h"
-#include "C:/cygwin/nxtOSEK/ecrobot/c/ecrobot_interface.h"
 }
 
-DeclareTask(TaskMain);
-
 // C++ Includes and objects should be defined here.
-#include "../../../NXtpandedLib/src/LcdDrawer.hpp"
+#include "../../src/NLine.hpp"
+#include "../../src/NRectangle.hpp"
+#include "../../src/NCircle.hpp"
+#include "../../src/NLcd.hpp"
 
 extern "C" {
 // startup/shutdown hooks
@@ -24,14 +24,13 @@ using namespace nxpl;
 
 TASK(TaskMain)
 {
-	NLcd lcd;
+	NLine::draw(NPoint(0, 0), NPoint(99, 63));
+	NRectangleFilled::draw(NPixelBox(NPoint(10, 10), 20, 30));
+	NRectangleFilled::draw(NPixelBox(NPoint(20, 20), 20, 30), DrawOpt::invert());
+	NCircleFilled::draw(NPoint(70, 30), 13);
 
-	drawLine(lcd, NPoint(0, 0), NPoint(99, 63));
-	drawRectangleFilled(lcd, NPixelBox(NPoint(10, 10), 20, 30));
-	drawRectangleFilled(lcd, NPixelBox(NPoint(20, 20), 20, 30), DrawOpt::invert());
-	drawCircleFilled(lcd, NPoint(70, 30), 13);
+	NLcd::update();
 
- 	display_update();
  	TerminateTask();
 }
 

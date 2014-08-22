@@ -6,7 +6,7 @@
  */
 
 #include "NLine.hpp"
-#include "..\..\..\GNUARM\include\c++\4.0.2\cstdlib" //abs
+#include "..\..\..\GNUARM\arm-elf\include\stdlib.h" //abs
 
 namespace nxpl {
 
@@ -14,8 +14,8 @@ bool NLine::draw(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
 	if(!lcd.noError()) return false;
 	if(!pointInLcd(start) || !pointInLcd(end)) return false;
 
-	const S8 height = std::abs(end.y() - start.y());
-	const S8 width = std::abs(end.x() - start.x());
+	const S8 height = abs(end.y() - start.y());
+	const S8 width = abs(end.x() - start.x());
 
 	S8 ix = start.x();
 	S8 iy = start.y();

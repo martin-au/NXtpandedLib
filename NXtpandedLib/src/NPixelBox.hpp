@@ -42,6 +42,14 @@ public:
 		baseLeftTop = base;
 	}
 
+	void setBaseX(S16 x) {
+		baseLeftTop.setX(x);
+	}
+
+	void setBaseY(S16 y) {
+		baseLeftTop.setY(y);
+	}
+
 	NPoint diagonalToBasePoint() const {
 		return baseLeftTop + NPoint(widthVal, heightVal);
 	}

@@ -90,9 +90,28 @@ public:
 	}
 
 	void setCenter(NPoint center) {
+		bool visible = isVisible();
 		if(center != center_)
 			hide();
 		center_ = center;
+		if(visible)
+			show();
+	}
+
+	void setCenterX(S16 x) {
+		bool visible = isVisible();
+		hide();
+		center_.setX(x);
+		if(visible)
+			show();
+	}
+
+	void setCenterY(S16 y) {
+		bool visible = isVisible();
+		hide();
+		center_.setY(y);
+		if(visible)
+			show();
 	}
 
 	U8 radius() const {
@@ -104,10 +123,12 @@ public:
 	 * @param radius New radius.
 	 */
 	void setRadius(U8 radius) {
-		//if(radius <= LCD::WIDTH/2 && radius <= LCD::HEIGHT/2 && r > 0)
+		bool visible = isVisible();
 		if(radius != r)
 			hide();
 		r = radius;
+		if(visible)
+			show();
 	}
 };
 
@@ -185,9 +206,28 @@ public:
 	}
 
 	void setCenter(NPoint center) {
+		bool visible = isVisible();
 		if(center != center_)
 			hide();
 		center_ = center;
+		if(visible)
+			show();
+	}
+
+	void setCenterX(S16 x) {
+		bool visible = isVisible();
+		hide();
+		center_.setX(x);
+		if(visible)
+			show();
+	}
+
+	void setCenterY(S16 y) {
+		bool visible = isVisible();
+		hide();
+		center_.setY(y);
+		if(visible)
+			show();
 	}
 
 	U8 radius() const {
@@ -199,10 +239,13 @@ public:
 	 * @param radius New radius.
 	 */
 	void setRadius(U8 radius) {
-		//if(radius <= LCD::WIDTH/2 && radius <= LCD::HEIGHT/2 && r > 0)
+		bool visible = isVisible();
 		if(radius != r)
 			hide();
 		r = radius;
+		if(visible)
+			show();
+
 	}
 };
 

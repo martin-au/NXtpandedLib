@@ -89,12 +89,71 @@ public:
 	}
 
 	void setGeometry(const NPixelBox &geometry) {
+		bool visible = this->isVisible();
 		this->hide();
 		geometry_ = geometry;
+		if(visible)
+			this->show();
 	}
 
 	NPixelBox geometry() const {
 		return geometry_;
+	}
+
+	S16 baseX() const {
+		return geometry_.base().x();
+	}
+
+	S16 baseY() const {
+		return geometry_.base().y();
+	}
+
+	void setBaseX(S16 x) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setBaseX(x);
+		if(visible)
+			this->show();
+	}
+
+	void setBaseY(S16 y) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setBaseY(y);
+		if(visible)
+			this->show();
+	}
+
+	void setBase(NPoint base) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setBase(base);
+		if(visible)
+			this->show();
+	}
+
+	U16 width() const {
+		return geometry_.width();
+	}
+
+	void setWidth(U16 width) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setWidth(width);
+		if(visible)
+			this->show();
+	}
+
+	U16 height() const {
+		return geometry_.height();
+	}
+
+	void setHeight(U16 height) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setHeight(height);
+		if(visible)
+			this->show();
 	}
 };
 
@@ -169,12 +228,71 @@ public:
 	}
 
 	void setGeometry(const NPixelBox &geometry) {
+		bool visible = this->isVisible();
 		this->hide();
 		geometry_ = geometry;
+		if(visible)
+			this->show();
 	}
 
 	NPixelBox geometry() const {
 		return geometry_;
+	}
+
+	S16 baseX() const {
+		return geometry_.base().x();
+	}
+
+	S16 baseY() const {
+		return geometry_.base().y();
+	}
+
+	void setBaseX(S16 x) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setBaseX(x);
+		if(visible)
+			this->show();
+	}
+
+	void setBaseY(S16 y) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setBaseY(y);
+		if(visible)
+			this->show();
+	}
+
+	void setBase(NPoint base) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setBase(base);
+		if(visible)
+			this->show();
+	}
+
+	U16 width() const {
+		return geometry_.width();
+	}
+
+	void setWidth(U16 width) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setWidth(width);
+		if(visible)
+			this->show();
+	}
+
+	U16 height() const {
+		return geometry_.height();
+	}
+
+	void setHeight(U16 height) {
+		bool visible = this->isVisible();
+		this->hide();
+		geometry_.setHeight(height);
+		if(visible)
+			this->show();
 	}
 };
 

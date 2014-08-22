@@ -5,16 +5,12 @@
  *      Author: Martin
  */
 
-#ifndef __NLCD_HPP_
-#define __NLCD_HPP_
+#ifndef __NBITMAP_HPP_
+#define __NBITMAP_HPP_
 
 /** \file
  *	\ingroup NxtLcd
 */
-
-extern "C" {
-#include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h"
-}
 
 #include "Uncopyable.hpp"
 #include "NGenericPixelMatrix.hpp"
@@ -29,21 +25,21 @@ namespace nxpl {
  * Its high efficient so there is no range checking!!
  * If you write for example on pixel x 101 y 65 anything could happen!
  */
-class NLcd : public NGenericPixelMatrix {
+class NBitmap : public NGenericPixelMatrix {
 
 public:
 
-	/** \brief Use standard lcd.
-	 * Constructs a lcd object which directly draws on the nxt lcd.
+	/** \brief Construct a bitmap
+	 *
+	 * You can then copy the bitmap to the lcd or to another bitmap,
 	 */
-	NLcd() : NGenericPixelMatrix(display_get_buffer(), LCD::WIDTH, LCD::ROWS) {
+	NBitmap(U8 width, U8 rows) :
+		NGenericPixelMatrix(new U8[width * rows], width, rows) {
 	}
 
-	static void update() {
-		display_update();
+	~NBitmap() {
+		deleteMatrix();
 	}
+
+	// TODO Implement resize,.. methods ...
 };
-
-}
-
-#endif
