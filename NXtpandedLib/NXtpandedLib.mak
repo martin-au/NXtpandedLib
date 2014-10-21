@@ -11,6 +11,7 @@ NXTPANDEDLIB_SOURCES = $(addprefix $(NXTPANDEDLIB_SRC_PATH)/,\
 		NString.cpp \
 		NOstream.cpp \
 		NLabel.cpp \
+		NPairBox.cpp \
 		NCom.cpp \
 		NComSingle.cpp \
 		Motorcontroller.cpp \
