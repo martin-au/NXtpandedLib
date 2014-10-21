@@ -78,22 +78,53 @@ public:
 
 	/**
 	 * Send data.
-	 * @param address I2C address
+	 * @param regAddr I2C address
 	 * @param data Data to be sent
 	 * @param length Length of data to be sent
 	 * @return The result of send data: true(succeded)/false(failed)
 	 */
-	bool send(U32 address, U8* data, U32 length);
+	bool send(U32 regAddr, U8* data, U32 length);
 
+	/***/
+	// Writes a byte to a given register of the I2C device
+	bool sendByte(U8 regAddr, U8 data) {
+	  return send(regAddr, &data, 1);
+	}
+	
+	bool send(U32 address, SINT regAddr, U8* data, U32 length);
+
+	bool receive(U32 address, SINT regAddr, U8* data, U32 length) const;
+	
+	bool send(U32 address, SINT regAddr, SINT nInternalAddressBytes, U8* data, U32 length);
+
+	bool receive(U32 address, SINT regAddr, SINT nInternalAddressBytes, U8* data, U32 length) const;
+	
+	
 	/**
 	 * Receive data.
-	 * @param address I2C address
+	 * @param regAddr I2C address
 	 * @param data Data to be received
 	 * @param length Length of data to be received
 	 * @return The result of receive data: true(succeded)/false(failed)
 	 */
-	bool receive(U32 address, U8* data, U32 length) const;
+	bool receive(U32 regAddr, U8* data, U32 length) const;
 
+	/**
+	 * \brief Check if i2c busy is ready to send/receive data
+	 *
+	 * If i2c is not ready and you call a send/receive function the actual task
+	 * will go into waiting state. This is good so other task get time to run.
+	 * However if you have a real time task with low execution time with a lot of i2c calls
+	 * the task may not get its timing and the system gets in undefined behaviour.
+	 * To prevent this you may check if i2c is ready before the call to read/write so you can either
+	 * wait in the same task until rdy or you wait until next task loop.
+	 *
+	 * Remember also that a lot of sensors do not give you always new values if you request the value
+	 * to often!
+	 *
+	 * @return true if ready for read/write
+	 */
+	bool isReady() const {return (i2c_busy(mPort) == 0);}
 protected:
 	/**
 	 * Get the I2C device connected port.
