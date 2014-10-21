@@ -43,9 +43,9 @@ TASK(OSEK_Task_Background)
 
 		if (ecrobot_is_RUN_button_pressed())
 		{
-			ecrobot_set_MMX_time(NXT_PORT, MMX_I2C_ADDR, MMX_Motor_1, speed1, 10, motorbrake);
-			//ecrobot_set_MMX_speed(NXT_PORT, MMX_I2C_ADDR, MMX_Motor_2, speed1,0);
-			ecrobot_set_MMX_Run_Rev(NXT_PORT, MMX_I2C_ADDR, MMX_Motor_2, speed1, three_rev, run_relative, motorbrake);
+			// ecrobot_set_MMX_time(NXT_PORT, MMX_I2C_ADDR, MMX_Motor_1, speed1, 3, motorbrake);
+			// ecrobot_set_MMX_speed(NXT_PORT, MMX_I2C_ADDR, MMX_Motor_2, speed1,0);
+			// ecrobot_set_MMX_Run_Rev(NXT_PORT, MMX_I2C_ADDR, MMX_Motor_2, speed1, three_rev, run_relative, motorbrake);
 			display_clear(0);
 			display_goto_xy(0, 0);
 			display_string("NXTMMX Test");
