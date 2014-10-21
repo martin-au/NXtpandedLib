@@ -42,13 +42,17 @@ TASK(Task1)
 	int sonar;
 	
 	sonar = ecrobot_get_sonar_sensor(PORT_IN_USE);
+	display_clear(0);
+	display_goto_xy(0, 0);
+	display_int(sonar, 0);
+	display_update();
 	
  	TerminateTask();
 }
 
 TASK(Task2)
 {
-  ecrobot_status_monitor("Sonar Test");
+  // ecrobot_status_monitor("Sonar Test");
 
   TerminateTask();
 }
