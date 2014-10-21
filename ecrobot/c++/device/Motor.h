@@ -52,13 +52,12 @@ public:
 	~Motor(void);
 
 	/**
-	 * Stop motor and set motor encoder count to 0.
+	 * Reset motor encoder count to 0.
 	 * @param -
 	 * @return -
 	 */
-	inline void reset(void)
+	inline void resetCount(void)
 	{
-		nxt_motor_set_speed(mPort, 0, 1); // need to set brake to stop the motor immidiately
 		nxt_motor_set_count(mPort, 0);
 	}
 
