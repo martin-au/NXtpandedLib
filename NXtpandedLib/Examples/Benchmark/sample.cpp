@@ -17,12 +17,12 @@ extern "C" {
 #include "../../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 }
 
-#include "../../../NXtpandedLib/src/LcdDrawer.hpp"
+#include "../../../NXtpandedLib/src/NLine.hpp"
+#include "../../../NXtpandedLib/src/NRectangle.hpp"
+#include "../../../NXtpandedLib/src/NCircle.hpp"
+#include "../../../NXtpandedLib/src/NEllipse.hpp"
 
 #include "../../../../GNUARM/arm-elf/sys-include/math.h"
-//#include "../../../../GNUARM/arm-elf/sys-include/stdio.h"
-
-DeclareTask(TaskMain);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////OSEK HOOKS/IRS///////////////////////////////////////////////////
@@ -45,10 +45,7 @@ bool btnhit() {
 //////////////////////////////BENCHMARK FUNCTIONS////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-using namespace nxpl; // NXtpandedLib
-
 int a[500], b[500], c[500];
-NLcd lcd;
 
 //--------------------------------------------
 // Mersenne Twister
@@ -312,23 +309,23 @@ long test_TextOut() {
    return 99;
 }
 
+using namespace nxpl; // NXtpandedLib
+NLcd lcd;
 
 long test_graphics() {
    int x = 0;
    for (int y = 0; y < 100; ++y) {
-      display_clear(0);
-
+	  lcd.clear();
       // no official functions, its my actual project: NXtpandedLib
+      NCircle::draw(NPoint(50, 40), 10);
+      NCircleFilled::draw(NPoint(30, 24), 10);
+      NLine::draw(NPoint(10, 10), NPoint(60, 60));
+      NLine::draw(NPoint(50, 20), NPoint(90, 70));
+      NRectangle::draw(NPixelBox(NPoint(20, 20), 40, 40));
+      NRectangleFilled::draw(NPixelBox(NPoint(65, 25), 20, 30));
+      NEllipse::draw(NPoint(70, 30), 15, 20);
 
-      drawCircle(lcd, NPoint(50, 40), 10);
-      drawCircleFilled(lcd, NPoint(30, 24), 10);
-      drawLine(lcd, NPoint(10, 10), NPoint(60, 60));
-      drawLine(lcd, NPoint(50, 20), NPoint(90, 70));
-      drawRectangle(lcd, NPixelBox(NPoint(20, 20), 40, 40));
-      drawRectangleFilled(lcd, NPixelBox(NPoint(65, 25), 20, 30));
-      drawEllipse(lcd, NPoint(70, 30), 15, 20);
-
-      display_update(); // not really good because we can update hardware only every 16 ms
+      NLcd::update(); // not really good because we can update hardware only every 16 ms
    }
    return x;
 }
