@@ -340,7 +340,7 @@ public:
 	 */
 	void resetPos() {
 		controllerOff();
-		mot->reset();
+		mot->resetCount();
 	}
 
 #ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON

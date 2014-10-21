@@ -143,11 +143,13 @@ void Motorcontroller::process() {
 		   if(lastCount !=  nowCount) {
 			   mx = nowCount;
 		   } else {
-		      mreset = false;
+		      mot->setPWM(0);
+		      mot->setBrake(true);
+			  mreset = false;
 		      mgo = false;
 		      mx = 0;
 		      mv = 0;
-		      mot->reset();
+		      mot->resetCount();
 		   }
 	   }
 	   mv = nowTime;
