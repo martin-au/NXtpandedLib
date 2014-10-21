@@ -31,7 +31,7 @@ struct PixelInvert;
 
 /** \brief Provides low level pixel functions.
  *
- * GenericPixelMatrix is a very low level class
+ * GenericPixelMatrix is a low level class
  * It is designed to direct access pixels of the lcd
  * Its high efficient so there is no range checking!!
  * If you write for example on pixel x 101 y 65 anything could happen!
@@ -42,12 +42,6 @@ private:
 
 	static const S8 DEPTH = 8;
 	U8 mWidth, mRows;
-
-	/** \brief Bitmap constructor
-	 * Constructs an lcd object which draws on a bitmap with size width * depth.
-	 * @param width Width of the bitmap in pixels.
-	 * @param depth Depth of the bitmap in rows.
-	 */
 
 protected:
 
@@ -95,10 +89,10 @@ public:
 	 * |||| < line 0 <br>
 	 * |||| < line 1 <br>
 	 * 0123 < x <br>
-	 * The mask is represented by | <br>
+	 * The mask is represented by '|' <br>
 	 * If we look closer to the mask we see that each mask consists of 8 pixels (LCD::DEPTH)<br>
 	 * The 8 pixels are represented by a unsigned 8 bit number<br>
-	 * So if the number is 1 the pixel mask looks like this: 0000 0001 first pixel ist set<br>
+	 * So if the number is 1 the pixel mask looks like this: 0000 0001 -> first pixel is set<br>
 	 * If the number is 20 the pixel mask looks like this: 0001 0100<br>
 	 *
 	 * \note This is the fastest way to update a set of pixels.
