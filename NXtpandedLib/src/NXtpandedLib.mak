@@ -7,6 +7,7 @@ ifndef NXTPANDEDLIB_SOURCES
 		NString.cpp \
 		NOstream.cpp \
 		NLabel.cpp \
+		NPairBox.cpp \
 		NCom.cpp \
 		NComSingle.cpp \
 		Motorcontroller.cpp \
