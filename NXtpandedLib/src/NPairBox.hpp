@@ -62,7 +62,7 @@ public:
 	 * @param align The alignment of the secondary widget.
 	 */
 	NPairBox(NWidget *mainWidget, NWidget *secWidget, NCursor position, NAlignment align) :
-		alignment(NAlignment::none()), main(mainWidget), sec(secWidget) {
+		alignment(align), main(mainWidget), sec(secWidget) {
 		setPosition(position);
 	}
 
@@ -73,11 +73,11 @@ public:
 	 * @param align The alignment of the secondary widget.
 	 */
 	NPairBox(NWidget *mainWidget, NWidget *secWidget, NAlignment align) :
-		alignment(NAlignment::none()), main(mainWidget), sec(secWidget) {
+		alignment(align), main(mainWidget), sec(secWidget) {
 		align2Main(align);
 	}
 
-	~NPairBox() {}
+	virtual ~NPairBox() {}
 
 	/** \brief Set position of the main object and align secondary object to main object.
 	 *
