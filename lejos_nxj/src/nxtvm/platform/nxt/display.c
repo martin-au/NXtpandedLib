@@ -356,11 +356,11 @@ display_get_buffer(void)
   return (U8 *)display_buffer;
 }
 
-STACKWORD
-display_get_array(void)
-{
-  return (STACKWORD)ptr2word(&display_array);
-}
+// STACKWORD
+// display_get_array(void)
+// {
+  // return (STACKWORD)ptr2word(&display_array);
+// }
 
 void
 display_init(void)
