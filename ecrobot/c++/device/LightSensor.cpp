@@ -21,7 +21,7 @@ Sensor(port)
 // Destructor
 LightSensor::~LightSensor(void)
 {
-	unset_digi0(Sensor::getPort()); // turn off lamp
+	sp_set(Sensor::getPort(), SP_DIGI0, 0); // turn off lamp
 }
 
 //=============================================================================
@@ -37,10 +37,10 @@ void LightSensor::setLamp(bool lamp)
 { 
 	if (lamp == true)
 	{
-		set_digi0(Sensor::getPort());
+		sp_set(Sensor::getPort(), SP_DIGI0, 1);
 	}
 	else
 	{
-		unset_digi0(Sensor::getPort());
+		sp_set(Sensor::getPort(), SP_DIGI0, 0);
 	}
 }

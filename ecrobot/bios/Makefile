@@ -52,7 +52,7 @@ endif
 ifndef LEJOS_HOOK_SOURCES
 LEJOS_HOOK_SOURCES := $(addprefix $(LEJOS_PLATFORM_SOURCES_PATH)/, \
 	nxt_avr.c \
-	sensors.c \
+	sensors1.c \
 	nxt_lcd.c )
 endif
 

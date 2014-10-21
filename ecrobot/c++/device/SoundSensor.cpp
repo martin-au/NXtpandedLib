@@ -21,8 +21,8 @@ Sensor(port)
 // Destructor
 SoundSensor::~SoundSensor(void)
 {
-	unset_digi0(Sensor::getPort());
-	unset_digi1(Sensor::getPort());
+	sp_set(Sensor::getPort(), SP_DIGI0, 0);
+	sp_set(Sensor::getPort(), SP_DIGI1, 0);
 }
 
 //=============================================================================
@@ -40,13 +40,13 @@ void SoundSensor::setDBA(bool dba)
 
 	if (dba)
 	{
-    	set_digi1(port);
-    	unset_digi0(port);
+		sp_set(Sensor::getPort(), SP_DIGI1, 1);
+		sp_set(Sensor::getPort(), SP_DIGI0, 0);
 	}
 	else
 	{
-		unset_digi1(port);
-		set_digi0(port);
+		sp_set(Sensor::getPort(), SP_DIGI1, 0);
+		sp_set(Sensor::getPort(), SP_DIGI0, 1);
 	}
 }
 

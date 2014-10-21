@@ -127,7 +127,8 @@ void ecrobot_set_motor_rev(U8 port_id, S32 rev)
  */
 void ecrobot_set_light_sensor_active(U8 port_id)
 {
-	set_digi0(port_id);
+	// set_digi0(port_id);
+	sp_set(port_id, SP_DIGI0, 1);
 }
 
 /**
@@ -137,7 +138,8 @@ void ecrobot_set_light_sensor_active(U8 port_id)
  */
 void ecrobot_set_light_sensor_inactive(U8 port_id)
 {
-	unset_digi0(port_id);
+	//unset_digi0(port_id);
+	sp_set(port_id, SP_DIGI0, 0);
 }
 
 /**
@@ -189,6 +191,7 @@ void ecrobot_init_i2c(U8 port_id, U8 type)
 	{
 		nxt_avr_set_input_power(port_id, type);
 		i2c_enable(port_id);
+		// i2c_enable(port_id, I2C_LEGO_MODE);
 	}
 }
 

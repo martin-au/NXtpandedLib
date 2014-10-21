@@ -31,7 +31,7 @@ C_PLATFORM_SOURCES := \
 C_HOOK_SOURCES := \
 	main.c \
 	nxt_avr.c \
-	sensors.c \
+	sensors1.c \
 	nxt_lcd.c \
 	native.c \
 	platform_hooks.c

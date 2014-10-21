@@ -14,7 +14,7 @@
 #include "nxt_avr.h"
 #include "nxt_lcd.h"
 #include "nxt_motors.h"
-#include "sensors.h"
+#include "sensors1.h"
 #include "display.h"
 #include "i2c.h"
 #include "bt.h"

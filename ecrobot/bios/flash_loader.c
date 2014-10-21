@@ -57,7 +57,7 @@
 #include "nxt_avr.h"
 #include "nxt_lcd.h"
 #include "nxt_motors.h"
-#include "sensors.h"
+#include "sensors1.h"
 #include "display.h"
 #include "i2c.h"
 #include "bt.h"
@@ -367,7 +367,8 @@ void nxt_device_init(void)
 	bt_init();
 	systick_wait_ms(1000); /* wait for LCD to stabilize */
 	display_init();
-	init_sensors();
+	//init_sensors();
+	sp_init();
 }
 
 
