@@ -221,7 +221,7 @@ public:
 	/** \brief Wait until motor is on setpoint.
 	*
 	* This function is a blocking function. This means it will return when the motor is on setpoint.
-	* Sleep is used for waiting: see ecrobot API what you have to implement in oil file!
+	* Sleep is used for waiting: see ecrobot API ecrobot::Clock::sleep what you have to implement in oil file!
 	*/
 	void waitMove() const {
 	   do {

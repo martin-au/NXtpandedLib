@@ -6,11 +6,7 @@
  *	\ingroup Utilities
 */
 
-extern "C" {
-#include "../../toppers_osek/include/kernel.h"
-#include "kernel_id.h"
-#include "../../ecrobot/c/ecrobot_interface.h"
-}
+#include "..\..\ecrobot\c\ecrobot_types.h"
 
 namespace nxpl {
 

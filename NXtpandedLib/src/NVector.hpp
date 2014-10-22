@@ -15,14 +15,8 @@
  *	\ingroup Utilities
 */
 
-extern "C" {
-	#include "../../toppers_osek/include/kernel.h"
-	#include "kernel_id.h"
-	#include "../../ecrobot/c/ecrobot_interface.h"
-}
-
 //for codecorrection
-#include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
+#include "../../ecrobot/c/ecrobot_types.h"
 
 
 // NULL
