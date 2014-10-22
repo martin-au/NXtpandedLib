@@ -59,7 +59,7 @@ CFLAGS = -c -ffreestanding -fsigned-char -mcpu=arm7tdmi \
 
 ifdef ECROBOT_CPP_ROOT
 # for .cpp
-CXX_PATH = $(addprefix -I ,$(ECROBOT_CPP_ROOT)/device) $(addprefix -I ,$(ECROBOT_CPP_ROOT)/util)
+CXX_PATH = $(addprefix -I ,$(ECROBOT_CPP_ROOT)/device) $(addprefix -I ,$(ECROBOT_CPP_ROOT)/util) $(addprefix -I ,$(NXTPANDEDLIB_ROOT)/src)
 else
 # for .cc
 CXX_PATH = $(addprefix -I ,$(CXX_ROOT)) $(addprefix -I ,$(CXX_ROOT)/boost) $(addprefix -I ,$(CXX_ROOT)/util)
@@ -80,7 +80,8 @@ CXXFLAGS = -c -fsigned-char -mcpu=arm7tdmi -fno-exceptions \
 
 ifdef ECROBOT_CPP_ROOT
 # for .cpp
-CXX_LIB = $(LIBECROBOT_CPP)
+CXX_LIB = $(LIBECROBOT_CPP) \
+		  $(LIBNXTPANDEDLIB) 
 else
 # for .cc
 CXX_LIB = $(LIBLEJOSOSEK)

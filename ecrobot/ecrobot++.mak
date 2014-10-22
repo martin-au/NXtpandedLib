@@ -9,6 +9,7 @@ endif
 
 ECROBOT_ROOT = $(ROOT)/ecrobot
 LEJOSNXJSRC_ROOT = $(ROOT)/lejos_nxj/src/
+NXTPANDEDLIB_ROOT = $(ROOT)/NXtpandedLib
 
 ifeq ($(TOPPERS_KERNEL), NXT_JSP)
 TOPPERS_ROOT = $(ROOT)/toppers_jsp
@@ -21,10 +22,8 @@ ECROBOT_C_ROOT = $(ECROBOT_ROOT)/c
 ECROBOT_CPP_ROOT = $(ECROBOT_ROOT)/c++
 CXX_ROOT = $(ECROBOT_CPP_ROOT)
 
-include $(ROOT)/NXtpandedLib/NXtpandedLib.mak
-
 vpath %.c   $(LEJOSNXJSRC_ROOT) $(TOPPERS_ROOT) $(ECROBOT_ROOT) $(ECROBOT_C_ROOT)
-vpath %.cpp $(ECROBOT_CPP_ROOT)/device $(ECROBOT_CPP_ROOT)/util
+vpath %.cpp $(ECROBOT_CPP_ROOT)/device $(ECROBOT_CPP_ROOT)/util $(NXTPANDEDLIB_ROOT)/src
 vpath %.S   $(LEJOSNXJSRC_ROOT) $(TOPPERS_ROOT)
 vpath %.s   $(LEJOSNXJSRC_ROOT) $(TOPPERS_ROOT) $(ECROBOT_ROOT) $(ECROBOT_C_ROOT)
 
@@ -181,7 +180,6 @@ S_RAMSOURCES = \
 	$(TOPPERS_SRAM_SOURCES)
 
 CPP_SOURCES = \
-    $(NXTPANDEDLIB_SOURCES) \
 	$(TARGET_CPP_SOURCES)
 
 # using the new linker script
@@ -189,6 +187,8 @@ LDSCRIPT_SOURCE = $(ECROBOT_C_ROOT)/sam7_ecrobot.lds
 
 LIBECROBOT = -lecrobot
 LIBECROBOT_CPP = -lecrobot++
+LIBNXTPANDEDLIB = $(NXTPANDEDLIB_ROOT)/nxtpandedlib.a
+
 include $(ECROBOT_ROOT)/tool_gcc.mak
 
 INC_PATH = \
@@ -199,7 +199,7 @@ INC_PATH = \
 	$(ECROBOT_CPP_ROOT)/device \
 	$(ECROBOT_CPP_ROOT)/util \
 	$(ECROBOT_C_ROOT) \
-	$(NXTPANDEDLIB_SRC_PATH) \
+	$(NXTPANDEDLIB_ROOT)/src \
 	$(USER_INC_PATH)
 
 PHONY: EnvironmentMessage
