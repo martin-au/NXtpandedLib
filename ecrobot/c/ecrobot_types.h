@@ -1,7 +1,7 @@
 #ifndef _ECROBOT_TYPES_H_
 #define _ECROBOT_TYPES_H_
 
-#include "mytypes.h"
+#include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
 typedef          char CHAR; /* NOTE: ARM GCC treats "char" as unsigned */
 
