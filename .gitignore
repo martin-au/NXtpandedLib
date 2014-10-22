@@ -220,6 +220,7 @@ toppers_osek/
 
 #doks
 NXtpandedLib/Documentation/
+NXtpandedLib/AutoDocumentation/
 ecrobot/c++/html
 
 #private
