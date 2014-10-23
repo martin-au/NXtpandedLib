@@ -50,19 +50,19 @@ void user_1ms_isr_type2(void){
 // C++ Includes, Globals
 
 
-#include "NOstream.hpp"
+#include "../src/NOstream.hpp"
 nxpl::mutex_t streammtx(ostreamRes);
 nxpl::NOstream cout(streammtx);
 
 
-#include "NTimer.hpp"
-#include "Motorcontroller.hpp"
+#include "../src/NTimer.hpp"
+#include "../src/Motorcontroller.hpp"
 
 nxpl::mutex_t motorControlMtx(motorRes);
 ecrobot::Motor motorADirect(PORT_A);
 nxpl::Motorcontroller motorA(&motorADirect, motorControlMtx, 24, 100); // 18 100
 
-#include "NLabel.hpp"
+#include "../src/NLabel.hpp"
 
 extern "C" {
 
