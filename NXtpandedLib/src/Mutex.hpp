@@ -39,9 +39,9 @@ public:
 	 *
 	 * @param resource Reference to resource
 	 */
-	mutex_t(ResourceType resource) {
-		mtx = resource;
-	}
+	mutex_t(ResourceType resource)
+			: mtx(resource)
+	{}
 
 	/**
 	 * \brief Acquire the lock to the mutex.

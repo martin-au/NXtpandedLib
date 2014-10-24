@@ -382,7 +382,7 @@ public:
 		}
 		--this->startIndex;
 
-		new ((void*) &this->buffer[this->startIndex]) T(inValue);
+		new (static_cast<void*> (&this->buffer[this->startIndex])) T(inValue);
 	}
 
 	/**

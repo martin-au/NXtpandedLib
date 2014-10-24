@@ -54,12 +54,12 @@ void NVector<T>::insert(S32 inPosition, T inValue) {
 			for (S32 index = this->endIndex; index != inPosition; --index) {
 				this->buffer[index] = this->buffer[index - 1];
 			}
-			new ((void*) &this->buffer[inPosition]) T(inValue);
+			new (static_cast<void*>(&this->buffer[inPosition])) T(inValue);
 			++this->endIndex;
 		} else {
 			memcpy(&this->buffer[this->startIndex - 1],
 					&this->buffer[this->startIndex], sizeof(T));
-			new ((void*) &this->buffer[inPosition]) T(inValue);
+			new (static_cast<void*>(&this->buffer[inPosition])) T(inValue);
 		}
 
 	}
@@ -84,7 +84,7 @@ NVector<T> NVector<T>::subvector(S32 inPosition, S32 in_length) const {
 	inPosition += this->startIndex;
 
 	while (in_length--) {
-		new ((void*) &vec.buffer[vec.end++]) T(this->buffer[inPosition++]);
+		new (static_cast<void*>(&vec.buffer[vec.end++])) T(this->buffer[inPosition++]);
 	}
 
 	return vec;

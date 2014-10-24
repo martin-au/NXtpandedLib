@@ -59,8 +59,8 @@ private:
 	struct StreamBuffer {
 	public:
 		explicit StreamBuffer(U8 len, U8 rows) :
-				currentLen(len), currentRows(rows), cursorLine(0) {
-			buffer = new char *[rows];
+				buffer(new char *[rows]), currentLen(len), currentRows(rows), cursorLine(0) {
+
 			for (int i = 0; i < rows + 1; i++) {
 				buffer[i] = new char[len + 1]; // +1 for '\0'
 				strcpy(buffer[i], "");
