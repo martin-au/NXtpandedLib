@@ -9,39 +9,32 @@ NString::NString()
 }
 
 NString::NString(S32 inBufferlength)
-: length(0), decplaces(2)
+: string(0), length(0), bufferlength(inBufferlength), decplaces(2)
 {
-	if (inBufferlength > 0) {                  // buffer size > 0
+	if (bufferlength > 0) {                  // buffer size > 0
 		this->string = new char[inBufferlength];              // allocate buffer
-		this->bufferlength = inBufferlength;
 		this->string[0] = '\0';                   // set first char \0
-	} else {
-		this->string = 0;                     // else NULL
-		this->bufferlength = 0;
 	}
+
 	// this->bufferlength = inBufferlength;         // Copy buffer length
 	//this->length = 0;                     		// str length = 0
 }
 
 
   NString::NString(const NString& inString)
-  : decplaces(2)
+  : string(0), length(0), bufferlength(0), decplaces(2)
   {
 	if (inString.length) {                    // if original string is not empty
 		this->length = inString.length;
 		this->bufferlength = inString.length + 1;
 		this->string = new char[bufferlength];                 //allocate buffer
 		NString::copy(inString.string, string);          // copy and save size
-	} else {
-		this->string = 0;                     // set to zeros
-		this->length = 0;                     //
-		this->bufferlength = 0;                   //
 	}
 }
 
 
   NString::NString(const char* const inString)
-  : decplaces(2)
+  : string(0), length(0), bufferlength(0), decplaces(2)
   {
 	S32 inlength;
 
@@ -50,10 +43,6 @@ NString::NString(S32 inBufferlength)
 		this->bufferlength = inlength + 1;
 		this->string = new char[bufferlength];        //allocate buffer
 		NString::copy(inString, string);                        // copy and save size
-	} else {
-		this->string = 0;                                 // set to zeros
-		this->length = 0;                                 //
-		this->bufferlength = 0;                           //
 	}
 }
 

@@ -67,7 +67,7 @@ S8 numToStr(float num, char* dest, U8 places) {
 	}
 	x.f = num;
 
-	exp2 = (unsigned char) (x.l >> 23) - 127;
+	exp2 = static_cast<unsigned char>(x.l >> 23) - 127;
 	mantissa = (x.l & 0xFFFFFF) | 0x800000;
 	frac_part = 0;
 	int_part = 0;
