@@ -16,4 +16,4 @@ C_OPTIMISATION_FLAGS = -Os
 O_PATH ?= build
 
 # makefile for C++(.cpp) build
-include /nxtOSEK/ecrobot/ecrobot++.mak
+include ../../ecrobot/ecrobot++.mak

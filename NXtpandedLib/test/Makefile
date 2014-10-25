@@ -5,8 +5,8 @@ TARGET_CPP_SOURCES = sample_.cpp
 	
 TOPPERS_OSEK_OIL_SOURCE = ./_sample.oil 
 
-#BUILD_MODE = ROM_ONLY
-BUILD_MODE = RXE_ONLY
+BUILD_MODE = ROM_ONLY
+#BUILD_MODE = RXE_ONLY
 
 # GCC optimisation level
 #-Os optimisation for size
@@ -17,4 +17,4 @@ C_OPTIMISATION_FLAGS = -Os
 O_PATH ?= build
 
 # makefile for C++(.cpp) build
-include /nxtOSEK/ecrobot/ecrobot++.mak
+include ../../ecrobot/ecrobot++.mak
