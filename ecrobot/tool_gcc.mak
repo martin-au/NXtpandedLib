@@ -4,14 +4,22 @@
 # GNUARM_ROOT and NEXTTOOL_ROOT need to adapt your PC environment
 #===============================================================================
 
+#
+## ROOT path configurations
+#
+ifndef ROOT
+ROOT := $(dir $(lastword $(MAKEFILE_LIST)))..
+endif
+#
+
 # specify GNU-ARM root directory
 ifndef GNUARM_ROOT
-GNUARM_ROOT = /cygdrive/D/NXT_embedded/GNUARM
+GNUARM_ROOT =  $(ROOT)/../GNUARM
 endif
 
 # specify NeXTTool root directory
 ifndef NEXTTOOL_ROOT
-NEXTTOOL_ROOT = /cygdrive/D/NXT_embedded/nexttool
+NEXTTOOL_ROOT = $(ROOT)/../nexttool
 endif
 
 
