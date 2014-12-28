@@ -17,11 +17,11 @@ namespace LCD {
 	const S8 DEPTH = 8; 	  /**<Lcd depth in pixel, depth = line height in pixel*/
 
 	// text constants
-	const S8 LINE_WIDTH = 16; /**<Line with in chars*/
-	const S8 ROWS = HEIGHT / DEPTH;    /**<Rows of NXT lcd*/
+	const S8 LINE_WIDTH = 16; 			/**<Line with in chars*/
+	const S8 ROWS = HEIGHT / DEPTH;     /**<Rows of NXT lcd*/
 
-	const S8 CHAR_WIDTH = 6;  /**<Width of one char on the the lcd in pixel*/
-	const S8 CHAR_HEIGHT = 8; /**<Height of one char on the the lcd in pixel*/
+	const S8 CHAR_WIDTH = 6;  			/**<Width of one char on the the lcd in pixel*/
+	const S8 CHAR_HEIGHT = 8; 			/**<Height of one char on the the lcd in pixel*/
 
 	/**
 	 * \brief Convert horizontal pixel coordinate to indent chars.
@@ -30,7 +30,7 @@ namespace LCD {
 	 * @param x  Pixel X-Coordinate (from left).
 	 * @return Indent measured in Chars.
 	 */
-	S8 pixelXToIndent(S8 x) {
+	inline S8 pixelXToIndent(S8 x) {
 		return (x - 1) / LCD::CHAR_WIDTH;
 	}
 
@@ -41,7 +41,7 @@ namespace LCD {
 	 * @param y  Pixel Y-Coordinate (from top).
 	 * @return Line (0 - LCD::ROWS).
 	 */
-	S8 pixelYToLine(S8 y) {
+	inline S8 pixelYToLine(S8 y) {
 		return y/LCD::DEPTH;
 	}
 
@@ -52,7 +52,7 @@ namespace LCD {
 	 * @param width  Width in pixels.
 	 * @return Number of chars.
 	 */
-	S8 pixelWidthToTextWidth(S8 width) {
+	inline S8 pixelWidthToTextWidth(S8 width) {
 		return width/LCD::CHAR_WIDTH;
 	}
 
@@ -62,33 +62,38 @@ namespace LCD {
 	 * @param line (0 - LCD::ROWS)
 	 * @return Pixel Y-Coordinate.
 	 */
-	S8 lineToPixelY(S8 line) {
+	inline S8 lineToPixelY(S8 line) {
 		return line*LCD::DEPTH;
 	}
 
-	S8 indentToPixelX(S8 indent) {
+	/**
+	 * \brief Calculates the pixel coordinate from indent.
+	 *
+	 * @param indent (0 - LCD::LINE_WIDTH)
+	 * @return Pixel X-Coordinate.
+	 */
+	inline S8 indentToPixelX(S8 indent) {
 		return indent * LCD::CHAR_WIDTH + 1;
 	}
 
-    // <= height ok??
 	/** \brief Checks if Pixel-Coordinate is in lcd.
 	 *
 	 * @param x Pixel X-Coordinate
 	 * @param y Pixel Y-Coordinate
 	 * @return true if Pixel in lcd.
 	 */
-	bool pixelInLcd(S16 x, S16 y) {
-		return ((x >= 0) && (x < LCD::WIDTH) && (y >= 0) && (y <= LCD::HEIGHT));
+	inline bool pixelInLcd(S16 x, S16 y) {
+		return ((x >= 0) && (x < LCD::WIDTH) && (y >= 0) && (y < LCD::HEIGHT));
 	}
 
 	/**
 	 * \brief Checks if cursor position is in lcd.
 	 *
-	 * @param indent Cursor Indent in chars.
+	 * @param indent Cursor Indent in chars (0 - LCD::LINE_WIDTH).
 	 * @param row (0 - LCD::ROWS)
 	 * @return true if cursor is in lcd.
 	 */
-	bool cursorInLcd(S16 indent, S16 row) {
+	inline bool cursorInLcd(S16 indent, S16 row) {
 		return ((indent >= 0) && (indent < LCD::LINE_WIDTH) && (row >= 0)
 				&& (row < LCD::ROWS));
 	}
@@ -101,7 +106,7 @@ namespace LCD {
 	 * @param textwidth
 	 * @return true if field is in lcd.
 	 */
-	bool fieldInLcd(S16 indent, S16 row, S16 rows, S16 textwidth) {
+	inline bool fieldInLcd(S16 indent, S16 row, S16 rows, S16 textwidth) {
 		return cursorInLcd(indent, row) && cursorInLcd(indent + textwidth, row)
 				&& cursorInLcd(indent, row + (rows - 1))
 				&& cursorInLcd(indent + textwidth, row + (rows - 1));
@@ -115,7 +120,7 @@ namespace LCD {
 	 * @param width  Width in pixels.
 	 * @return true if all pixels are in lcd.
 	 */
-	bool objectInLcd(S16 x, S16 y, S16 height, S16 width) {
+	inline bool objectInLcd(S16 x, S16 y, S16 height, S16 width) {
 		return pixelInLcd(x, y) && pixelInLcd(x + width, y)
 				&& pixelInLcd(x, y + height) && pixelInLcd(x + width, y + height);
 	}
