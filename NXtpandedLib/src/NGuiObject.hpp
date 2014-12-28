@@ -12,10 +12,16 @@ extern "C" {
 #include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h" // display_update
 }
 
-extern "C" int __cxa_pure_virtual() {return 0;}
+extern "C" int __cxa_pure_virtual() {return 0;} // pure virtual error handler
 
 namespace nxpl {
 
+/**
+ * \brief Base class for all GUI objects. Handles visibility.
+ *
+ * Use this class as base class when creating new GUI object and implement the virtual
+ * functions showImpl() and hideImpl().
+ */
 class NGuiObject {
 private:
 	mutable bool visible;
