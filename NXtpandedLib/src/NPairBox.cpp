@@ -24,7 +24,7 @@ void NPairBox::align2Main(NAlignment align) {
 		}
 		sec->setPosition(NCursor(main->textBox().base().indent() + adjustment, main->textBox().base().line()));
 	} else if (align == NAlignment::top() || align == NAlignment::bottom()) {
-		adjustment = (align.get() > 0) ? (1) : (-1);
+		adjustment = (align.getID() > 0) ? (1) : (-1);
 		sec->setPosition(NCursor(main->textBox().base().indent(), main->textBox().base().line() + adjustment));
 	}
 	alignment = align;

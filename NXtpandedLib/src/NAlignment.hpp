@@ -37,7 +37,7 @@ public:
 	 * Used for lib functions internally.
 	 * @return id
 	 */
-	inline S8 get() const { return val; }
+	inline S8 getID() const { return val; }
 };
 
 }
