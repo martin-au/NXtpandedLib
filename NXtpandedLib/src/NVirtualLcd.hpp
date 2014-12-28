@@ -17,7 +17,8 @@
 
 namespace nxpl {
 
-
+/** \brief Draw on virtual not visible lcd.
+**/
 class NVirtualLcd : public NGenericPixelMatrix {
 
 public:

@@ -22,12 +22,7 @@ extern "C" {
 
 namespace nxpl {
 
-/** \brief Provides low level pixel functions.
- *
- * NLcd is a very low level class
- * It is designed to direct access pixels of the lcd
- * Its high efficient so there is no range checking!!
- * If you write for example on pixel x 101 y 65 anything could happen!
+/** \brief Draw directly on nxt lcd.
  */
 class NLcd : public NGenericPixelMatrix {
 
@@ -39,6 +34,7 @@ public:
 	NLcd() : NGenericPixelMatrix(display_get_buffer(), LCD::WIDTH, LCD::ROWS) {
 	}
 
+	/** \brief Update display (hardware)*/
 	static void update() {
 		display_update();
 	}

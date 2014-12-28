@@ -40,7 +40,7 @@ class NGenericPixelMatrix : private Uncopyable {
 private:
 	U8 *pixelMatrix;
 
-	static const S8 DEPTH = 8;
+	static const S8 DEPTH = 8; // 8 bit
 	U8 mWidth, mRows;
 
 protected:
