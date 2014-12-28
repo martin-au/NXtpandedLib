@@ -17,7 +17,7 @@ void Motorcontroller::controllerOff() {
 	if (mon) {   // controller is on
 		mgo = false;
 		mot->setBrake(true);
-		mot->setPWM(0);
+		mot->setPower(0);
 		mon = false;
 #ifdef NXPL_MOTORCONTROLLER_STALL_RESET_ON
 		mreset = false;
@@ -92,7 +92,7 @@ void Motorcontroller::resetMotorPos(S16 pwr, bool waitReset) {
 
 	controllerOff();
 	controlMtx.acquire();
-	mot->setPWM(pwr);
+	mot->setPower(pwr);
 	mot->setBrake(true);
 	mx = mot->getCount();
 	mreset = true;
@@ -135,7 +135,7 @@ void Motorcontroller::process() {
 	if(mreset) {
 	   S32 lastTime = mv;
 	   S32 nowTime = systick_get_ms();
-	   S32 motorPwr = mot->getPWM();
+	   S32 motorPwr = mot->getPower();
 
 	   if((nowTime - lastTime) > (40 - motorPwr/2)) {
 		   S32 lastCount = mx;
@@ -143,7 +143,7 @@ void Motorcontroller::process() {
 		   if(lastCount !=  nowCount) {
 			   mx = nowCount;
 		   } else {
-		      mot->setPWM(0);
+		      mot->setPower(0);
 		      mot->setBrake(true);
 			  mreset = false;
 		      mgo = false;
@@ -236,10 +236,10 @@ void Motorcontroller::process() {
 
 		if (p != mp) {
 			if (p != 0)
-				mot->setPWM(p);
+				mot->setPower(p);
 			else {
 				mot->setBrake(true);
-				mot->setPWM(0);
+				mot->setPower(0);
 			}
 			mp = p;
 		}

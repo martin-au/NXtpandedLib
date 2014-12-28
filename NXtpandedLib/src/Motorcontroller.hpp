@@ -8,7 +8,7 @@
 #ifndef __MOTORCONTROLLER_HPP_
 #define __MOTORCONTROLLER_HPP_
 
-// #define NXPL_MOTORCONTROLLER_EVENTS_ON
+#define NXPL_MOTORCONTROLLER_EVENTS_ON
 #define NXPL_MOTORCONTROLLER_STALL_RESET_ON
 
 /** \file
@@ -18,7 +18,7 @@
 #include "Mutex.hpp"
 #include "Uncopyable.hpp"
 
-#include "../../ecrobot/c++/device/Motor.h"
+#include "NIMotor.hpp"
 
 // Sleep
 extern "C" {
@@ -37,7 +37,7 @@ namespace nxpl {
  */
 class Motorcontroller {
 private:
-	ecrobot::Motor* mot;
+	NIMotor* mot;
 	mutex_t &controlMtx;
 
 	//long M_DELAY;
@@ -91,7 +91,7 @@ public:
 	 * @param paraAmax Control-parameter maximum Acceleration.
 	 * @param paraVmax Control-parameter maximum Velocity.
 	*/
-	Motorcontroller(ecrobot::Motor *motor, mutex_t &controlMutex, S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
+	Motorcontroller(NIMotor *motor, mutex_t &controlMutex, S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
 		: mot(motor),
 		  controlMtx(controlMutex),
 		  M_SCALE(12),
@@ -131,7 +131,7 @@ public:
 	 * @param paraAmax Control-parameter maximum Acceleration.
 	 * @param paraVmax Control-parameter maximum Velocity.
 	*/
-	Motorcontroller(ecrobot::Motor *motor, mutex_t &controlMutex, const EventMaskType &userMoveDoneEvent,S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
+	Motorcontroller(NIMotor *motor, mutex_t &controlMutex, const EventMaskType &userMoveDoneEvent,S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
 		: mot(motor),
 		  controlMtx(controlMutex),
 		  M_SCALE(12),
@@ -272,7 +272,7 @@ public:
 	 */
 	void move(S16 pwr) {
 		this->controllerOff();
-		mot->setPWM(pwr);
+		mot->setPower(pwr);
 	}
 
 	/** \brief Stop motor.
@@ -284,7 +284,7 @@ public:
 	void off(bool brake) {
 		this->controllerOff();
 		mot->setBrake(brake);
-		mot->setPWM(0);
+		mot->setPower(0);
 	}
 
 	/** \brief Stops the Motor softly at current position
