@@ -13,6 +13,13 @@
 
 namespace nxpl {
 
+/**
+ * \brief Class for positioning text.
+ *
+ * The position of a text (on the lcd screen) is described by indent (x) and line (y).
+ * One indent and one line is the space occupied by one character.
+ * See LcdConstants.hpp for limits on nxt lcd.
+ */
 class NCursor {
 private:
 	S8 indentVal, lineVal;
@@ -36,18 +43,22 @@ public:
 		lineVal = line;
 	}
 
+	/** \brief Move cursor one character in same line forward */
 	void moveForward() {
 		indentVal++;
 	}
 
+	/** \brief Move cursor one character in same line backward */
 	void moveBackward() {
 		indentVal--;
 	}
 
+	/** \brief Move cursor two next line (down) */
 	void moveNextLine() {
 		lineVal++;
 	}
 
+	/** \brief Move cursor two previous line (up) */
 	void movePerviousLine() {
 		lineVal--;
 	}
@@ -63,6 +74,11 @@ public:
 		return *this;
 	}
 
+	/** \brief Practical function to write cursor as string
+	 *
+	 * Format: "(indent,line)"
+	 * Example: (2,1)
+	 */
 	NString asString() const {
 		const U8 countDigits = 4;
 		const U8 countChars = 3;
@@ -76,6 +92,7 @@ public:
 	}
 };
 
+/** \brief Check if cursor is in nxt lcd */
 bool cursorInLcd(NCursor c) {
 	return LCD::cursorInLcd(c.indent(), c.line());
 }
