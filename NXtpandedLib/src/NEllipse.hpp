@@ -40,20 +40,31 @@ public:
 
 	/** \brief Draw an ellipse.
 	 *
-	 * This function lets you draw an ellipse on the screen with its center at the specified x and y location, using the specified radii.
+	 * This function lets you draw an ellipse on given lcd with its center at the specified point, using the specified radii.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
 	 * @param lcd      The lcd for drawing the ellipse.
-	 * @param centerX  The x value for the center of the ellipse.
-	 * @param centerY  The y value for the center of the ellipse.
+	 * @param center   The center of the ellipse.
 	 * @param a		   The x axis radius.
 	 * @param b		   The y axis radius.
 	 * @param op       The optional drawing options.
 	 */
 	static bool draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
+	/** \brief Draw an ellipse directly on nxt lcd.
+	 *
+	 * This function lets you draw an ellipse on nxt lcd with its center at the specified point, using the specified radii.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param center   The center of the ellipse.
+	 * @param a		   The x axis radius.
+	 * @param b		   The y axis radius.
+	 * @param op       The optional drawing options.
+	 */
 	inline static bool draw(NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
 		return draw(lcd, center, a, b, op);
@@ -63,12 +74,12 @@ public:
 
 	/** \brief Construct a ellipse object.
 	 *
-	 * This constructs a ellipse on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * This constructs a ellipse on the given lcd with its center at the specified point, using the specified radius.
 	 *
 	 * @param nlcd      The lcd for drawing the ellipse.
-	 * @param centerX  The x value for the center of the ellipse.
-	 * @param centerY  The y value for the center of the ellipse.
-	 * @param radius   The radius of the ellipse.
+	 * @param center   The center of the ellipse.
+	 * @param a		   The x axis radius.
+	 * @param b		   The y axis radius.
 	 */
 	NEllipse(NLcd &nlcd, NPoint center, S8 a, S8 b) :
 			NShape(nlcd), center_(center), a_(a), b_(b) {
@@ -81,14 +92,15 @@ public:
 		hide();
 	}
 
-	/** \brief Calculate the x-coordinate of the center point.
-	 *
-	 * @return Center point x-coordinate
+	/** \brief Get the center point.
 	 */
 	NPoint center() const {
 		return center_;
 	}
 
+	/**
+	 * \brief Set center point.
+	 */
 	void setCenter(NPoint center) {
 		bool visible = isVisible();
 		if(center != center_)
@@ -98,6 +110,9 @@ public:
 			show();
 	}
 
+	/**
+	 * \brief Set center X-Coordinate.
+	 */
 	void setCenterX(S16 x) {
 		bool visible = isVisible();
 		hide();
@@ -106,6 +121,9 @@ public:
 			show();
 	}
 
+	/**
+	 * \brief Set center Y-Coordinate.
+	 */
 	void setCenterY(S16 y) {
 		bool visible = isVisible();
 		hide();
@@ -114,6 +132,7 @@ public:
 			show();
 	}
 
+	/* \brief Get radius a **/
 	U8 a() const {
 		return a_;
 	}
@@ -131,6 +150,7 @@ public:
 			show();
 	}
 
+	/* \brief Get radius b**/
 	U8 b() const {
 		return b_;
 	}
@@ -172,22 +192,33 @@ private:
 
 public:
 
-	/** \brief Draw an ellipse.
+	/** \brief Draw an filled ellipse.
 	 *
-	 * This function lets you draw an ellipse on the screen with its center at the specified x and y location, using the specified radii.
+	 * This function lets you draw an filled ellipse on given lcd with its center at the specified point, using the specified radii.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
 	 * @param lcd      The lcd for drawing the ellipse.
-	 * @param centerX  The x value for the center of the ellipse.
-	 * @param centerY  The y value for the center of the ellipse.
+	 * @param center   The center of the ellipse.
 	 * @param a		   The x axis radius.
 	 * @param b		   The y axis radius.
 	 * @param op       The optional drawing options.
 	 */
 	static bool draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
+	/** \brief Draw an filled ellipse directly on nxt lcd.
+	 *
+	 * This function lets you draw an filled ellipse on nxt lcd with its center at the specified point, using the specified radii.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param center   The center of the ellipse.
+	 * @param a		   The x axis radius.
+	 * @param b		   The y axis radius.
+	 * @param op       The optional drawing options.
+	 */
 	inline static bool draw(NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
 		return draw(lcd, center, a, b, op);
@@ -195,14 +226,14 @@ public:
 
 public:
 
-	/** \brief Construct a ellipse object.
+	/** \brief Construct filled ellipse object.
 	 *
-	 * This constructs a ellipse on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * This constructs a ellipse on the given lcd with its center at the specified point, using the specified radius.
 	 *
 	 * @param nlcd      The lcd for drawing the ellipse.
-	 * @param centerX  The x value for the center of the ellipse.
-	 * @param centerY  The y value for the center of the ellipse.
-	 * @param radius   The radius of the ellipse.
+	 * @param center   The center of the ellipse.
+	 * @param a		   The x axis radius.
+	 * @param b		   The y axis radius.
 	 */
 	NEllipseFilled(NLcd &nlcd, NPoint center, S8 a, S8 b) :
 			NShape(nlcd), center_(center), a_(a), b_(b) {
@@ -215,21 +246,53 @@ public:
 		hide();
 	}
 
-	/** \brief Calculate the x-coordinate of the center point.
-	 *
-	 * @return Center point x-coordinate
+	/** \brief Get the center point.
 	 */
-	NPoint center() const {
+	NPoint center() const
+	{
 		return center_;
 	}
 
-	void setCenter(NPoint center) {
-		if(center != center_)
+	/**
+	 * \brief Set center point.
+	 */
+	void setCenter(NPoint center)
+	{
+		bool visible = isVisible();
+		if (center != center_)
 			hide();
 		center_ = center;
+		if (visible)
+			show();
 	}
 
-	U8 a() const {
+	/**
+	 * \brief Set center X-Coordinate.
+	 */
+	void setCenterX(S16 x)
+	{
+		bool visible = isVisible();
+		hide();
+		center_.setX(x);
+		if (visible)
+			show();
+	}
+
+	/**
+	 * \brief Set center Y-Coordinate.
+	 */
+	void setCenterY(S16 y)
+	{
+		bool visible = isVisible();
+		hide();
+		center_.setY(y);
+		if (visible)
+			show();
+	}
+
+	/* \brief Get radius a **/
+	U8 a() const
+	{
 		return a_;
 	}
 
@@ -237,14 +300,19 @@ public:
 	 *
 	 * @param radius New radius.
 	 */
-	void setA(U8 a) {
-		//if(radius <= LCD::WIDTH/2 && radius <= LCD::HEIGHT/2 && r > 0)
-		if(a != a_)
+	void setA(U8 a)
+	{
+		bool visible = isVisible();
+		if (a != a_)
 			hide();
 		a_ = a;
+		if (visible)
+			show();
 	}
 
-	U8 b() const {
+	/* \brief Get radius b**/
+	U8 b() const
+	{
 		return b_;
 	}
 
@@ -252,11 +320,15 @@ public:
 	 *
 	 * @param radius New radius.
 	 */
-	void setB(U8 b) {
+	void setB(U8 b)
+	{
+		bool visible = isVisible();
 		//if(radius <= LCD::WIDTH/2 && radius <= LCD::HEIGHT/2 && r > 0)
-		if(b != b_)
+		if (b != b_)
 			hide();
 		b_ = b;
+		if (visible)
+			show();
 	}
 };
 
