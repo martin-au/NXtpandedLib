@@ -18,7 +18,7 @@
 
 namespace nxpl {
 
-/** \brief Circle object for lcd.
+/** \brief Drawable circle object.
  */
 class NCircle : public NShape {
 private:
@@ -41,19 +41,29 @@ public:
 
 	/** \brief Draw a circle.
 	 *
-	 * This function lets you draw a circle on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * This function lets you draw a circle on the given lcd with its center at the specified point, using the specified radius.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
 	 * @param lcd      The lcd for drawing the circle.
-	 * @param centerX  The x value for the center of the circle.
-	 * @param centerY  The y value for the center of the circle.
+	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 * @param op       	The optional drawing options.
 	 */
 	bool static draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
 
+	/** \brief Draw a circle directly on nxt lcd.
+	 *
+	 * This function lets you draw a circle with its center at the specified point location, using the specified radius.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param center   The center point of the circle.
+	 * @param radius   The radius of the circle.
+	 * @param op       	The optional drawing options.
+	 */
 	bool static inline draw(NPoint center, S8 radius, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
 		return draw(lcd, center, radius, op);
@@ -63,11 +73,10 @@ public:
 
 	/** \brief Construct a circle object.
 	 *
-	 * This constructs a circle on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * This constructs a circle on the given lcd with its center at the specified point, using the specified radius.
 	 *
-	 * @param nlcd      The lcd for drawing the circle.
-	 * @param centerX  The x value for the center of the circle.
-	 * @param centerY  The y value for the center of the circle.
+	 * @param nlcd     The lcd for drawing the circle.
+	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 */
 	NCircle(NLcd &nlcd, NPoint center, U8 radius) :
@@ -81,14 +90,15 @@ public:
 		hide();
 	}
 
-	/** \brief Calculate the x-coordinate of the center point.
-	 *
-	 * @return Center point x-coordinate
+	/** \brief Get the center point.
 	 */
 	NPoint center() const {
 		return center_;
 	}
 
+	/**
+	 * \brief Set center point.
+	 */
 	void setCenter(NPoint center) {
 		bool visible = isVisible();
 		if(center != center_)
@@ -98,6 +108,9 @@ public:
 			show();
 	}
 
+	/**
+	 * \brief Set center X-Coordinate.
+	 */
 	void setCenterX(S16 x) {
 		bool visible = isVisible();
 		hide();
@@ -106,6 +119,9 @@ public:
 			show();
 	}
 
+	/**
+	 * \brief Set center Y-Coordinate.
+	 */
 	void setCenterY(S16 y) {
 		bool visible = isVisible();
 		hide();
@@ -114,6 +130,7 @@ public:
 			show();
 	}
 
+	/* \brief Get radius **/
 	U8 radius() const {
 		return r;
 	}
@@ -133,7 +150,7 @@ public:
 };
 
 
-/** \brief Circle object for lcd.
+/** \brief Drawable filled circle object.
  */
 class NCircleFilled : public NShape {
 private:
@@ -156,19 +173,29 @@ public:
 
 	/** \brief Draw a filled circle.
 	 *
-	 * This function lets you draw a filled circle on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * This function lets you draw a filled circle on the given lcd with its center at the specified point, using the specified radius.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
 	 * @param lcd      The lcd for drawing the circle.
-	 * @param centerX  The x value for the center of the circle.
-	 * @param centerY  The y value for the center of the circle.
+	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
-	 * @param op       	The optional drawing options.
+	 * @param op       The optional drawing options.
 	 */
 	static bool draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
 
+	/** \brief Draw a filled circle directly on nxt lcd.
+	 *
+	 * This function lets you draw a filled circle with its center at the specified point location, using the specified radius.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param center   The center point of the circle.
+	 * @param radius   The radius of the circle.
+	 * @param op       	The optional drawing options.
+	 */
 	static inline bool draw(NPoint center, S8 radius, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
 		return draw(lcd, center, radius, op);
@@ -177,13 +204,12 @@ public:
 
 public:
 
-	/** \brief Construct a circle object.
+	/** \brief Construct a filled circle object.
 	 *
-	 * This constructs a circle on the given lcd with its center at the specified x and y location, using the specified radius.
+	 * This constructs a filled circle on the given lcd with its center at the specified point, using the specified radius.
 	 *
-	 * @param nlcd      The lcd for drawing the circle.
-	 * @param centerX  The x value for the center of the circle.
-	 * @param centerY  The y value for the center of the circle.
+	 * @param nlcd     The lcd for drawing the circle.
+	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 */
 	NCircleFilled(NLcd &nlcd, NPoint center, U8 radius) :
@@ -191,20 +217,21 @@ public:
 	}
 
 	/** \brief Destructor
-	 *  Hides line if visible.
+	 *  Hides circle if visible.
 	 */
 	virtual ~NCircleFilled() {
 		hide();
 	}
 
-	/** \brief Calculate the x-coordinate of the center point.
-	 *
-	 * @return Center point x-coordinate
+	/** \brief Get the center point.
 	 */
 	NPoint center() const {
 		return center_;
 	}
 
+	/**
+	 * \brief Set center point.
+	 */
 	void setCenter(NPoint center) {
 		bool visible = isVisible();
 		if(center != center_)
@@ -214,6 +241,9 @@ public:
 			show();
 	}
 
+	/**
+	 * \brief Set center X-Coordinate.
+	 */
 	void setCenterX(S16 x) {
 		bool visible = isVisible();
 		hide();
@@ -222,6 +252,9 @@ public:
 			show();
 	}
 
+	/**
+	 * \brief Set center Y-Coordinate.
+	 */
 	void setCenterY(S16 y) {
 		bool visible = isVisible();
 		hide();
@@ -230,6 +263,7 @@ public:
 			show();
 	}
 
+	/* \brief Get radius **/
 	U8 radius() const {
 		return r;
 	}
@@ -245,7 +279,6 @@ public:
 		r = radius;
 		if(visible)
 			show();
-
 	}
 };
 
