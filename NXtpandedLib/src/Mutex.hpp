@@ -26,7 +26,7 @@ namespace nxpl {
 /**
  * \brief Resource wrapper implements simple, modern and advanced mutex functions.
  */
-struct mutex_t {
+struct NMutex {
 private:
 	ResourceType mtx;
 public:
@@ -39,7 +39,7 @@ public:
 	 *
 	 * @param resource Reference to resource
 	 */
-	mutex_t(ResourceType resource)
+	NMutex(ResourceType resource)
 			: mtx(resource)
 	{}
 
@@ -86,13 +86,13 @@ public:
  */
 class LockGuard: private Uncopyable {
 private:
-	mutex_t &_ref;
+	NMutex &_ref;
 public:
 	/** \brief Constructs a LockGuard object that keeps mutex locked.
 	 *
 	 * @param mutex
 	 */
-	LockGuard(mutex_t &mutex) : _ref(mutex) {
+	LockGuard(NMutex &mutex) : _ref(mutex) {
 		_ref.acquire();
 	}
 
@@ -104,7 +104,7 @@ public:
 	 *
 	 * @return Mutex object.
 	 */
-	mutex_t &get() const {return _ref;}
+	NMutex &get() const {return _ref;}
 };
 
 /**
@@ -118,14 +118,14 @@ public:
  */
 class SharedLockGuard {
 private:
-	mutex_t &_ref;
+	NMutex &_ref;
 	RefCount *refcnt;
 public:
 	/** \brief Constructs a SharedLockGuard object that keeps mutex locked.
 	 *
 	 * @param mutex
 	 */
-	SharedLockGuard(mutex_t &mutex) : _ref(mutex), refcnt(new RefCount) {
+	SharedLockGuard(NMutex &mutex) : _ref(mutex), refcnt(new RefCount) {
 		_ref.acquire();
 		refcnt->add();
 	}
@@ -166,7 +166,7 @@ public:
 	*
 	* @return Mutex object.
 	*/
-	mutex_t &get() const {return _ref;}
+	NMutex &get() const {return _ref;}
 };
 
 }

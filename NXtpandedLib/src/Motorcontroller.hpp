@@ -38,7 +38,7 @@ namespace nxpl {
 class Motorcontroller {
 private:
 	NIMotor* mot;
-	mutex_t &controlMtx;
+	NMutex &controlMtx;
 
 	//long M_DELAY;
 	S16  	 M_SCALE;
@@ -91,7 +91,7 @@ public:
 	 * @param paraAmax Control-parameter maximum Acceleration.
 	 * @param paraVmax Control-parameter maximum Velocity.
 	*/
-	Motorcontroller(NIMotor *motor, mutex_t &controlMutex, S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
+	Motorcontroller(NIMotor *motor, NMutex &controlMutex, S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
 		: mot(motor),
 		  controlMtx(controlMutex),
 		  M_SCALE(12),
@@ -131,7 +131,7 @@ public:
 	 * @param paraAmax Control-parameter maximum Acceleration.
 	 * @param paraVmax Control-parameter maximum Velocity.
 	*/
-	Motorcontroller(NIMotor *motor, mutex_t &controlMutex, const EventMaskType &userMoveDoneEvent,S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
+	Motorcontroller(NIMotor *motor, NMutex &controlMutex, const EventMaskType &userMoveDoneEvent,S16 paraAmax, S16 paraVmax, S16 initialMotorPwr = 50)
 		: mot(motor),
 		  controlMtx(controlMutex),
 		  M_SCALE(12),

@@ -17,7 +17,7 @@ DeclareResource(OstreamResource);
 #include "../../../NXtpandedLib/src/NPairBox.hpp"
 #include "../../../NXtpandedLib/src/NTimer.hpp"
 
-nxpl::mutex_t ostreamMtx(OstreamResource);
+nxpl::NMutex ostreamMtx(OstreamResource);
 nxpl::NOstream cout(ostreamMtx);
 
 extern "C" {

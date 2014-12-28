@@ -20,7 +20,7 @@ DeclareResource(OstreamResource);
 #include "../../../NXtpandedLib/src/NLabel.hpp"
 #include "../../../NXtpandedLib/src/NLcdView.hpp"
 
-nxpl::mutex_t ostreamMtx(OstreamResource);
+nxpl::NMutex ostreamMtx(OstreamResource);
 
 extern "C" {
 // startup/shutdown hooks

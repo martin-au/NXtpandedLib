@@ -17,7 +17,7 @@ DeclareResource(MyResource);
 #include "../../../NXtpandedLib/src/NTimer.hpp"
 #include "../../../NXtpandedLib/src/Mutex.hpp"
 
-nxpl::mutex_t ostreamMtx(OstreamResource);
+nxpl::NMutex ostreamMtx(OstreamResource);
 nxpl::NOstream cout(ostreamMtx);
 
 extern "C" {
@@ -39,7 +39,7 @@ void user_1ms_isr_type2(void){
 
 // here we give the resource to a NXtpandedLib Mutex object
 // which makes things easier
-nxpl::mutex_t myMutex(MyResource);
+nxpl::NMutex myMutex(MyResource);
 
 TASK(TaskMain)
 {

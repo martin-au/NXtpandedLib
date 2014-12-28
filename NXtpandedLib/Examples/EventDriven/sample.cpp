@@ -21,7 +21,7 @@ DeclareTask(EventCallback);
 
 #include "../../../ecrobot/C++/device/Nxt.h";
 
-nxpl::mutex_t ostreamMtx(OstreamResource);
+nxpl::NMutex ostreamMtx(OstreamResource);
 nxpl::NOstream cout(ostreamMtx);
 nxpl::NTimer timer;
 

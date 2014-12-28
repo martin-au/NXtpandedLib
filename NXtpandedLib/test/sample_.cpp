@@ -51,14 +51,14 @@ void user_1ms_isr_type2(void){
 
 
 #include "../src/NOstream.hpp"
-nxpl::mutex_t streammtx(ostreamRes);
+nxpl::NMutex streammtx(ostreamRes);
 nxpl::NOstream cout(streammtx);
 
 
 #include "../src/NTimer.hpp"
 #include "../src/Motorcontroller.hpp"
 
-nxpl::mutex_t motorControlMtx(motorRes);
+nxpl::NMutex motorControlMtx(motorRes);
 ecrobot::Motor motorADirect(PORT_A);
 nxpl::Motorcontroller motorA(&motorADirect, motorControlMtx, 24, 100); // 18 100
 

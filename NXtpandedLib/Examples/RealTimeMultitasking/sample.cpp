@@ -18,7 +18,7 @@ DeclareResource(OstreamResource);
 // fix this paths also
 #include "../../../NXtpandedLib/src/NOstream.hpp"
 
-nxpl::mutex_t ostreamMtx(OstreamResource);
+nxpl::NMutex ostreamMtx(OstreamResource);
 nxpl::NOstream cout(ostreamMtx);
 
 extern "C" {

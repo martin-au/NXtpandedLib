@@ -15,7 +15,7 @@
 namespace nxpl {
 
 // user errors are no problem, we check this when setting cursor position
-NOstream::NOstream(mutex_t res, NTextBox box)
+NOstream::NOstream(NMutex res, NTextBox box)
 : NWidget(box),
   somenew(false),
   nextHex(false),

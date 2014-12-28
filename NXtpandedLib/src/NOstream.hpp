@@ -43,7 +43,7 @@ private:
 	bool nextHex;
 	U16 floatplaces;
 
-	mutable mutex_t mutex;
+	mutable NMutex mutex;
 
 	void textBoxValid();
 
@@ -110,7 +110,7 @@ public:
 	 * @param indent The indent in chars from left.
 	 * @param width The width of the console in chars.
 	 */
-	explicit NOstream(mutex_t res, NTextBox box = NTextBox(NCursor(), LCD::LINE_WIDTH, LCD::ROWS));
+	explicit NOstream(NMutex res, NTextBox box = NTextBox(NCursor(), LCD::LINE_WIDTH, LCD::ROWS));
 
 	virtual ~NOstream();
 
