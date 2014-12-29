@@ -27,63 +27,44 @@ namespace nxpl {
  * you want to monitor. NLabel::show(), NLabel::hide() will make the Label visible at the right time.
  *
  * Note that multiline labels are not supported, the end line char is disabled.
- * const NLabel means constant position, data but not constant visibility!
+ * const NLabel means constant position and constant data but not constant visibility!
  */
-class NLabel: public NWidget, private Uncopyable {
-
+class NLabel: public NWidget, private Uncopyable
+{
 private:
 	NString *label;
 	bool somenew;
 
-	/** \brief Make the label visible.
-	 *
-	 * @param update If true update the display.
-	 */
 	virtual void showWidgetImpl() const;
-
-	/** \brief Make the label invisible.
-	 *
-	 * @param update If true update the display.
-	 */
 	virtual void hideWidgetImpl() const;
+
 public:
-	/** \brief Construct label object with positioning only.
+
+	/** \brief Construct label object at zero point.
 	 *
-	 * If charWidth is 0 the fieldWidth will be set to the size of the first passed string/number.
-	 * Its recommenced to set charWidth explicit to get no unexpected results.
-	 *
-	 * @param indent Indent in chars from the left side of the display. (0 - 15)
-	 * @param row    Row of the lcd (0 - 7)
-	 * @param charWidth The width of the label in chars.
+	 * Default width (max chars in line) is set to 1.
 	 */
 	NLabel::NLabel() :
 			NWidget(NTextBox()), label(new NString(textBox().charsInLine())), somenew(true) {
 		textBox().setLines(1);
 	}
 
-	/** \brief Construct label object with positioning only.
+	/** \brief Construct label object with given textbox.
+	 * TextBox chars in line should be set to a useful value. Multiline textbox is set back to 1.
 	 *
-	 * If charWidth is 0 the fieldWidth will be set to the size of the first passed string/number.
-	 * Its recommenced to set charWidth explicit to get no unexpected results.
-	 *
-	 * @param indent Indent in chars from the left side of the display. (0 - 15)
-	 * @param row    Row of the lcd (0 - 7)
-	 * @param charWidth The width of the label in chars.
+	 * @param box TextBox with indent, line and width.
 	 */
 	NLabel::NLabel(NTextBox box) :
 			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
 		textBox().setLines(1);
 	}
 
-	/** \brief Construct label object with position and string.
+	/** \brief Construct label object with given textbox and initial string.
 	 *
-	 * If charWidth is 0 the fieldWidth will be set to the size of the text.
-	 * Its recommenced to set charWidth explicit to get no unexpected results.
+	 * TextBox chars in line should be set to a useful value. Multiline textbox is set back to 1.
 	 *
 	 * @param text Starting text string displayed in the label.
-	 * @param indent Indent in chars from the left side of the display. (0 - 15)
-	 * @param row    Row of the lcd (0 - 7)
-	 * @param charWidth The width of the label in chars.
+	 * @param box TextBox with indent, line and width.
 	 */
 	explicit NLabel(const NString &text, NTextBox box) :
 			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
@@ -91,15 +72,12 @@ public:
 		setText(text);
 	}
 
-	/** Construct label object with position and C-String.
+	/** \brief Construct label object with given textbox and initial c-string.
 	 *
-	 * If charWidth is 0 the fieldWidth will be set to the size of the text.
-	 * Its recommenced to set charWidth explicit to get no unexpected results.
+	 * TextBox chars in line should be set to a useful value. Multiline textbox is set back to 1.
 	 *
-	 * @param text Starting text C-String displayed in the label.
-	 * @param indent Indent in chars from the left side of the display. (0 - 15)
-	 * @param row Row of the lcd (0 - 7)
-	 * @param charWidth The width of the label in chars.
+	 * @param text Starting text string displayed in the label.
+	 * @param box TextBox with indent, line and width.
 	 */
 	explicit NLabel(char *text, NTextBox box) :
 			NWidget(box), label(new NString(box.charsInLine())), somenew(true) {
@@ -107,15 +85,12 @@ public:
 		setText(text);
 	}
 
-	/** \brief Construct label object with position and number.
+	/** \brief Construct label object with given textbox and initial number.
 	 *
-	 * If charWidth is 0 the fieldWidth will be set to the size of the number.
-	 * Its recommenced to set charWidth explicit to get no unexpected results.
+	 * TextBox chars in line should be set to a useful value. Multiline textbox is set back to 1.
 	 *
-	 * @param num Starting number displayed in the label.
-	 * @param indent Indent in chars from the left side of the display. (0 - 15)
-	 * @param row Row of the lcd (0 - 7)
-	 * @param numWidth The width of the label in chars.
+	 * @param text Starting number displayed in the label.
+	 * @param box TextBox with indent, line and width.
 	 */
 	template<typename T>
 	NLabel(const T num, NTextBox box) :
@@ -130,7 +105,7 @@ public:
 	 */
 	virtual ~NLabel() {
 		this->clear(); // TODO do not call virtual functions in destructors?
-		delete[] label;
+		delete label;
 	}
 
 	/** \brief Set precision for floating-point-numbers.
@@ -178,6 +153,8 @@ public:
 
 	/** \brief Set a label number.
 	 *
+	 * In case of overflow the label will display '#'.
+	 *
 	 * @param number Number to set.
 	 */
 	template<typename T>
@@ -202,6 +179,8 @@ public:
 	}
 
 	/** \brief Set a label number.
+	 *
+	 * In case of overflow the label will display '#'.
 	 *
 	 * @param number Number to set.
 	 */
