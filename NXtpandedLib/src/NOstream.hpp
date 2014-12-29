@@ -102,13 +102,11 @@ public:
 	/** \brief Construct a console widget.
 	 *
 	 * In order to make ostream task save it needs a resource/mutex.
-	 * Please define the resource in oil file in every task where you use ostream.
+	 * You have to define the resource in oil file in every task where you use ostream.
+	 * You can specify the size and position of the widget with the box argument.
 	 *
 	 * @param res See description.
-	 * @param startLine The first line of the console. (0 - 7)
-	 * @param rows The number of console lines.
-	 * @param indent The indent in chars from left.
-	 * @param width The width of the console in chars.
+	 * @param box TextBox in which the console should exist. Default is a TextBox over the whole nxt lcd.
 	 */
 	explicit NOstream(NMutex res, NTextBox box = NTextBox(NCursor(), LCD::LINE_WIDTH, LCD::ROWS));
 
@@ -120,7 +118,7 @@ public:
 	 * A good solution is a display update task which has cycle time of about 100 - 400 ms.
 	 * Remember the human eye is slow ;)
 	 *
-	 * @param update If true update the display.
+	 * @param update If true update the display (hardware).
 	 */
 	void flush(bool update = false) const {
 		this->show(update);
@@ -156,10 +154,10 @@ public:
 	 */
 	friend NOstream& endl(NOstream& stream);
 
-	NOstream& operator<<(const char* str); /**<Put C-String into stream.*/
-	NOstream& operator<<(char ch); /**<Put char into stream.*/
-	NOstream& operator<<(S32 num); /**<Put signed 32bit number into stream.*/
-	NOstream& operator<<(U32 num); /**<Put unsigned 32bit number into stream.*/
+	NOstream& operator<<(const char* str); 		/**<Put C-String into stream.*/
+	NOstream& operator<<(char ch);			    /**<Put char into stream.*/
+	NOstream& operator<<(S32 num);              /**<Put signed 32bit number into stream.*/
+	NOstream& operator<<(U32 num);              /**<Put unsigned 32bit number into stream.*/
 
 	NOstream& operator<<(int num) {return operator<<(static_cast<S32>(num));} /**<Put integer number into stream.*/
 	NOstream& operator<<(S16 num) {return operator<<(static_cast<S32>(num));} /**<Put signed 16bit number into stream.*/
