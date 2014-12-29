@@ -53,12 +53,11 @@ public:
 		alignment(NAlignment::none()), main(mainWidget), sec(secWidget) {
 	}
 
-	/** \brief Constructor with positioning.
+	/** \brief Constructor with positioning and aligning.
 	 *
 	 * @param mainWidget
 	 * @param secWidget
-	 * @param indent  Indent in chars from the left side of the display. (0 - 15)
-	 * @param row  Row of the lcd (0 - 7)
+	 * @param position  Set position of the main object and align secondary object to main object.
 	 * @param align The alignment of the secondary widget.
 	 */
 	NPairBox(NWidget *mainWidget, NWidget *secWidget, NCursor position, NAlignment align) :
@@ -81,10 +80,8 @@ public:
 
 	/** \brief Set position of the main object and align secondary object to main object.
 	 *
-	 * @param indent  Indent in chars from the left side of the display. (0 - 15)
-	 * @param row     Row of the lcd (0 - 7)
-	 * @param align   The alignment of the secondary widget.
-	 * @return		  True if position is in lcd.
+	 * @param position  Position of the pair widget.
+	 * @return		    True if position is in lcd.
 	 */
 	void setPosition(NCursor position) {
 		main->setPosition(position);
