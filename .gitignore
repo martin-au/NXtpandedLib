@@ -226,4 +226,6 @@ ecrobot/c++/html
 #private
 Projects/
 
+#output
 *.oram
+*.o
