@@ -230,6 +230,11 @@ public:
 	}
 
 #ifdef NXPL_MOTORCONTROLLER_EVENTS_ON
+	/**
+	 * \brief Wait for move done event.
+	 *
+	 * This will suspend the current task and let other task execute.
+	 */
 	void waitMoveEvent() {
 		GetTaskID(&idOfWaitingForMoveDoneEventTask);
 		controlMtx.acquire();
