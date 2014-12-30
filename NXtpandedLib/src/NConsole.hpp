@@ -5,12 +5,13 @@
  *      Author: Martin
  */
 
-#ifndef __NOSTREAM_HPP_
-#define __NOSTREAM_HPP_
+#ifndef __NCONSOLE_HPP_
+#define __NCONSOLE_HPP_
 
 /** \file
  *	\ingroup NxtLcd
 */
+
 
 #include "..\..\ecrobot\c\ecrobot_types.h"
 
@@ -19,27 +20,28 @@
 #include "NWidget.hpp"
 #include "LcdConstants.hpp"
 #include "Uncopyable.hpp"
+#include "Mutex.hpp"
 
 #include "../../../GNUARM/arm-elf/include/string.h" // strcpy, strlen
 
 /**
- * \brief Create a ostream which can output data on nxt lcd.
+ * \brief Create a console widget on the lcd which works with streams.
  *
- * This class is basically the same as NConsole. The differences are:
- * - Its not thread save, so you do not have to construct it with a mutex/resource
- * (good for single thread programs)
- *
- * - There is already a object called "cout" which can be used immediately in all files where
- * this header is included.
+ * This class provides a interface just like the std::ostream in standard C++
+ * Its main indent is to see what your application does. You simply create a global
+ * object called for example cout (like on computers) and then you can use it to make outputs
+ * anywhere in your code. This class is task save so you can use it in all your tasks.
  *
  * For all output streams: If line gets to long for display, console will auto line feed with an indent.
  */
-class NOstream: public NWidget, private Uncopyable {
+class NConsole: public NWidget, private Uncopyable {
 private:
 	static const U8 autoLineFeedIndent = 2;
 	mutable bool somenew;
 	bool nextHex;
 	U16 floatplaces;
+
+	mutable NMutex mutex;
 
 	void textBoxValid();
 
@@ -79,7 +81,7 @@ private:
 	StreamBuffer *streamBuffer;
 
 	// allowing manipulators (endl, hex ...)
-	typedef NOstream& (*NOstreamManipulator)(NOstream&);
+	typedef NConsole& (*NOstreamManipulator)(NConsole&);
 
 	void newline() {
 		++(streamBuffer->cursorLine);
@@ -95,7 +97,6 @@ private:
 
 	virtual void textBoxChangedHandler();
 public:
-
 	/** \brief Construct a console widget.
 	 *
 	 * In order to make ostream task save it needs a resource/mutex.
@@ -105,9 +106,9 @@ public:
 	 * @param res See description.
 	 * @param box TextBox in which the console should exist. Default is a TextBox over the whole nxt lcd.
 	 */
-	NOstream();
+	explicit NConsole(NMutex res, NTextBox box = NTextBox(NCursor(), LCD::LINE_WIDTH, LCD::ROWS));
 
-	virtual ~NOstream();
+	virtual ~NConsole();
 
 	/** \brief Copy data of buffer into lcd.
 	 *
@@ -139,7 +140,7 @@ public:
 	 * @param stream
 	 * @return
 	 */
-	friend NOstream& hex(NOstream& stream);
+	friend NConsole& hex(NConsole& stream);
 
 	/** \brief Ostream manipulator: end actual line and flush console.
 	 *
@@ -149,44 +150,44 @@ public:
 	 * @param stream
 	 * @return
 	 */
-	friend NOstream& endl(NOstream& stream);
+	friend NConsole& endl(NConsole& stream);
 
-	NOstream& operator<<(const char* str); 		/**<Put C-String into stream.*/
-	NOstream& operator<<(char ch);			    /**<Put char into stream.*/
-	NOstream& operator<<(S32 num);              /**<Put signed 32bit number into stream.*/
-	NOstream& operator<<(U32 num);              /**<Put unsigned 32bit number into stream.*/
+	NConsole& operator<<(const char* str); 		/**<Put C-String into stream.*/
+	NConsole& operator<<(char ch);			    /**<Put char into stream.*/
+	NConsole& operator<<(S32 num);              /**<Put signed 32bit number into stream.*/
+	NConsole& operator<<(U32 num);              /**<Put unsigned 32bit number into stream.*/
 
-	NOstream& operator<<(int num) {return operator<<(static_cast<S32>(num));} /**<Put integer number into stream.*/
-	NOstream& operator<<(S16 num) {return operator<<(static_cast<S32>(num));} /**<Put signed 16bit number into stream.*/
-	NOstream& operator<<(U16 num) {return operator<<(static_cast<U32>(num));} /**<Put unsigned 32bit number into stream.*/
-	NOstream& operator<<(S8 num)  {return operator<<(static_cast<S32>(num));} /**<Put signed 8bit number into stream.*/
-	NOstream& operator<<(U8 num)  {return operator<<(static_cast<U32>(num));} /**<Put unsigned 16bit number into stream.*/
+	NConsole& operator<<(int num) {return operator<<(static_cast<S32>(num));} /**<Put integer number into stream.*/
+	NConsole& operator<<(S16 num) {return operator<<(static_cast<S32>(num));} /**<Put signed 16bit number into stream.*/
+	NConsole& operator<<(U16 num) {return operator<<(static_cast<U32>(num));} /**<Put unsigned 32bit number into stream.*/
+	NConsole& operator<<(S8 num)  {return operator<<(static_cast<S32>(num));} /**<Put signed 8bit number into stream.*/
+	NConsole& operator<<(U8 num)  {return operator<<(static_cast<U32>(num));} /**<Put unsigned 16bit number into stream.*/
 
-	NOstream& operator<<(float num); /**<Put floating-point-number into stream.*/
+	NConsole& operator<<(float num); /**<Put floating-point-number into stream.*/
 
-	NOstream& operator<<(bool b) { /**<Put boolean into stream. Converts bool into text form true/false*/
+	NConsole& operator<<(bool b) { /**<Put boolean into stream. Converts bool into text form true/false*/
 		if(b) return *this << "true";
 		else  return *this << "false";
 	}
 
-	NOstream& operator<<(const NString& str) {
+	NConsole& operator<<(const NString& str) {
 		return *this << str.data();
 	}
 
-	NOstream& operator<<(NOstream& stream) {return *this;}
-	NOstream& operator<<(NOstreamManipulator manip); /**<Put manipulator into stream.*/
+	NConsole& operator<<(NConsole& stream) {return *this;}
+	NConsole& operator<<(NOstreamManipulator manip); /**<Put manipulator into stream.*/
 };
 
-NOstream cout;
-
 // manipulator
-NOstream& endl(NOstream& stream) {
+NConsole& endl(NConsole& stream) {
+	stream.mutex.acquire();
 	stream.newline();
+	stream.mutex.release();
 	stream.flush();
 	return stream;
 }
 
-NOstream& hex(NOstream& stream) {
+NConsole& hex(NConsole& stream) {
 	stream.nextHex = true;
 	return stream;
 }

@@ -6,29 +6,31 @@
  */
 
 
-#include "NOstream.hpp"
+#include "NConsole.hpp"
 
 #include "../../lejos_nxj/src/nxtvm/platform/nxt/display.h"
 #include "../../../GNUARM/arm-elf/include/string.h" // strlen
 #include "StringConvert.hpp"
 
 // user errors are no problem, we check this when setting cursor position
-NOstream::NOstream()
-: NWidget(NTextBox(NCursor(), LCD::LINE_WIDTH, LCD::ROWS)),
+NConsole::NConsole(NMutex res, NTextBox box)
+: NWidget(box),
   somenew(false),
   nextHex(false),
   floatplaces(2),
+  mutex(res),
   streamBuffer()
-{
+ {
+	textBoxValid();
 	streamBuffer = new StreamBuffer(textBox().charsInLine(), textBox().lines());
 }
 
-NOstream::~NOstream() {
+NConsole::~NConsole() {
 	hide(false);
 	delete streamBuffer;
 }
 
-void NOstream::textBoxValid() {
+void NConsole::textBoxValid() {
 	// block user errors, otherwise we may get big arrays and program crashes with new
 	if(textBox().lines() > LCD::ROWS || textBox().lines() <= 0) {
 		textBox().setLines(LCD::ROWS);
@@ -43,7 +45,7 @@ void NOstream::textBoxValid() {
 }
 
 // make sure that there is space for new line
-void NOstream::newLineSpace() {
+void NConsole::newLineSpace() {
 	if (streamBuffer->cursorLine >= textBox().lines()) {
 		for (U8 i = 0; i < (textBox().lines()-1); ++i) {
 			strcpy(streamBuffer->buffer[i], streamBuffer->buffer[i + 1]);
@@ -53,9 +55,18 @@ void NOstream::newLineSpace() {
 	}
 }
 
-void NOstream::showWidgetImpl() const {
+void NConsole::textBoxChangedHandler() {
+	textBoxValid();
+	if(hasLinesChanged() || hasCharsInLineChanged()) {
+		delete streamBuffer;
+		streamBuffer = new StreamBuffer(textBox().charsInLine(), textBox().lines());
+	}
+}
+
+void NConsole::showWidgetImpl() const {
 	if(!somenew) return;
 
+	LockGuard lock(mutex);
 	// since flush can happen in any code segment with debugging
 	// we are not allowed to change cursor position!!
 	int save_x = display_get_x();
@@ -82,7 +93,7 @@ void NOstream::showWidgetImpl() const {
 	display_goto_xy(save_x, save_y);
 }
 
-void NOstream::hideWidgetImpl() const {
+void NConsole::hideWidgetImpl() const {
 	int save_x = display_get_x();
 	int save_y = display_get_y();
 
@@ -96,28 +107,21 @@ void NOstream::hideWidgetImpl() const {
 	display_goto_xy(save_x, save_y);
 }
 
-void NOstream::textBoxChangedHandler() {
-	textBoxValid();
-	if(hasLinesChanged() || hasCharsInLineChanged()) {
-		delete streamBuffer;
-		streamBuffer = new StreamBuffer(textBox().charsInLine(), textBox().lines());
-	}
-}
-
-U16 NOstream::precision() const {
+U16 NConsole::precision() const {
 	return floatplaces;
 }
 
-U16 NOstream::precision(U16 prec) {
+U16 NConsole::precision(U16 prec) {
 	floatplaces = prec;
 	return floatplaces;
 }
 
-void NOstream::streamhandler(const char *str) {
+void NConsole::streamhandler(const char *str) {
 	newLineSpace();
 	// i..idx of first free char in textBuffer
 	// j..idx iterator of destination string
 	// k..idx iterator of source string
+	LockGuard lock(mutex);
 	S16 j = 0;
 	S16 k = 0;
 	S16 i = strlen(streamBuffer->buffer[streamBuffer->cursorLine]);
@@ -157,12 +161,12 @@ void NOstream::streamhandler(const char *str) {
 	somenew = true;
 }
 
-NOstream& NOstream::operator<<(const char* str) {
+NConsole& NConsole::operator<<(const char* str) {
 	streamhandler(str);
 	return *this;
 }
 
-NOstream& NOstream::operator<<(char ch) {
+NConsole& NConsole::operator<<(char ch) {
 	char tmp[2];
 	tmp[0] = ch;
 	tmp[1] = '\0';
@@ -170,7 +174,7 @@ NOstream& NOstream::operator<<(char ch) {
 	return *this;
 }
 
-NOstream& NOstream::operator<<(S32 num) {
+NConsole& NConsole::operator<<(S32 num) {
 	if (!nextHex) {
 		char str[12];
 		numToStr(num, str);
@@ -184,7 +188,7 @@ NOstream& NOstream::operator<<(S32 num) {
 	return *this;
 }
 
-NOstream& NOstream::operator<<(U32 num) {
+NConsole& NConsole::operator<<(U32 num) {
 	if (!nextHex) {
 		char str[11];
 		numToStr(num, str);
@@ -198,7 +202,7 @@ NOstream& NOstream::operator<<(U32 num) {
 	return *this;
 }
 
-NOstream& NOstream::operator<<(float num) {
+NConsole& NConsole::operator<<(float num) {
 	//putf("f", num);
 	char str[12];
 	numToStr(num, str, floatplaces);
@@ -206,7 +210,7 @@ NOstream& NOstream::operator<<(float num) {
 	return *this;
 }
 
-NOstream& NOstream::operator<<(NOstreamManipulator manip) {
+NConsole& NConsole::operator<<(NOstreamManipulator manip) {
 	return manip(*this);
 }
 

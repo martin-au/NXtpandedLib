@@ -33,6 +33,7 @@ INC_PATH := \
 NXTPANDEDLIB_SOURCES = $(addprefix $(NXTPANDEDLIB_ROOT)/src/, \
 		StringConvert.cpp \
 		NString.cpp \
+		NConsole.cpp \
 		NOstream.cpp \
 		NLabel.cpp \
 		NPairBox.cpp \
