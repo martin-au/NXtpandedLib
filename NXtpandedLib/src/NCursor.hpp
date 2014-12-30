@@ -35,12 +35,14 @@ public:
 		return lineVal;
 	}
 
-	void setIndent(S8 indent) {
+	NCursor setIndent(S8 indent) {
 		indentVal = indent;
+		return *this;
 	}
 
-	void setLine(S8 line) {
+	NCursor setLine(S8 line) {
 		lineVal = line;
+		return *this;
 	}
 
 	/** \brief Move cursor one character in same line forward */
