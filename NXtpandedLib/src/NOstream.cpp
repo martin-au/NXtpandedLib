@@ -12,8 +12,6 @@
 #include "../../../GNUARM/arm-elf/include/string.h" // strlen
 #include "StringConvert.hpp"
 
-namespace nxpl {
-
 // user errors are no problem, we check this when setting cursor position
 NOstream::NOstream(NMutex res, NTextBox box)
 : NWidget(box),
@@ -163,20 +161,6 @@ void NOstream::streamhandler(const char *str) {
 	somenew = true;
 }
 
-
-// manipulator
-
-NOstream& endl(NOstream& stream) {
-	stream << '\n';
-	stream.flush();
-	return stream;
-}
-
-NOstream& hex(NOstream& stream) {
-	stream.nextHex = true;
-	return stream;
-}
-
 NOstream& NOstream::operator<<(const char* str) {
 	streamhandler(str);
 	return *this;
@@ -228,8 +212,6 @@ NOstream& NOstream::operator<<(float num) {
 
 NOstream& NOstream::operator<<(NOstreamManipulator manip) {
 	return manip(*this);
-}
-
 }
 
 

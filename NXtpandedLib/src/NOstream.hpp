@@ -38,6 +38,7 @@ class NOstream: public NWidget, private Uncopyable {
 private:
 	static const U8 autoLineFeedIndent = 2;
 	mutable bool somenew;
+	bool nextHex;
 	U16 floatplaces;
 
 	mutable NMutex mutex;
@@ -96,8 +97,6 @@ private:
 
 	virtual void textBoxChangedHandler();
 public:
-	bool nextHex; // expect next stream input hex.
-
 	/** \brief Construct a console widget.
 	 *
 	 * In order to make ostream task save it needs a resource/mutex.
@@ -179,5 +178,18 @@ public:
 	NOstream& operator<<(NOstreamManipulator manip); /**<Put manipulator into stream.*/
 };
 
+// manipulator
+NOstream& endl(NOstream& stream) {
+	stream.mutex.acquire();
+	stream.newline();
+	stream.mutex.release();
+	stream.flush();
+	return stream;
+}
+
+NOstream& hex(NOstream& stream) {
+	stream.nextHex = true;
+	return stream;
+}
 
 #endif /* __NOSTREAM_HPP_ */
