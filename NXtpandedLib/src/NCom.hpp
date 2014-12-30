@@ -14,9 +14,6 @@
 
 #include "../../ecrobot/c++/device/Usb.h"
 
-
-namespace nxpl {
-
 /** \brief Handler-Class implementing communication with message information.
  *
  * The class specifies how the message header is implemented.
@@ -118,5 +115,4 @@ public:
 	U32 receive(U8 *data, U8 &idx, comDatatype &datatype, comNModes &nmode) const;
 };
 
-} /* namespace nxpl */
 #endif /* __NCOM_HPP_ */

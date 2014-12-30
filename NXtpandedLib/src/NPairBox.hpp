@@ -18,8 +18,6 @@
 #include "NWidget.hpp"
 #include "NCursor.hpp"
 
-namespace nxpl {
-
 /** \brief Make pair of two Widgets.
  *
  * This bundles two NWidgets which support the function setPosition(positioning in chars/lines);
@@ -95,7 +93,5 @@ public:
 	 */
 	void align2Main(NAlignment align);
 };
-
-}
 
 #endif /* __NPAIRBOX_HPP_ */

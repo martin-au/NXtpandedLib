@@ -15,7 +15,6 @@
 #include "stdlib"
 #include "Uncopyable.hpp"
 
-namespace nxpl {
 
 /** \brief Defines a general queue abstraction.
 *
@@ -125,7 +124,5 @@ public:
 
 // extern "C" and Templates problem
 #include "NQueue.cpp"
-
-}
 
 #endif /* __NQUEUE_H_ */

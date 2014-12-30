@@ -5,8 +5,6 @@
  *	\ingroup NxtLcd
 */
 
-// double nesting to avoid namespace pollution
-namespace nxpl {
 /**
  * \brief Includes all constants and converter functions for the NXT lcd.
  */
@@ -124,7 +122,6 @@ namespace LCD {
 		return pixelInLcd(x, y) && pixelInLcd(x + width, y)
 				&& pixelInLcd(x, y + height) && pixelInLcd(x + width, y + height);
 	}
-}
 }
 
 #endif

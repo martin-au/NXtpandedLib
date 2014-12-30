@@ -15,9 +15,6 @@
 #include "Uncopyable.hpp"
 #include "NGenericPixelMatrix.hpp"
 
-
-namespace nxpl {
-
 /** \brief Draw on bitmap.
 **/
 class NBitmap : public NGenericPixelMatrix {

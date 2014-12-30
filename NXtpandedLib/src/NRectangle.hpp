@@ -17,8 +17,6 @@
 #include "GuiTypes.hpp"
 #include "NLcd.hpp"
 
-namespace nxpl {
-
 /**
  * \brief Rectangle object for lcd.
  */
@@ -335,8 +333,5 @@ public:
 			this->show();
 	}
 };
-
-
-}
 
 #endif /* __NREACTANGLE_HPP_ */

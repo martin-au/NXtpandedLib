@@ -15,8 +15,6 @@
 #include "Uncopyable.hpp"
 #include "NGenericPixelMatrix.hpp"
 
-namespace nxpl {
-
 /** \brief Draw on virtual not visible lcd.
 **/
 class NVirtualLcd : public NGenericPixelMatrix {
@@ -37,7 +35,5 @@ public:
 
 	// TODO Implement resize,.. methods ...
 };
-
-
 
 #endif /* NVIRTUALLCD_HPP_ */

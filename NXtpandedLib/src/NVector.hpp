@@ -26,8 +26,6 @@
 #include "../../ecrobot/c++/util/New.cpp"
 
 
-namespace nxpl {
-
 // antibug
 const float _DefaultStart = 0.30; /**< Default start position in %*/
 
@@ -774,8 +772,6 @@ public:
 	iterator insert(iterator in_before, const T & inValue);
 
 };
-
-}
 
 #include "NVector.cpp"
 

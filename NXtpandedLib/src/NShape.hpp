@@ -16,8 +16,6 @@
  * \ingroup NxtLcd
 */
 
-namespace nxpl {
-
 /**
  * \brief Baseclass for all shapes.
  *
@@ -63,7 +61,5 @@ public:
 		}
 	}
 };
-
-}
 
 #endif /* __NSHAPE_NEW_HPP_ */

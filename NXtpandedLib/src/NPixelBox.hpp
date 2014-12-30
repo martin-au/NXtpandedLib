@@ -11,8 +11,6 @@
 #include "NPoint.hpp"
 #include "../../../GNUARM/arm-elf/include/stdlib.h"
 
-namespace nxpl {
-
 /**
  * \brief A field with parameters specified in pixels.
  *
@@ -93,8 +91,6 @@ public:
  */
 bool pixelBoxInLcd(const NPixelBox &box) {
 	return LCD::objectInLcd(box.base().x(), box.base().y(), box.height(), box.width());
-}
-
 }
 
 

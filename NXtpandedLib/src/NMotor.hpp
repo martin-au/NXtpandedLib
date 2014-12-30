@@ -12,8 +12,6 @@
 
 #include "../../ecrobot/c++/device/Motor.h"
 
-namespace nxpl {
-
 class NMotor: public NIMotor
 {
 private:
@@ -160,6 +158,5 @@ public:
 	}
 };
 
-} /* namespace nxpl */
 
 #endif /* MOTOR_HPP_ */

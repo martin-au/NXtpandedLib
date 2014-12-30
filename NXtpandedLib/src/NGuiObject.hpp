@@ -14,8 +14,6 @@ extern "C" {
 
 extern "C" int __cxa_pure_virtual() {return 0;} // pure virtual error handler
 
-namespace nxpl {
-
 /**
  * \brief Base class for all GUI objects. Handles visibility.
  *
@@ -71,7 +69,6 @@ public:
 	}
 };
 
-}
 
 
 #endif /* __NGUIOBJECT_HPP_ */

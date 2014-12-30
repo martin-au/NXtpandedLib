@@ -12,7 +12,6 @@
 #include "LcdConstants.hpp"
 #include "NCursor.hpp"
 
-namespace nxpl {
 
 /**
  * \brief Class for positioning with pixel precision.
@@ -115,6 +114,5 @@ NOstream& operator<<(NOstream &stream, NPoint &point) {
 }
 */
 
-}
 
 #endif /* POINT_HPP_ */

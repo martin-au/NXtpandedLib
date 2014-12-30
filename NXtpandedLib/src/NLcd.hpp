@@ -19,9 +19,6 @@ extern "C" {
 #include "Uncopyable.hpp"
 #include "NGenericPixelMatrix.hpp"
 
-
-namespace nxpl {
-
 /** \brief Draw directly on nxt lcd.
  */
 class NLcd : public NGenericPixelMatrix {
@@ -39,7 +36,5 @@ public:
 		display_update();
 	}
 };
-
-}
 
 #endif

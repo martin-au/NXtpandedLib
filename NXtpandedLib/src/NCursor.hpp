@@ -11,8 +11,6 @@
 #include "NString.hpp"
 #include "LcdConstants.hpp"
 
-namespace nxpl {
-
 /**
  * \brief Class for positioning text.
  *
@@ -120,7 +118,5 @@ NOstream& operator<<(NOstream &stream, NCursor &point) {
 	return stream << '(' << point.indent() << "," << point.line() << ')';
 }
 */
-
-}
 
 #endif /* NCURSOR_HPP_ */

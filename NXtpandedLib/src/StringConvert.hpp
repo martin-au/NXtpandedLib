@@ -8,9 +8,6 @@
 
 #include "..\..\ecrobot\c\ecrobot_types.h"
 
-namespace nxpl {
-
-
 /**
  * \brief Get number of digits in a number.
  * The sign is treated as digit.
@@ -75,10 +72,5 @@ S8 numToStr(float f, char* dest, U8 places = 2);
  * @return Size of resulting string.
  */
 S8 numToHex(U32 value, char* dest);
-
-
-
-
-}
 
 #endif // __CONVERT_H_

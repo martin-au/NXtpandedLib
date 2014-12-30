@@ -25,9 +25,6 @@ extern "C" {
 	#include "../../ecrobot/c/rtoscalls.h"
 }
 
-
-namespace nxpl {
-
 /** \brief Motorcontroller for NXT motors position controlling.
  *
  * This is a aggressive motorcontroller. It tries to move the motor as fast as possible to the setpoint and
@@ -372,9 +369,5 @@ public:
 	 */
 	void process();
 };
-
-
-} /* namespace nxpl */
-
 
 #endif /* __MOTORCONTROLLER_HPP_ */

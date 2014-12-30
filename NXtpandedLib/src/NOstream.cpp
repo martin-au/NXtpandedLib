@@ -167,9 +167,7 @@ void NOstream::streamhandler(const char *str) {
 // manipulator
 
 NOstream& endl(NOstream& stream) {
-	stream.mutex.acquire();
-	stream.newline();
-	stream.mutex.release();
+	stream << '\n';
 	stream.flush();
 	return stream;
 }

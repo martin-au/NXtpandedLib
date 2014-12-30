@@ -16,8 +16,6 @@
 #include "GuiTypes.hpp"
 #include "NLcd.hpp"
 
-namespace nxpl {
-
 /** \brief Drawable circle object.
  */
 class NCircle : public NShape {
@@ -281,7 +279,5 @@ public:
 			show();
 	}
 };
-
-}
 
 #endif /* NCIRCLE_HPP_ */

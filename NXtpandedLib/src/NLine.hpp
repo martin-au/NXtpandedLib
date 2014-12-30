@@ -17,8 +17,6 @@
 #include "GuiTypes.hpp"
 #include "NLcd.hpp"
 
-namespace nxpl {
-
 /**
  * \brief Line object for lcd.
  */
@@ -185,7 +183,5 @@ public:
 		return start_;
 	}
 };
-
-}
 
 #endif /* NLINE_HPP_ */

@@ -18,8 +18,6 @@
 #include "NString.hpp"
 #include "NVector.hpp"
 
-namespace nxpl {
-
 /**
  * \brief Converts a signed 32 bit number to 4 bytes.
  * Byte-Oreder: Big-Endian. Destination array must have capacity for 4 bytes.
@@ -379,7 +377,5 @@ public:
 		return &data[0];
 	}
 };
-
-} /* namespace nxpl */
 
 #endif /* NCOMSINGLE_HPP_ */

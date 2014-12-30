@@ -10,8 +10,6 @@
 
 #include "NCursor.hpp"
 
-namespace nxpl {
-
 /**
  * \brief A field with parameters specified in character width and lines.
  *
@@ -103,8 +101,6 @@ public:
 
 bool textBoxInLcd(NTextBox box) {
 	return LCD::fieldInLcd(box.base().indent(), box.base().line(), box.lines(), box.charsInLine());
-}
-
 }
 
 #endif /* __NTEXTBOX_HPP_ */

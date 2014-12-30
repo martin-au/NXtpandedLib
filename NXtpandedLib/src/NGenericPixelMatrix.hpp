@@ -23,8 +23,6 @@ extern "C" {
 
 //#define NXPL_GENERIC_PIXEL_MATRIX_ERRCHECK
 
-namespace nxpl {
-
 struct PixelOn;
 struct PixelOff;
 struct PixelInvert;
@@ -289,7 +287,5 @@ public:
 		}
 	};
 };
-
-} // namespace nxpl
 
 #endif /* __GenericPixelMatrix_HPP_ */

@@ -9,9 +9,6 @@
 #include "StringConvert.hpp"
 //#include "NOstream.hpp"
 
-namespace nxpl {
-
-
 // to do: replace, erase
 /** \brief A basic, light and fast implementation of a C++ String.
  * \sa http://en.wikipedia.org/wiki/String_%28C%2B%2B%29
@@ -416,7 +413,5 @@ public:
 		decplaces = places;
 	}
 };
-
-}
 
 #endif

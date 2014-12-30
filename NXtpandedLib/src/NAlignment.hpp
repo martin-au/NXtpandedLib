@@ -13,8 +13,6 @@
 */
 #include "../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 
-namespace nxpl {
-
 /**
  * \brief Alignment options for functions.
  */
@@ -40,6 +38,5 @@ public:
 	inline S8 getID() const { return val; }
 };
 
-}
 
 #endif /* NALIGNMENT_HPP_ */

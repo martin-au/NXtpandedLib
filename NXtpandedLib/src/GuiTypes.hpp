@@ -12,8 +12,6 @@
  *	\ingroup NxtLcd
  */
 
-namespace nxpl {
-
 /**
  * \brief Draw Options for functions.
  */
@@ -54,7 +52,5 @@ public:
 		return opt;
 	}
 };
-
-}
 
 #endif /* GUITYPES_HPP_ */

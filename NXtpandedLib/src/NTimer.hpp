@@ -14,8 +14,6 @@
 
 #include "../../ecrobot/c++/device/Clock.h"
 
-namespace nxpl {
-
 /** \brief A advanced timer for measurements.
  */
 class NTimer {
@@ -162,9 +160,6 @@ U32 NTimer::stop() {
 	++tpause;
 	started = false;
 	return time;
-}
-
-
 }
 
 #endif /* __NTIMER_HPP_ */

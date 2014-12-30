@@ -18,8 +18,6 @@
  *	\ingroup NxtLcd
 */
 
-namespace nxpl {
-
 /** \brief Label for NXT Display.
  *
  * A Label is a text field with a position. If you constructed the label with a starting position you do not have
@@ -212,9 +210,6 @@ void NLabel::setNumber(T number) {
 			label->append('#');
 	}
 	somenew = true;
-}
-
-
 }
 
 #endif /* __NLABEL_HPP_ */

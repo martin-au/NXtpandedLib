@@ -24,8 +24,6 @@
 
 #include "../../../GNUARM/arm-elf/include/string.h" // strcpy, strlen
 
-namespace nxpl {
-
 /**
  * \brief Create a console widget on the lcd which works with streams.
  *
@@ -40,7 +38,6 @@ class NOstream: public NWidget, private Uncopyable {
 private:
 	static const U8 autoLineFeedIndent = 2;
 	mutable bool somenew;
-	bool nextHex;
 	U16 floatplaces;
 
 	mutable NMutex mutex;
@@ -99,6 +96,8 @@ private:
 
 	virtual void textBoxChangedHandler();
 public:
+	bool nextHex; // expect next stream input hex.
+
 	/** \brief Construct a console widget.
 	 *
 	 * In order to make ostream task save it needs a resource/mutex.
@@ -179,9 +178,6 @@ public:
 	NOstream& operator<<(NOstream& stream) {return *this;}
 	NOstream& operator<<(NOstreamManipulator manip); /**<Put manipulator into stream.*/
 };
-
-}
-
 
 
 #endif /* __NOSTREAM_HPP_ */

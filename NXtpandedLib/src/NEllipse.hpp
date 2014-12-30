@@ -16,8 +16,6 @@
 #include "GuiTypes.hpp"
 #include "NLcd.hpp"
 
-namespace nxpl {
-
 /** \brief Ellipse object for lcd.
  */
 class NEllipse : public NShape {
@@ -332,7 +330,5 @@ public:
 			show();
 	}
 };
-
-}
 
 #endif /* NCIRCLE_HPP_ */

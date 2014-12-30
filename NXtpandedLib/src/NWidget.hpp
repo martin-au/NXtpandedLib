@@ -16,8 +16,6 @@
  *	\ingroup NxtLcd
 */
 
-namespace nxpl {
-
 // NWidget is designed as a base class which provides space managing functions
 // Be aware: All coordinates are converted into pixel coordinates (100x64)
 // but never in other direction! If you set for example x, height then the functions indent, lines will return 0!
@@ -97,6 +95,5 @@ public:
 	}
 };
 
-}
 
 #endif /* NWIDGET_HPP_ */

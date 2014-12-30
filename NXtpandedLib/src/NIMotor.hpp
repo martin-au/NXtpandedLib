@@ -8,8 +8,6 @@
 #ifndef NIMOTOR_HPP_
 #define NIMOTOR_HPP_
 
-namespace nxpl {
-
 /** \brief A interface class for motors
  *
  */
@@ -87,7 +85,5 @@ public:
 	 */
 	virtual bool isFloating() const = 0;
 };
-
-} /* namespace nxpl */
 
 #endif /* NIMOTOR_HPP_ */

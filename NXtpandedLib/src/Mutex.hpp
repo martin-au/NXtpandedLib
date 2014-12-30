@@ -21,8 +21,6 @@ extern "C" {
 #include "Uncopyable.hpp"
 #include "RefCount.hpp"
 
-namespace nxpl {
-
 /**
  * \brief Resource wrapper implements simple, modern and advanced mutex functions.
  */
@@ -168,7 +166,5 @@ public:
 	*/
 	NMutex &get() const {return _ref;}
 };
-
-}
 
 #endif /* LOCKGUARD_HPP_ */

@@ -3,7 +3,6 @@
  *	\ingroup Utilities
 */
 
-namespace nxpl {
 
 /**
  * Reference counting class.
@@ -28,5 +27,3 @@ class RefCount
         return --cnt;
     }
 };
-
-}
