@@ -14,6 +14,11 @@
 
 namespace nxpl {
 
+/**
+ * \brief Class for positioning with pixel precision.
+ *
+ * This class is needed to for positioning any shapes on the lcd screen.
+ */
 class NPoint {
 private:
 	S16 xVal, yVal;
@@ -62,6 +67,11 @@ public:
 		return *this;
 	}
 
+	/** \brief Practical function to write point as string.
+	 *
+	 * Format: "(x,y)"
+	 * Example: (2,1)
+	 */
 	NString asString() const {
 		const U8 countDigits
 			= numDigits(static_cast<S32>(xVal))+ numDigits(static_cast<S32>(yVal));
@@ -76,6 +86,9 @@ public:
 	}
 };
 
+/*
+ * \brief Checks if given point is in nxt lcd.
+ */
 bool pointInLcd(NPoint p) {
 	return LCD::pixelInLcd(p.x(), p.y());
 }
