@@ -27,6 +27,8 @@ public:
 
 	~NPoint() {}
 
+	static NPoint ZERO() {return NPoint(0, 0);}
+
 	bool isNull() const {
 		return xVal == 0 && yVal == 0;
 	}

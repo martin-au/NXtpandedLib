@@ -13,19 +13,31 @@
 
 namespace nxpl {
 
+/**
+ * \brief A field with parameters specified in pixels.
+ *
+ * This class can be used for positioning a box with pixel precision.
+ */
 class NPixelBox {
 public:
 	NPoint baseLeftTop;
 	U16 widthVal, heightVal;
 
-	NPixelBox(NPoint base = NPoint(0, 0), U16 width = 1, U16 height = 1)
+	/**
+	 * \brief Construct a PixelBox.
+	 *
+	 * @param base 		The base point (left top) of the box. Default is zero point.
+	 * @param width 	The width of the box.
+	 * @param height 	The height of the box.
+	 */
+	NPixelBox(NPoint base = NPoint::ZERO(), U16 width = 1, U16 height = 1)
 	: baseLeftTop(base), widthVal(width), heightVal(height) {
 	}
 
-	/** diagonal to base means the point is right, bottom to base
+	/** Construct a PixelBox with diagonal points.
 	 *
-	 * @param base
-	 * @param diagonalToBase
+	 * @param base 				The base point (left top) of the box. Default is zero point.
+	 * @param diagonalToBase	The point which is diagonal to base point.
 	 */
 	NPixelBox(NPoint base, NPoint diagonalToBase)
 	: baseLeftTop(base),
@@ -76,6 +88,9 @@ public:
 	}
 };
 
+/**
+ * \brief Check if PixelBox is in nxt lcd.
+ */
 bool pixelBoxInLcd(const NPixelBox &box) {
 	return LCD::objectInLcd(box.base().x(), box.base().y(), box.height(), box.width());
 }
