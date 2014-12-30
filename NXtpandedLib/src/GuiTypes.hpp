@@ -12,6 +12,8 @@
  *	\ingroup NxtLcd
  */
 
+#include "..\..\ecrobot\c\ecrobot_types.h"
+
 /**
  * \brief Draw Options for functions.
  */

@@ -1,3 +1,6 @@
+#ifndef __REFCOUNT_HPP_
+#define __REFCOUNT_HPP_
+
 
 /** \file
  *	\ingroup Utilities
@@ -27,3 +30,5 @@ class RefCount
         return --cnt;
     }
 };
+
+#endif

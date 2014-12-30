@@ -35,3 +35,5 @@ public:
 
 	// TODO Implement resize,.. methods ...
 };
+
+#endif

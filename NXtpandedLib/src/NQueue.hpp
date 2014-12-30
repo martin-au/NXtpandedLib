@@ -12,7 +12,6 @@
  *	\ingroup Utilities
 */
 
-#include "stdlib"
 #include "Uncopyable.hpp"
 
 
@@ -104,7 +103,7 @@ public:
 	 */
 	T dequeue() {
 		if (isEmpty()) { // TODO: What to do? error!
-			std::exit(-1);
+			while(1); // loud error
 		}
 		head = (head + 1) % capacity;
 		return data[head];
@@ -116,7 +115,7 @@ public:
 	 */
 	T peek() const {
 		if (isEmpty()) {
-			std::exit(-1);
+			while(1); // loud error
 		}
 		return data[head];
 	}
