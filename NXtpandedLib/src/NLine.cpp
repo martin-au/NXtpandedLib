@@ -10,8 +10,8 @@
 
 namespace nxpl {
 
-bool NLine::draw(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
-	if(!lcd.noError()) return false;
+bool NLine::draw(NGenericPixelMatrix *matrix, NPoint start, NPoint end, DrawOpt op) {
+	if(!matrix->noError()) return false;
 	if(!pointInLcd(start) || !pointInLcd(end)) return false;
 
 	const S8 height = abs(end.y() - start.y());
@@ -26,16 +26,16 @@ bool NLine::draw(NLcd &lcd, NPoint start, NPoint end, DrawOpt op) {
 	for (;;) {
 		switch (op()) {
 		case DrawOpt::drawID:
-			lcd.pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
+			matrix->pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
 			break;
 		case DrawOpt::clearID:
-			lcd.pixelOff(static_cast<U8>(ix), static_cast<U8>(iy));
+			matrix->pixelOff(static_cast<U8>(ix), static_cast<U8>(iy));
 			break;
 		case DrawOpt::invertID:
-			lcd.invertPixel(static_cast<U8>(ix), static_cast<U8>(iy));
+			matrix->invertPixel(static_cast<U8>(ix), static_cast<U8>(iy));
 			break;
 		default:
-			lcd.pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
+			matrix->pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));
 		}
 
 		//lcd.pixelOn(static_cast<U8>(ix), static_cast<U8>(iy));

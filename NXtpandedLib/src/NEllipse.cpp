@@ -10,7 +10,7 @@
 namespace nxpl {
 
 
-bool NEllipse::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
+bool NEllipse::draw(NGenericPixelMatrix *matrix, NPoint center, S8 a, S8 b, DrawOpt op) {
 	NPoint right(center.x() + a, center.y());
 	NPoint top(center.x(), center.y() - b);
 	NPoint left(center.x() - a, center.y());
@@ -20,17 +20,17 @@ bool NEllipse::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 			|| !pointInLcd(bottom))
 		return false;
 
-	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
+	void (NGenericPixelMatrix::*fpPixelState)(const U8, const U8) = &NGenericPixelMatrix::pixelOn;
 
 	switch (op()) {
 	case DrawOpt::drawID:
-		fpPixelState = &NLcd::pixelOn;
+		fpPixelState = &NGenericPixelMatrix::pixelOn;
 		break;
 	case DrawOpt::clearID:
-		fpPixelState = &NLcd::pixelOff;
+		fpPixelState = &NGenericPixelMatrix::pixelOff;
 		break;
 	case DrawOpt::invertID:
-		fpPixelState = &NLcd::invertPixel;
+		fpPixelState = &NGenericPixelMatrix::invertPixel;
 		break;
 	}
 
@@ -39,10 +39,10 @@ bool NEllipse::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 	S32 err = b2 - (2 * b - 1) * a2, e2; /* Fehler im 1. Schritt */
 
 	do {
-		(lcd.*fpPixelState)(center.x() + dx, center.y() + dy); /* I. Quadrant */
-		(lcd.*fpPixelState)(center.x() - dx, center.y() + dy); /* II. Quadrant */
-		(lcd.*fpPixelState)(center.x() - dx, center.y() - dy); /* III. Quadrant */
-		(lcd.*fpPixelState)(center.x() + dx, center.y() - dy); /* IV. Quadrant */
+		(matrix->*fpPixelState)(center.x() + dx, center.y() + dy); /* I. Quadrant */
+		(matrix->*fpPixelState)(center.x() - dx, center.y() + dy); /* II. Quadrant */
+		(matrix->*fpPixelState)(center.x() - dx, center.y() - dy); /* III. Quadrant */
+		(matrix->*fpPixelState)(center.x() + dx, center.y() - dy); /* IV. Quadrant */
 
 		e2 = 2 * err;
 		if (e2 < (2 * dx + 1) * b2) {
@@ -56,28 +56,28 @@ bool NEllipse::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 	} while (dy >= 0);
 
 	while (dx++ < a) { /* fehlerhafter Abbruch bei flachen Ellipsen (b=1) */
-		(lcd.*fpPixelState)(center.x() + dx, center.y()); /* -> Spitze der Ellipse vollenden */
-		(lcd.*fpPixelState)(center.x() - dx, center.y());
+		(matrix->*fpPixelState)(center.x() + dx, center.y()); /* -> Spitze der Ellipse vollenden */
+		(matrix->*fpPixelState)(center.x() - dx, center.y());
 	}
 	return true;
 }
 
 
 
-bool NEllipseFilled::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
-	if(!draw(lcd, center, a, b, op)) return false;
+bool NEllipseFilled::draw(NGenericPixelMatrix *matrix, NPoint center, S8 a, S8 b, DrawOpt op) {
+	if(!draw(matrix, center, a, b, op)) return false;
 
-	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
+	void (NGenericPixelMatrix::*fpPixelState)(const U8, const U8) = &NGenericPixelMatrix::pixelOn;
 
 	switch (op()) {
 	case DrawOpt::drawID:
-		fpPixelState = &NLcd::pixelOn;
+		fpPixelState = &NGenericPixelMatrix::pixelOn;
 		break;
 	case DrawOpt::clearID:
-		fpPixelState = &NLcd::pixelOff;
+		fpPixelState = &NGenericPixelMatrix::pixelOff;
 		break;
 	case DrawOpt::invertID:
-		fpPixelState = &NLcd::invertPixel;
+		fpPixelState = &NGenericPixelMatrix::invertPixel;
 		break;
 	}
 	S32 hh = b * b;
@@ -89,7 +89,7 @@ bool NEllipseFilled::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 // do the horizontal diameter
 	for (int x = -a; x <= a; x++)
 		//lcd.pixelOn(centerX + x, centerY);
-		(lcd.*fpPixelState)(center.x() + x, center.y());
+		(matrix->*fpPixelState)(center.x() + x, center.y());
 
 // now do both halves at the same time, away from the diameter
 	for (int y = 1; y <= b; y++) {
@@ -103,8 +103,8 @@ bool NEllipseFilled::draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op) {
 		for (int x = -x0; x <= x0; x++) {
 			//lcd.pixelOn(centerX + x, centerY - y);
 			//lcd.pixelOn(centerX + x, centerY + y);
-			(lcd.*fpPixelState)(center.x() + x, center.y() - y);
-			(lcd.*fpPixelState)(center.x() + x, center.y() + y);
+			(matrix->*fpPixelState)(center.x() + x, center.y() - y);
+			(matrix->*fpPixelState)(center.x() + x, center.y() + y);
 		}
 	}
 	return true;

@@ -15,6 +15,7 @@
 #include "NShape.hpp"
 #include "NPixelBox.hpp"
 #include "GuiTypes.hpp"
+#include "NLcd.hpp"
 
 namespace nxpl {
 
@@ -26,32 +27,32 @@ private:
 	NPixelBox geometry_;
 
 	void showShapeImpl() const {
-		draw(*lcd, geometry_, DrawOpt::draw());
+		draw(pixelMatrix, geometry_, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		draw(*lcd, geometry_, DrawOpt::clear());
+		draw(pixelMatrix, geometry_, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		draw(*lcd, geometry_, DrawOpt::invert());
+		draw(pixelMatrix, geometry_, DrawOpt::invert());
 	}
 
 public:
 
 	/**
-	 * \brief Draw a rectangle on given lcd.
+	 * \brief Draw a rectangle on given pixel matrix.
 	 *
-	 * This function lets you draw a rectangle on the given lcd and geometry.
+	 * This function lets you draw a rectangle on the given pixel matrix and geometry.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd  		 The lcd for drawing the rectangle.
+	 * @param matrix  	 The pixel matrix for drawing the rectangle.
 	 * @param geometry   The geometry of the rectangle.
 	 * @param op   		 The optional drawing options.
 	 */
-	static bool draw(NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
+	static bool draw(NGenericPixelMatrix *matrix, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
 
 	/**
 	 * \brief Draw a rectangle directly on nxt lcd.
@@ -66,21 +67,21 @@ public:
 	 */
 	static inline bool draw(NPixelBox geometry, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, geometry, op);
+		return draw(&lcd, geometry, op);
 	}
 
 public:
 
 	/**
-	 * \brief Construct rectangle object on given lcd.
+	 * \brief Construct rectangle object on given pixel matrix.
 	 *
-	 * Constructs a rectangle on the given lcd.
+	 * Constructs a rectangle on the given pixel matrix.
 	 *
-	 * @param nlcd  The lcd for drawing the rectangle.
+	 * @param matrix  	 The pixel matrix for drawing the rectangle.
 	 * @param geometry   The geometry of the rectangle.
 	 */
-	NRectangle(NLcd &nlcd, const NPixelBox geometry) :
-			NShape(nlcd), geometry_(geometry) {
+	NRectangle(NGenericPixelMatrix *matrix, const NPixelBox geometry) :
+			NShape(matrix), geometry_(geometry) {
 	}
 
 	/** \brief Destructor
@@ -185,32 +186,32 @@ private:
 	NPixelBox geometry_;
 
 	void showShapeImpl() const {
-		draw(*lcd, geometry_, DrawOpt::draw());
+		draw(pixelMatrix, geometry_, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		draw(*lcd, geometry_, DrawOpt::clear());
+		draw(pixelMatrix, geometry_, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		draw(*lcd, geometry_, DrawOpt::invert());
+		draw(pixelMatrix, geometry_, DrawOpt::invert());
 	}
 
 public:
 
 	/**
-	 * \brief Draw a filled rectangle on given lcd.
+	 * \brief Draw a filled rectangle on given pixel matrix.
 	 *
-	 * This function lets you draw a rectangle on the given lcd and geometry.
+	 * This function lets you draw a rectangle on the given pixel matrix and geometry.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd  		 The lcd for drawing the rectangle.
-	 * @param geometry   The geometry of the rectangle.
-	 * @param op   		 The optional drawing options.
+	 * @param matrix  		The pixel matrix for drawing the rectangle.
+	 * @param geometry   	The geometry of the rectangle.
+	 * @param op   		 	The optional drawing options.
 	 */
-	static bool draw(NLcd &lcd, const NPixelBox &geometry, DrawOpt op = DrawOpt::draw());
+	static bool draw(NGenericPixelMatrix *matrix, const NPixelBox &geometry, DrawOpt op = DrawOpt::draw());
 
 	/**
 	 * \brief Draw a filled rectangle directly on nxt lcd.
@@ -225,21 +226,21 @@ public:
 	 */
 	static inline bool draw(const NPixelBox &geometry, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, geometry, op);
+		return draw(&lcd, geometry, op);
 	}
 
 public:
 
 	/**
-	* \brief Construct filled rectangle object on given lcd.
+	* \brief Construct filled rectangle object on given pixel matrix.
 	*
-	* Constructs a rectangle on the given lcd.
+	* Constructs a rectangle on the given pixel matrix.
 	*
-	* @param nlcd  The lcd for drawing the rectangle.
+	* @param matrix     The pixel matrix for drawing the rectangle.
 	* @param geometry   The geometry of the rectangle.
 	*/
-	NRectangleFilled(NLcd &nlcd, const NPixelBox geometry) :
-			NShape(nlcd), geometry_(geometry) {
+	NRectangleFilled(NGenericPixelMatrix *matrix, const NPixelBox geometry) :
+			NShape(matrix), geometry_(geometry) {
 	}
 
 	/** \brief Destructor

@@ -15,6 +15,7 @@
 
 #include "NShape.hpp"
 #include "GuiTypes.hpp"
+#include "NLcd.hpp"
 
 namespace nxpl {
 
@@ -26,35 +27,35 @@ private:
 	NPoint start_, end_;
 
 	void showShapeImpl() const {
-		draw(*lcd, start_, end_, DrawOpt::draw());
+		draw(pixelMatrix, start_, end_, DrawOpt::draw());
 	}
 
 
 	void hideShapeImpl() const {
-		draw(*lcd, start_, end_, DrawOpt::clear());
+		draw(pixelMatrix, start_, end_, DrawOpt::clear());
 	}
 
 
 	void invertShapeImpl() const {
-		draw(*lcd, start_, end_, DrawOpt::invert());
+		draw(pixelMatrix, start_, end_, DrawOpt::invert());
 	}
 
 public:
 
 	/**
-	 * \brief Draw a line on given lcd.
+	 * \brief Draw a line on given pixel matrix.
 	 *
-	 * This function lets you draw a line on the given lcd from start point to end point.
+	 * This function lets you draw a line on the given pixel matrix from start point to end point.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd     The lcd for drawing the line.
+	 * @param matrix  The generic pixel matrix for drawing the line.
 	 * @param start   The start point for the of the line.
 	 * @param end     The end point of the line.
 	 * @param op      The optional drawing options.
 	 */
-	static bool draw(NLcd &lcd, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw());
+	static bool draw(NGenericPixelMatrix *matrix, NPoint start, NPoint end, DrawOpt op = DrawOpt::draw());
 
 	/**
 	 * \brief Draw a line directly on nxt lcd.
@@ -70,22 +71,22 @@ public:
 	 */
 	static inline bool draw(NPoint start, NPoint end, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, start, end, op);
+		return draw(&lcd, start, end, op);
 	}
 
 public:
 
 	/**
-	 * \brief Construct line object on given lcd.
+	 * \brief Construct line object on given pixel matrix.
 	 *
-	 * Creates a line object on given lcd from start point to end point.
+	 * Creates a line object on given pixel matrix from start point to end point.
 	 *
-	 * @param nlcd  The lcd for drawing the line.
+	 * @param matrix  The pixel matrix for drawing the line.
 	 * @param start   The start point for the of the line.
 	 * @param end     The end point of the line.
 	 */
-	explicit NLine(NLcd &nlcd, NPoint startP, NPoint endP) :
-			NShape(nlcd), start_(startP), end_(endP) {
+	explicit NLine(NGenericPixelMatrix *matrix, NPoint startP, NPoint endP) :
+			NShape(matrix), start_(startP), end_(endP) {
 	}
 
 	/**

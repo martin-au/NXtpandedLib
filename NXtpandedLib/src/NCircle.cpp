@@ -9,18 +9,18 @@
 
 namespace nxpl {
 
-bool NCircle::draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
-	void (NLcd::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
+bool NCircle::draw(NGenericPixelMatrix *matrix, NPoint center, S8 radius, DrawOpt op) {
+	void (NGenericPixelMatrix::*fpPixelState)(const U8, const U8) = &NLcd::pixelOn;
 
 	switch (op()) {
 	case DrawOpt::drawID:
-		fpPixelState = &NLcd::pixelOn;
+		fpPixelState = &NGenericPixelMatrix::pixelOn;
 		break;
 	case DrawOpt::clearID:
-		fpPixelState = &NLcd::pixelOff;
+		fpPixelState = &NGenericPixelMatrix::pixelOff;
 		break;
 	case DrawOpt::invertID:
-		fpPixelState = &NLcd::invertPixel;
+		fpPixelState = &NGenericPixelMatrix::invertPixel;
 		break;
 	}
 
@@ -40,10 +40,10 @@ bool NCircle::draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 		return false;
 
 	// no casts at moment
-	(lcd.*fpPixelState)(right.x(), right.y());
-	(lcd.*fpPixelState)(top.x(), top.y());
-	(lcd.*fpPixelState)(left.x(), left.y());
-	(lcd.*fpPixelState)(bottom.x(), bottom.y());
+	(matrix->*fpPixelState)(right.x(), right.y());
+	(matrix->*fpPixelState)(top.x(), top.y());
+	(matrix->*fpPixelState)(left.x(), left.y());
+	(matrix->*fpPixelState)(bottom.x(), bottom.y());
 
 	while (x < y) {
 		if (f >= 0) {
@@ -55,36 +55,36 @@ bool NCircle::draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
 		ddF_x += 2;
 		f += ddF_x + 1;
 
-		(lcd.*fpPixelState)(center.x() + x, center.y() + y);
-		(lcd.*fpPixelState)(center.x() - x, center.y() + y);
-		(lcd.*fpPixelState)(center.x() + x, center.y() - y);
-		(lcd.*fpPixelState)(center.x() - x, center.y() - y);
-		(lcd.*fpPixelState)(center.x() + y, center.y() + x);
-		(lcd.*fpPixelState)(center.x() - y, center.y() + x);
-		(lcd.*fpPixelState)(center.x() + y, center.y() - x);
-		(lcd.*fpPixelState)(center.x() - y, center.y() - x);
+		(matrix->*fpPixelState)(center.x() + x, center.y() + y);
+		(matrix->*fpPixelState)(center.x() - x, center.y() + y);
+		(matrix->*fpPixelState)(center.x() + x, center.y() - y);
+		(matrix->*fpPixelState)(center.x() - x, center.y() - y);
+		(matrix->*fpPixelState)(center.x() + y, center.y() + x);
+		(matrix->*fpPixelState)(center.x() - y, center.y() + x);
+		(matrix->*fpPixelState)(center.x() + y, center.y() - x);
+		(matrix->*fpPixelState)(center.x() - y, center.y() - x);
 	}
 	return true;
 }
 
-bool NCircleFilled::draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op) {
-	if(!NCircle::draw(lcd, center, radius, op)) return false;
+bool NCircleFilled::draw(NGenericPixelMatrix *matrix, NPoint center, S8 radius, DrawOpt op) {
+	if(!NCircle::draw(matrix, center, radius, op)) return false;
 
 	for (int y = -radius; y <= radius; y++) {
 		for (int x = -radius; x <= radius; x++) {
 			if (x * x + y * y <= radius * radius) {
 				switch (op()) {
 				case DrawOpt::drawID:
-					lcd.pixelOn(center.x() + x, center.y() + y);
+					matrix->pixelOn(center.x() + x, center.y() + y);
 					break;
 				case DrawOpt::clearID:
-					lcd.pixelOff(center.x() + x, center.y() + y);
+					matrix->pixelOff(center.x() + x, center.y() + y);
 					break;
 				case DrawOpt::invertID:
-					lcd.invertPixel(center.x() + x, center.y() + y);
+					matrix->invertPixel(center.x() + x, center.y() + y);
 					break;
 				default:
-					lcd.pixelOn(center.x() + x, center.y() + y);
+					matrix->pixelOn(center.x() + x, center.y() + y);
 				}
 				//lcd.pixelOn(centerX + x, centerY + y);
 			}

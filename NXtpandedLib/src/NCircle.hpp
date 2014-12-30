@@ -14,7 +14,7 @@
 
 #include "NShape.hpp"
 #include "GuiTypes.hpp"
-
+#include "NLcd.hpp"
 
 namespace nxpl {
 
@@ -26,32 +26,32 @@ private:
 	U8 r;
 
 	void showShapeImpl() const {
-		draw(*lcd, center_, r, DrawOpt::draw());
+		draw(pixelMatrix, center_, r, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		draw(*lcd, center_, r, DrawOpt::clear());
+		draw(pixelMatrix, center_, r, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		draw(*lcd, center_, r, DrawOpt::invert());
+		draw(pixelMatrix, center_, r, DrawOpt::invert());
 	}
 
 public:
 
-	/** \brief Draw a circle.
+	/** \brief Draw a circle on given pixel matrix.
 	 *
-	 * This function lets you draw a circle on the given lcd with its center at the specified point, using the specified radius.
+	 * This function lets you draw a circle on the given pixel matrix with its center at the specified point, using the specified radius.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd      The lcd for drawing the circle.
+	 * @param matrix   The pixel matrix for drawing the circle.
 	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 * @param op       	The optional drawing options.
 	 */
-	bool static draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
+	bool static draw(NGenericPixelMatrix *matrix, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
 
 	/** \brief Draw a circle directly on nxt lcd.
 	 *
@@ -66,21 +66,21 @@ public:
 	 */
 	bool static inline draw(NPoint center, S8 radius, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, center, radius, op);
+		return draw(&lcd, center, radius, op);
 	}
 
 public:
 
-	/** \brief Construct a circle object.
+	/** \brief Construct a circle object on given pixel matrix.
 	 *
-	 * This constructs a circle on the given lcd with its center at the specified point, using the specified radius.
+	 * This constructs a circle on the given pixel matrix with its center at the specified point, using the specified radius.
 	 *
-	 * @param nlcd     The lcd for drawing the circle.
+	 * @param matrix   The pixel matrix for drawing the circle.
 	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 */
-	NCircle(NLcd &nlcd, NPoint center, U8 radius) :
-			NShape(nlcd), center_(center), r(radius) {
+	NCircle(NGenericPixelMatrix *matrix, NPoint center, U8 radius) :
+			NShape(matrix), center_(center), r(radius) {
 	}
 
 	/** \brief Destructor
@@ -158,32 +158,32 @@ private:
 	U8 r;
 
 	void showShapeImpl() const {
-		draw(*lcd, center_, r, DrawOpt::draw());
+		draw(pixelMatrix, center_, r, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		draw(*lcd, center_, r, DrawOpt::clear());
+		draw(pixelMatrix, center_, r, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		draw(*lcd, center_, r, DrawOpt::invert());
+		draw(pixelMatrix, center_, r, DrawOpt::invert());
 	}
 
 public:
 
 	/** \brief Draw a filled circle.
 	 *
-	 * This function lets you draw a filled circle on the given lcd with its center at the specified point, using the specified radius.
+	 * This function lets you draw a filled circle on the given pixel matrix with its center at the specified point, using the specified radius.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd      The lcd for drawing the circle.
+	 * @param matrix   The pixel matrix for drawing the circle.
 	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 * @param op       The optional drawing options.
 	 */
-	static bool draw(NLcd &lcd, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
+	static bool draw(NGenericPixelMatrix *matrix, NPoint center, S8 radius, DrawOpt op = DrawOpt::draw());
 
 	/** \brief Draw a filled circle directly on nxt lcd.
 	 *
@@ -198,7 +198,7 @@ public:
 	 */
 	static inline bool draw(NPoint center, S8 radius, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, center, radius, op);
+		return draw(&lcd, center, radius, op);
 	}
 
 
@@ -206,14 +206,14 @@ public:
 
 	/** \brief Construct a filled circle object.
 	 *
-	 * This constructs a filled circle on the given lcd with its center at the specified point, using the specified radius.
+	 * This constructs a filled circle on the given pixel matrix with its center at the specified point, using the specified radius.
 	 *
-	 * @param nlcd     The lcd for drawing the circle.
+	 * @param matrix   The pixel matrix for drawing the circle.
 	 * @param center   The center point of the circle.
 	 * @param radius   The radius of the circle.
 	 */
-	NCircleFilled(NLcd &nlcd, NPoint center, U8 radius) :
-			NShape(nlcd), center_(center), r(radius) {
+	NCircleFilled(NGenericPixelMatrix *matrix, NPoint center, U8 radius) :
+			NShape(matrix), center_(center), r(radius) {
 	}
 
 	/** \brief Destructor

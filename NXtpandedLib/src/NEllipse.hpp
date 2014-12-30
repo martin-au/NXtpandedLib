@@ -14,6 +14,7 @@
 
 #include "NShape.hpp"
 #include "GuiTypes.hpp"
+#include "NLcd.hpp"
 
 namespace nxpl {
 
@@ -25,33 +26,33 @@ private:
 	S8 a_, b_;
 
 	void showShapeImpl() const {
-		draw(*lcd, center_, a_, b_, DrawOpt::draw());
+		draw(pixelMatrix, center_, a_, b_, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		draw(*lcd, center_, a_, b_, DrawOpt::clear());
+		draw(pixelMatrix, center_, a_, b_, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		draw(*lcd, center_, a_, b_, DrawOpt::invert());
+		draw(pixelMatrix, center_, a_, b_, DrawOpt::invert());
 	}
 
 public:
 
 	/** \brief Draw an ellipse.
 	 *
-	 * This function lets you draw an ellipse on given lcd with its center at the specified point, using the specified radii.
+	 * This function lets you draw an ellipse on given pixel matrix with its center at the specified point, using the specified radii.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd      The lcd for drawing the ellipse.
+	 * @param matrix   The pixel matrix for drawing the ellipse.
 	 * @param center   The center of the ellipse.
 	 * @param a		   The x axis radius.
 	 * @param b		   The y axis radius.
 	 * @param op       The optional drawing options.
 	 */
-	static bool draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
+	static bool draw(NGenericPixelMatrix *matrix, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
 	/** \brief Draw an ellipse directly on nxt lcd.
 	 *
@@ -67,22 +68,22 @@ public:
 	 */
 	inline static bool draw(NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, center, a, b, op);
+		return draw(&lcd, center, a, b, op);
 	}
 
 public:
 
 	/** \brief Construct a ellipse object.
 	 *
-	 * This constructs a ellipse on the given lcd with its center at the specified point, using the specified radius.
+	 * This constructs a ellipse on the given pixel matrix with its center at the specified point, using the specified radius.
 	 *
-	 * @param nlcd      The lcd for drawing the ellipse.
+	 * @param matrix   The pixel matrix for drawing the ellipse.
 	 * @param center   The center of the ellipse.
 	 * @param a		   The x axis radius.
 	 * @param b		   The y axis radius.
 	 */
-	NEllipse(NLcd &nlcd, NPoint center, S8 a, S8 b) :
-			NShape(nlcd), center_(center), a_(a), b_(b) {
+	NEllipse(NGenericPixelMatrix *matrix, NPoint center, S8 a, S8 b) :
+			NShape(matrix), center_(center), a_(a), b_(b) {
 	}
 
 	/** \brief Destructor
@@ -179,33 +180,33 @@ private:
 	S8 a_, b_;
 
 	void showShapeImpl() const {
-		draw(*lcd, center_, a_, b_, DrawOpt::draw());
+		draw(pixelMatrix, center_, a_, b_, DrawOpt::draw());
 	}
 
 	void hideShapeImpl() const {
-		draw(*lcd, center_, a_, b_, DrawOpt::clear());
+		draw(pixelMatrix, center_, a_, b_, DrawOpt::clear());
 	}
 
 	void invertShapeImpl() const {
-		draw(*lcd, center_, a_, b_, DrawOpt::invert());
+		draw(pixelMatrix, center_, a_, b_, DrawOpt::invert());
 	}
 
 public:
 
 	/** \brief Draw an filled ellipse.
 	 *
-	 * This function lets you draw an filled ellipse on given lcd with its center at the specified point, using the specified radii.
+	 * This function lets you draw an filled ellipse on given pixel matrix with its center at the specified point, using the specified radii.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd      The lcd for drawing the ellipse.
+	 * @param matrix   The pixel matrix for drawing the ellipse.
 	 * @param center   The center of the ellipse.
 	 * @param a		   The x axis radius.
 	 * @param b		   The y axis radius.
 	 * @param op       The optional drawing options.
 	 */
-	static bool draw(NLcd &lcd, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
+	static bool draw(NGenericPixelMatrix *matrix, NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw());
 
 	/** \brief Draw an filled ellipse directly on nxt lcd.
 	 *
@@ -221,22 +222,22 @@ public:
 	 */
 	inline static bool draw(NPoint center, S8 a, S8 b, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
-		return draw(lcd, center, a, b, op);
+		return draw(&lcd, center, a, b, op);
 	}
 
 public:
 
 	/** \brief Construct filled ellipse object.
 	 *
-	 * This constructs a ellipse on the given lcd with its center at the specified point, using the specified radius.
+	 * This constructs a ellipse on the given pixel matrix with its center at the specified point, using the specified radius.
 	 *
-	 * @param nlcd      The lcd for drawing the ellipse.
+	 * @param matrix   The pixel matrix for drawing the ellipse.
 	 * @param center   The center of the ellipse.
 	 * @param a		   The x axis radius.
 	 * @param b		   The y axis radius.
 	 */
-	NEllipseFilled(NLcd &nlcd, NPoint center, S8 a, S8 b) :
-			NShape(nlcd), center_(center), a_(a), b_(b) {
+	NEllipseFilled(NGenericPixelMatrix *matrix, NPoint center, S8 a, S8 b) :
+			NShape(matrix), center_(center), a_(a), b_(b) {
 	}
 
 	/** \brief Destructor
