@@ -40,40 +40,44 @@ private:
 public:
 
 	/**
-	 * \brief Draw a rectangle.
+	 * \brief Draw a rectangle on given lcd.
 	 *
-	 * This function lets you draw a rectangle on the given lcd at x, y with the
-	 * specified width and height.
+	 * This function lets you draw a rectangle on the given lcd and geometry.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd  The lcd for drawing the rectangle.
-	 * @param x0   The x value for the top left corner of the rectangle.
-	 * @param y0   The y value for the top left corner of the rectangle.
-	 * @param w    The width of the rectangle.
-	 * @param h    The height of the rectangle.
-	 * @param op   The optional drawing options.
+	 * @param lcd  		 The lcd for drawing the rectangle.
+	 * @param geometry   The geometry of the rectangle.
+	 * @param op   		 The optional drawing options.
 	 */
 	static bool draw(NLcd &lcd, NPixelBox geometry, DrawOpt op = DrawOpt::draw());
 
+	/**
+	 * \brief Draw a rectangle directly on nxt lcd.
+	 *
+	 * This function lets you draw a rectangle directly on nxt lcd with given geometry.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param geometry   The geometry of the rectangle.
+	 * @param op   		 The optional drawing options.
+	 */
 	static inline bool draw(NPixelBox geometry, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
 		return draw(lcd, geometry, op);
 	}
 
 public:
+
 	/**
 	 * \brief Construct rectangle object on given lcd.
 	 *
-	 * Constructs a rectangle on the given lcd at x, y with the
-	 * specified width and height.
+	 * Constructs a rectangle on the given lcd.
 	 *
 	 * @param nlcd  The lcd for drawing the rectangle.
-	 * @param x0   The x value for the top left corner of the rectangle.
-	 * @param y0   The y value for the top left corner of the rectangle.
-	 * @param w    The width of the rectangle.
-	 * @param h    The height of the rectangle.
+	 * @param geometry   The geometry of the rectangle.
 	 */
 	NRectangle(NLcd &nlcd, const NPixelBox geometry) :
 			NShape(nlcd), geometry_(geometry) {
@@ -100,14 +104,23 @@ public:
 		return geometry_;
 	}
 
+	/**
+	 * \brief Get the X-Coordinate of base point (left top)
+	 */
 	S16 baseX() const {
 		return geometry_.base().x();
 	}
 
+	/**
+	 * \brief Get the Y-Coordinate of base point (left top)
+	 */
 	S16 baseY() const {
 		return geometry_.base().y();
 	}
 
+	/**
+	 * \brief Set the X-Coordinate of base point (left top)
+	 */
 	void setBaseX(S16 x) {
 		bool visible = this->isVisible();
 		this->hide();
@@ -116,6 +129,9 @@ public:
 			this->show();
 	}
 
+	/**
+	 * \brief Set the Y-Coordinate of base point (left top)
+	*/
 	void setBaseY(S16 y) {
 		bool visible = this->isVisible();
 		this->hide();
@@ -124,6 +140,9 @@ public:
 			this->show();
 	}
 
+	/**
+	 * \brief Set base point (left top)
+	 */
 	void setBase(NPoint base) {
 		bool visible = this->isVisible();
 		this->hide();
@@ -178,42 +197,47 @@ private:
 	}
 
 public:
+
 	/**
-	 * \brief Draw a filled rectangle.
+	 * \brief Draw a filled rectangle on given lcd.
 	 *
-	 * This function lets you draw a filled rectangle on the given lcd at x, y with the
-	 * specified width and height.
+	 * This function lets you draw a rectangle on the given lcd and geometry.
 	 * Optionally specify drawing options.
 	 * If this argument is not specified it defaults to DrawOpt::draw().
 	 * Valid display options are listed in the DrawOpt class.
 	 *
-	 * @param lcd  The lcd for drawing the rectangle.
-	 * @param x0   The x value for the top left corner of the rectangle.
-	 * @param y0   The y value for the top left corner of the rectangle.
-	 * @param w    The width of the rectangle.
-	 * @param h    The height of the rectangle.
-	 * @param op   The optional drawing options.
+	 * @param lcd  		 The lcd for drawing the rectangle.
+	 * @param geometry   The geometry of the rectangle.
+	 * @param op   		 The optional drawing options.
 	 */
 	static bool draw(NLcd &lcd, const NPixelBox &geometry, DrawOpt op = DrawOpt::draw());
 
+	/**
+	 * \brief Draw a filled rectangle directly on nxt lcd.
+	 *
+	 * This function lets you draw a rectangle directly on nxt lcd with given geometry.
+	 * Optionally specify drawing options.
+	 * If this argument is not specified it defaults to DrawOpt::draw().
+	 * Valid display options are listed in the DrawOpt class.
+	 *
+	 * @param geometry   The geometry of the rectangle.
+	 * @param op   		 The optional drawing options.
+	 */
 	static inline bool draw(const NPixelBox &geometry, DrawOpt op = DrawOpt::draw()) {
 		NLcd lcd;
 		return draw(lcd, geometry, op);
 	}
 
 public:
+
 	/**
-	 * \brief Construct rectangle object on given lcd.
-	 *
-	 * Constructs a rectangle on the given lcd at x, y with the
-	 * specified width and height.
-	 *
-	 * @param nlcd  The lcd for drawing the rectangle.
-	 * @param x0   The x value for the top left corner of the rectangle.
-	 * @param y0   The y value for the top left corner of the rectangle.
-	 * @param w    The width of the rectangle.
-	 * @param h    The height of the rectangle.
-	 */
+	* \brief Construct filled rectangle object on given lcd.
+	*
+	* Constructs a rectangle on the given lcd.
+	*
+	* @param nlcd  The lcd for drawing the rectangle.
+	* @param geometry   The geometry of the rectangle.
+	*/
 	NRectangleFilled(NLcd &nlcd, const NPixelBox geometry) :
 			NShape(nlcd), geometry_(geometry) {
 	}
@@ -239,14 +263,23 @@ public:
 		return geometry_;
 	}
 
+	/**
+	 * \brief Get the X-Coordinate of base point (left top)
+	 */
 	S16 baseX() const {
 		return geometry_.base().x();
 	}
 
+	/**
+	 * \brief Get the Y-Coordinate of base point (left top)
+	 */
 	S16 baseY() const {
 		return geometry_.base().y();
 	}
 
+	/**
+	 * \brief Set the X-Coordinate of base point (left top)
+	 */
 	void setBaseX(S16 x) {
 		bool visible = this->isVisible();
 		this->hide();
@@ -255,6 +288,9 @@ public:
 			this->show();
 	}
 
+	/**
+	 * \brief Set the Y-Coordinate of base point (left top)
+	 */
 	void setBaseY(S16 y) {
 		bool visible = this->isVisible();
 		this->hide();
@@ -263,6 +299,9 @@ public:
 			this->show();
 	}
 
+	/**
+	 * \brief Set base point (left top)
+	 */
 	void setBase(NPoint base) {
 		bool visible = this->isVisible();
 		this->hide();
