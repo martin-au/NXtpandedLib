@@ -17,7 +17,7 @@
 #include "src/NLine.hpp"	
 #include "src/NMotor.hpp"
 #include "src/NConsole.hpp"		
-#include "src/NOstream.hpp"	
+//#include "src/NOstream.hpp"	
 #include "src/NPairBox.hpp"	
 #include "src/NPixelBox.hpp"	
 #include "src/NPoint.hpp"	
