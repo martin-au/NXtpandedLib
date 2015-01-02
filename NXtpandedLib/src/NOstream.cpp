@@ -18,14 +18,14 @@ NOstream::NOstream()
   somenew(false),
   nextHex(false),
   floatplaces(2),
-  streamBuffer()
+  streamBuffer(new StreamBuffer(textBox().charsInLine(), textBox().lines()))
 {
-	streamBuffer = new StreamBuffer(textBox().charsInLine(), textBox().lines());
 }
 
 NOstream::~NOstream() {
-	hide(false);
+	this->hide(false); // TODO Dont call virtual method in destructor
 	delete streamBuffer;
+	streamBuffer = 0;
 }
 
 void NOstream::textBoxValid() {

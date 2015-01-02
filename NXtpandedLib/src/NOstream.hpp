@@ -14,7 +14,6 @@
 
 #include "..\..\ecrobot\c\ecrobot_types.h"
 
-
 #include "NString.hpp"
 #include "NWidget.hpp"
 #include "LcdConstants.hpp"
@@ -55,19 +54,21 @@ private:
 	struct StreamBuffer {
 	public:
 		explicit StreamBuffer(U8 len, U8 rows) :
-				buffer(new char *[rows]), currentLen(len), currentRows(rows), cursorLine(0) {
+				buffer(new char *[rows+1]), currentLen(len), currentRows(rows), cursorLine(0) {
 
-			for (int i = 0; i < rows + 1; i++) {
+			for (int i = 0; i < rows+1; i++) {
 				buffer[i] = new char[len + 1]; // +1 for '\0'
 				strcpy(buffer[i], "");
 			}
 		}
 
 		~StreamBuffer() {
-			for (int i = 0; i < currentRows + 1; i++) {
+			for (int i = 0; i < currentRows+1; i++) {
 				delete[] buffer[i];
 			}
 			delete[] buffer;
+
+			buffer = 0;
 		}
 
 		char **buffer;
