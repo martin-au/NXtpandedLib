@@ -2,25 +2,15 @@
 
 extern "C" {
 #include "../../../toppers_osek/include/kernel.h"
-#include "kernel_id.h"
 }
 
 // C++ Includes and objects should be defined here.
-#include "../../src/NLine.hpp"
-#include "../../src/NRectangle.hpp"
-#include "../../src/NCircle.hpp"
-#include "../../src/NLcd.hpp"
+#include "../../nxtpandedlib.h"
 
 extern "C" {
-// startup/shutdown hooks
-void ecrobot_device_initialize(void);
-void ecrobot_device_terminate(void);
 
 // nxtOSEK hook to be invoked from an ISR in category 2
 void user_1ms_isr_type2(void){}
-
-
-using namespace nxpl;
 
 TASK(TaskMain)
 {
@@ -31,7 +21,8 @@ TASK(TaskMain)
 
 	NLcd::update();
 
- 	TerminateTask();
+ 	NNxt::wait(10000);
+ 	NNxt::restart();
 }
 
 }
