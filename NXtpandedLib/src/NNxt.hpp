@@ -22,6 +22,7 @@ class NNxt
 {
 public:
 
+	/* Singleton not essential now.
 	static NNxt* instance()
     {
 		if(!nxtInstance)
@@ -33,6 +34,7 @@ public:
     	delete nxtInstance;
     	nxtInstance = 0;
     }
+    */
 
 	/**
 	 * NXT Button enum.
@@ -52,31 +54,31 @@ public:
 	 * @param -
 	 * @return Status of all buttons on the NXT (true:pressed/false:not pressed)
 	 */
-	eButton getButtonsState(void) const
+	static eButton getButtonsState(void)
 	{
 		return static_cast<eButton>(ecrobot_get_button_state());
 	}
 
 	/** \brief True if orange colored rectangle button is pressed */
-	bool isOrangeRectPressed()
+	static bool isOrangeRectPressed()
 	{
 		return (bool) getButtonsState() & ORANGE_RECT;
 	}
 
 	/** \brief True if gray colored rectangle button is pressed */
-	bool isGrayRectPressed()
+	static bool isGrayRectPressed()
 	{
 		return (bool) getButtonsState() & GRAY_RECT;
 	}
 
 	/** \brief True if left button button is pressed */
-	bool isLeftPressed()
+	static bool isLeftPressed()
 	{
 		return (bool) getButtonsState() & LEFT;
 	}
 
 	/** \brief True if right button button is pressed */
-	bool isRightPressed()
+	static bool isRightPressed()
 	{
 		return (bool) getButtonsState() & RIGHT;
 	}
@@ -86,7 +88,7 @@ public:
 	 * @param -
 	 * @return Battery voltage in mV
 	 */
-	S16 getBatteryVoltage(void) const
+	static S16 getBatteryVoltage(void)
 	{
 		return static_cast<S16>(ecrobot_get_battery_voltage());
 	}
@@ -96,7 +98,7 @@ public:
 	 * @param -
 	 * @return -
 	 */
-	void shutdown(void)
+	static void shutdown(void)
 	{
 		ecrobot_shutdown_NXT();
 	}
@@ -106,7 +108,7 @@ public:
 	 * @param -
 	 * @return -
 	 */
-	void restart(void)
+	static void restart(void)
 	{
 		ecrobot_restart_NXT();
 	}
@@ -118,13 +120,31 @@ public:
 	 * @param -
 	 * @return -
 	 */
-	 void execNXTBIOS(void)
+	 static void execNXTBIOS(void)
 	 {
 		 ecrobot_exec_NXT_BIOS();
 	 }
 
+	 /**
+	  * \brief Gets system tick in msec.
+	  *
+	  * System tick is started when the NXT is turned on (not started when an application begins)
+	  */
+	 static U32 getTick()
+	 {
+		 return systick_get_ms();
+	 }
+
+	 /**
+	  * \brief Wait in a loop for duration in msec.
+	  */
+	 static void wait(U32 ms)
+	 {
+		 systick_wait_ms(ms);
+	 }
+
 private:
-	 static NNxt *nxtInstance;
+	// static NNxt *nxtInstance;
 
 	/* disable construction/copy */
 	NNxt(void) {}
@@ -132,6 +152,6 @@ private:
 	// NNxt & operator = (const NNxt& n) {n;}
 };
 
-NNxt* NNxt::nxtInstance = 0;
+// NNxt* NNxt::nxtInstance = 0;
 
 #endif /* _NNXT_HPP_ */
