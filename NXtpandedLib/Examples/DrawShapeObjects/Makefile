@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = untitled
+TARGET = DrawShapeObjEx
 
 TARGET_CPP_SOURCES = sample.cpp
 	
