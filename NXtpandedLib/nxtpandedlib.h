@@ -1,3 +1,4 @@
+#include "src/NNxt.hpp"
 #include "src/GuiTypes.hpp"	
 #include "src/LcdConstants.hpp"	
 #include "src/Motorcontroller.hpp"	
