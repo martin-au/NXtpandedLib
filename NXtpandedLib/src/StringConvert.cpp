@@ -1,8 +1,6 @@
 
 #include "StringConvert.hpp"
 
-namespace nxpl {
-
 const char _digitAsChar[] = "0123456789";
 
 // dest must have 12 chars
@@ -133,6 +131,4 @@ S8 numToHex(U32 value, char* dest) {
 		value = value / 16;
 	} while (value);
 	return length;
-}
-
 }
