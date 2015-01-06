@@ -59,6 +59,12 @@ public:
 		return static_cast<eButton>(ecrobot_get_button_state());
 	}
 
+	/** \brief True if any button pressed */
+	static bool isAnyButtonPressed()
+	{
+		return getButtonsState() > 0;
+	}
+
 	/** \brief True if orange colored rectangle button is pressed */
 	static bool isOrangeRectPressed()
 	{
