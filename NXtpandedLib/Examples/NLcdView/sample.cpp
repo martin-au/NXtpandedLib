@@ -9,6 +9,7 @@ DeclareResource(ConsoleWidgetResource);
 
 // C++ Includes and objects should be defined here.
 #include "../../nxtpandedlib.h"
+#include "../../src/NLcdView.hpp"
 
 NMutex consoleMutext(ConsoleWidgetResource);
 
@@ -19,9 +20,6 @@ void user_1ms_isr_type2(void){}
 
 TASK(TaskMain)
 {
-	// NLabel test("(test)", NTextBox(NCursor(5, 0), 7, 1));
-	// test.show(true);
-
 	NLabel toRight(">>", NTextBox(NCursor(14, 3), 2, 1));
 	NLabel toLeft("<<", NTextBox(NCursor(0, 3), 2, 1));
 	NLabel lastSite("(main)", NTextBox(NCursor(5, 3), 7, 1));
@@ -29,19 +27,19 @@ TASK(TaskMain)
 	NConsole console(consoleMutext, NTextBox(NCursor(3, 0), 14, 8));
 
 	NLcd lcd;
-	NRectangleFilled rectangle(lcd, NPixelBox(NPoint(20, 20), 30, 30));
+	NRectangleFilled rectangle(&lcd, NPixelBox(NPoint(20, 20), 30, 30));
 
 	// now create different views
-	NLcdView mainSite(4);
+	NLcdView mainSite(3);
 	mainSite.add(&toRight);
 	mainSite.add(&toLeft);
 	mainSite.add(&lastSite);
 
-	NLcdView rightSite(3);
+	NLcdView rightSite(2);
 	rightSite.add(&toLeft);
 	rightSite.add(&console);
 
-	NLcdView leftSite(3);
+	NLcdView leftSite(2);
 	leftSite.add(&toRight);
 	leftSite.add(&rectangle);
 
@@ -52,28 +50,27 @@ TASK(TaskMain)
 	mainSite.show(true);
 	int site = mainSiteId;
 
-	while(true) {
 
+	while(true) {
 		switch(site) {
 		case leftSiteId:
 			if(NNxt::isRightPressed()) {
 				NLcdView::swap(leftSite, mainSite, true);
 				site = mainSiteId;
 
-				cout << "right pressed\n";
+				console << "right pressed\n";
 				lastSite.setText("Left");
 			}
 			break;
 		case mainSiteId:
-
 			if (NNxt::isRightPressed()) {
 				NLcdView::swap(mainSite, rightSite, true);
 				site = rightSiteId;
-				cout << "right pressed\n";
+				console << "right pressed\n";
 			} else if(NNxt::isLeftPressed()) {
 				NLcdView::swap(mainSite, leftSite, true);
 				site = leftSiteId;
-				cout << "left pressed\n";
+				console << "left pressed\n";
 			}
 
 			break;
@@ -82,13 +79,20 @@ TASK(TaskMain)
 				NLcdView::swap(rightSite, mainSite, true);
 				site = mainSiteId;
 
-				cout << "left pressed\n";
+				console << "left pressed\n";
 				lastSite.setText("Right");
 			}
 			break;
 		}
+
+		if(NNxt::isGrayRectPressed())
+			NNxt::shutdown();
+
 		NNxt::wait(300);
 	}
+
+
+	NNxt::wait(10000);
 	TerminateTask();
 }
 

@@ -43,7 +43,8 @@ NXTPANDEDLIB_SOURCES = $(addprefix $(NXTPANDEDLIB_ROOT)/src/, \
 		NLine.cpp \
 		NRectangle.cpp \
 		NCircle.cpp \
-		NEllipse.cpp)
+		NEllipse.cpp \
+		NLcdView.cpp )
 
 CPP_LIB_SOURCES = $(NXTPANDEDLIB_SOURCES)
 
