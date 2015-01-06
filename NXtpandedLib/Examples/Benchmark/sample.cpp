@@ -12,15 +12,9 @@
 
 extern "C" {
 #include "../../../toppers_osek/include/kernel.h"
-#include "kernel_id.h"
-#include "../../../ecrobot/c/ecrobot_interface.h"
-#include "../../../lejos_nxj/src/nxtvm/platform/nxt/mytypes.h"
 }
 
-#include "../../../NXtpandedLib/src/NLine.hpp"
-#include "../../../NXtpandedLib/src/NRectangle.hpp"
-#include "../../../NXtpandedLib/src/NCircle.hpp"
-#include "../../../NXtpandedLib/src/NEllipse.hpp"
+#include "../../nxtpandedlib.h"
 
 #include "../../../../GNUARM/arm-elf/sys-include/math.h"
 
@@ -32,14 +26,6 @@ extern "C" {
 
 // nxtOSEK hook to be invoked from an ISR in category 2
 void user_1ms_isr_type2(void) { }
-
-// hooks
-void ecrobot_device_initialize(void);
-void ecrobot_device_terminate(void);
-
-bool btnhit() {
-   return (ecrobot_is_RUN_button_pressed() || ecrobot_is_ENTER_button_pressed());
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////BENCHMARK FUNCTIONS////////////////////////////////////////////////////
@@ -309,7 +295,6 @@ long test_TextOut() {
    return 99;
 }
 
-using namespace nxpl; // NXtpandedLib
 NLcd lcd;
 
 long test_graphics() {
@@ -352,11 +337,8 @@ void displayValues() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-TASK(TaskMain) {
-   //test_graphics();
-   //display_update();
-
-
+TASK(TaskMain)
+{
    unsigned long time0, x, y;
    float s;
 
@@ -368,7 +350,7 @@ TASK(TaskMain) {
    TextOut(0, 4, "Martin Aumair");
    TextOut(0, 5, "initializing...");
    display_update();
-   systick_wait_ms(3000);
+   NNxt::wait(3000);
 
    for (y = 0; y < 500; ++y) {
       a[y] = randM();
@@ -378,62 +360,62 @@ TASK(TaskMain) {
 
    TextOut(0, 6, "done .. go!");
    display_update();
-   systick_wait_ms(2000);
+   NNxt::wait(2000);
    display_clear(1);
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_Int_Add();
-   runtime[0] = systick_get_ms() - time0;
+   runtime[0] = NNxt::getTick() - time0;
    NumOut(0,0, 0, 1); NumOut(2,0, (int)runtime[0], 5); TextOut(8,0, "int_Add");
    display_update();
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_Int_Mult();
-   runtime[1] = systick_get_ms() - time0;
+   runtime[1] = NNxt::getTick() - time0;
    NumOut(0,1, 1, 1); NumOut(2,1, (int)runtime[1], 5); TextOut(8,1, "int_Mult");
    display_update();
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_float_math();
-   runtime[2] = systick_get_ms() - time0;
+   runtime[2] = NNxt::getTick() - time0;
    NumOut(0,2, 2, 1); NumOut(2,2, (int)runtime[2], 5); TextOut(8,2, "float_op");
    display_update();
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_rand_MT();
-   runtime[3] = systick_get_ms() - time0;
+   runtime[3] = NNxt::getTick() - time0;
    NumOut(0,3, 3, 1); NumOut(2,3, (int)runtime[3], 5); TextOut(8,3, "rand_array");
    display_update();
 
-   systick_wait_ms(1500);
+   NNxt::wait(1500);
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_matrix_math();
-   runtime[4] = systick_get_ms() - time0;
+   runtime[4] = NNxt::getTick() - time0;
    NumOut(0,4, 4, 1); NumOut(2,4, (int)runtime[4], 5); TextOut(8,4, "matrx_algb");
    display_update();
 
-   systick_wait_ms(1500);
+   NNxt::wait(1500);
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_Sort();
-   runtime[5] = systick_get_ms() - time0;
+   runtime[5] = NNxt::getTick() - time0;
    NumOut(0,5, 5, 1); NumOut(2,5, (int)runtime[5], 5); TextOut(8,5, "arr_sort");
    display_update();
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_TextOut();
-   runtime[6] = systick_get_ms() - time0;
+   runtime[6] = NNxt::getTick() - time0;
    display_update();
 
 
-   time0 = systick_get_ms();
+   time0 = NNxt::getTick();
    s = test_graphics();
-   runtime[7] = systick_get_ms() - time0;
+   runtime[7] = NNxt::getTick() - time0;
 
    displayValues();
 
-   while (! btnhit() );  //  <<<<< wait for btnpress
+   while (! NNxt::isAnyButtonPressed() );  //  <<<<< wait for btnpress
 
    display_clear(1);
    y = 0;
@@ -444,10 +426,10 @@ TASK(TaskMain) {
    TextOut(0,0, "sum ms:");    NumOut(8,0, y, 7);
    TextOut(0,1, "benchmark:"); NumOut(8,1, 50000000/y, 7);
 
-   systick_wait_ms(1000);
-   while (! btnhit() );  //  <<<<< wait for btnpress
+   NNxt::wait(1000);
+   while (! NNxt::isAnyButtonPressed() );  //  <<<<< wait for btnpress
 
-   TerminateTask();
+   NNxt::restart();
 }
 
 }
