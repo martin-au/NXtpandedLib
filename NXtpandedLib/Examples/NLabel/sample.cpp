@@ -1,23 +1,17 @@
 /* sample.cpp for TOPPERS/ATK(OSEK) */ 
 
-// fix this paths
+
 extern "C" {
 #include "../../../toppers_osek/include/kernel.h"
-#include "kernel_id.h"
-#include "../../../ecrobot/c/ecrobot_interface.h"
-#
 }
 
 // C++ Includes and objects should be defined here.
-// fix this paths also
 #include "../../../NXtpandedLib/src/NLabel.hpp"
+#include "../../../NXtpandedLib/src/NNxt.hpp"
 
 extern "C" {
 
-void user_1ms_isr_type2(void) {
-}
-
-using namespace nxpl;
+void user_1ms_isr_type2(void) {}
 
 TASK(TaskMain)
 {
@@ -40,8 +34,9 @@ TASK(TaskMain)
 	label2.show(true);
 
 	// wait 4 seconds
-	systick_wait_ms(4000);
+	NNxt::wait(4000);
 
+	// change properties of label2 and set float number
 	label2.setPrecision(3);
 	label2.setLine(5);
 	label2.setNumber(12.12345f);
@@ -49,11 +44,8 @@ TASK(TaskMain)
 	label1.hide();
 	label2.show(true);
 
-	systick_wait_ms(10000);
-
-	// Shutdown Program
-	StatusType ercd = E_OK;
-	ShutdownOS(ercd);
+	NNxt::wait(10000);
+	NNxt::restart();
 }
 
 }
