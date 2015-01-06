@@ -18,12 +18,6 @@ CPU ATMEL_AT91SAM7S256
   /* Definition of application mode */
   APPMODE appmode1{}; 
 
-  
-  RESOURCE OstreamResource
-  {
-     RESOURCEPROPERTY = STANDARD;
-  };
-
   /* Definition of TaskMain */
   TASK TaskMain
   {
@@ -35,14 +29,6 @@ CPU ATMEL_AT91SAM7S256
     ACTIVATION = 1;
     SCHEDULE = FULL;
     STACKSIZE = 512;
-    RESOURCE = OstreamResource;
-  };
-  
-  COUNTER SysTimerCnt
-  {
-    MINCYCLE = 1;
-    MAXALLOWEDVALUE = 10000;
-    TICKSPERBASE = 1; /* One tick is equal to 1msec */
   };
 };
 
