@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = untitled
+TARGET = CursorAndTextB
 
 TARGET_CPP_SOURCES = \
 					 sample.cpp

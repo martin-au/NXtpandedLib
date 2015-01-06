@@ -29,7 +29,6 @@ CPU ATMEL_AT91SAM7S256
     ACTIVATION = 1;
     SCHEDULE = FULL;
     STACKSIZE = 512;
-    RESOURCE = OstreamResource;
   };
 };
 

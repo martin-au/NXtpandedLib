@@ -1,30 +1,28 @@
 /* sample.cpp for TOPPERS/ATK(OSEK) */ 
 
-// fix this paths
 extern "C" {
 #include "../../../toppers_osek/include/kernel.h"
-#include "kernel_id.h"
-#include "../../../ecrobot/c/ecrobot_interface.h"
 }
 
 // C++ Includes and objects should be defined here.
 // fix this paths also
-#include "../../../NXtpandedLib/src/NLabel.hpp"
+#include "../../nxtpandedlib.h"
 
 extern "C" {
 
-void user_1ms_isr_type2(void) {
-}
-
-using namespace nxpl;
+void user_1ms_isr_type2(void) {}
 
 TASK(TaskMain)
 {
+	// (indent, line)
 	NCursor cursor(4, 1);
+	// (cursor, max characters, lines)
 	NTextBox box(cursor, 10, 1);
 
+	// create label and set the text to cursor position string.
 	NLabel label1(cursor.asString(), box);
 
+	// now create label with same box in next line.
 	cursor.moveNextLine();
 	box.setBase(cursor);
 
@@ -34,12 +32,8 @@ TASK(TaskMain)
 	label1.show();
 	label2.show(true);
 
-
-	systick_wait_ms(10000);
-
-	// Shutdown Program
-	StatusType ercd = E_OK;
-	ShutdownOS(ercd);
+	NNxt::wait(10000);
+	NNxt::restart();
 }
 
 }
