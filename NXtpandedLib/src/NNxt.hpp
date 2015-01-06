@@ -62,25 +62,25 @@ public:
 	/** \brief True if orange colored rectangle button is pressed */
 	static bool isOrangeRectPressed()
 	{
-		return (bool) getButtonsState() & ORANGE_RECT;
+		return getButtonsState() == ORANGE_RECT;
 	}
 
 	/** \brief True if gray colored rectangle button is pressed */
 	static bool isGrayRectPressed()
 	{
-		return (bool) getButtonsState() & GRAY_RECT;
+		return getButtonsState() == GRAY_RECT;
 	}
 
 	/** \brief True if left button button is pressed */
 	static bool isLeftPressed()
 	{
-		return (bool) getButtonsState() & LEFT;
+		return getButtonsState() == LEFT;
 	}
 
 	/** \brief True if right button button is pressed */
 	static bool isRightPressed()
 	{
-		return (bool) getButtonsState() & RIGHT;
+		return getButtonsState() == RIGHT;
 	}
 
 	/**
