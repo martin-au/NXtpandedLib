@@ -31,6 +31,7 @@
 #include "src/NVector.hpp"	
 #include "src/NVirtualLcd.hpp"	
 #include "src/NWidget.hpp"
+#include "src/NLcdView.hpp"
 #include "src/RefCount.hpp"
 #include "src/StringConvert.hpp"
 #include "src/Uncopyable.hpp"
