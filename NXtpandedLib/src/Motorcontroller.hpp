@@ -5,17 +5,17 @@
  *      Author: Martin
  */
 
-#ifndef __MOTORCONTROLLER_HPP_
-#define __MOTORCONTROLLER_HPP_
+#ifndef __NMOTORCONTROLLER_HPP_
+#define __NMOTORCONTROLLER_HPP_
 
-#define NXPL_MOTORCONTROLLER_EVENTS_ON
-#define NXPL_MOTORCONTROLLER_STALL_RESET_ON
+#define NXPL_NMOTORCONTROLLER_EVENTS_ON
+#define NXPL_NMOTORCONTROLLER_STALL_RESET_ON
 
 /** \file
  *	\ingroup NxtIO
 */
 
-#include "Mutex.hpp"
+#include "NMutex.hpp"
 #include "Uncopyable.hpp"
 
 #include "NIMotor.hpp"

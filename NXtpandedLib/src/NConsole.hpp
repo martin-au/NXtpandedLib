@@ -20,7 +20,7 @@
 #include "NWidget.hpp"
 #include "LcdConstants.hpp"
 #include "Uncopyable.hpp"
-#include "Mutex.hpp"
+#include "NMutex.hpp"
 
 #include "../../../GNUARM/arm-elf/include/string.h" // strcpy, strlen
 

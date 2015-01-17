@@ -2,7 +2,7 @@
 #include "src/GuiTypes.hpp"	
 #include "src/LcdConstants.hpp"	
 #include "src/Motorcontroller.hpp"	
-#include "src/Mutex.hpp"	
+#include "src/NMutex.hpp"	
 #include "src/NAlignment.hpp"	
 #include "src/NBitmap.hpp"	
 #include "src/NCircle.hpp"	
