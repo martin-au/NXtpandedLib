@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = untitled
+TARGET = RealTimeEx1
 
 TARGET_CPP_SOURCES = \
 					 sample.cpp
