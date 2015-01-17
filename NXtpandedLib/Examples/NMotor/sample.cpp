@@ -28,7 +28,7 @@ TASK(TaskMain)
 
 	NNxt::wait(1000);
 
-	// reverse with 30
+	// reverse with 60
 	motorA.setPower(-60);
 
 	NNxt::wait(1000);
