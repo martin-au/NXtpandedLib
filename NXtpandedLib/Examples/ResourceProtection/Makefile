@@ -1,5 +1,5 @@
 # Target specific macros
-TARGET = untitled
+TARGET = ResourceProtecEx
 
 TARGET_CPP_SOURCES = \
 					 sample.cpp
