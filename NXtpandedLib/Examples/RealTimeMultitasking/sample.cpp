@@ -3,60 +3,50 @@
 // fix this paths
 extern "C" {
 #include "../../../toppers_osek/include/kernel.h"
-#include "kernel_id.h"
-#include "../../../ecrobot/c/ecrobot_interface.h"
 }
 
 DeclareCounter(SysTimerCnt);
-DeclareTask(Task1);
-DeclareTask(Task2);
-DeclareTask(Task3);
-
 DeclareResource(OstreamResource);
 
 // C++ Includes and objects should be defined here.
-// fix this paths also
-#include "../../../NXtpandedLib/src/NOstream.hpp"
+#include "../../../NXtpandedLib/nxtpandedlib.h"
 
-nxpl::NMutex ostreamMtx(OstreamResource);
-nxpl::NOstream cout(ostreamMtx);
+NMutex ostreamMutex(OstreamResource);
+NConsole cout(ostreamMutex); // NConsole is thread save version of console
 
 extern "C" {
-// startup/shutdown hooks
-void ecrobot_device_initialize(void);
-void ecrobot_device_terminate(void);
 
 // nxtOSEK hook to be invoked from an ISR in category 2
 void user_1ms_isr_type2(void){
 	StatusType ercd;
-
-	ercd = SignalCounter(SysTimerCnt); /* Increment OSEK Alarm Counter */
+	ercd = SignalCounter(SysTimerCnt); // Increment OSEK Alarm Counter every 1 ms
 	if (ercd != E_OK) {
 	    ShutdownOS(ercd);
 	}
 }
 
-// 2 second activation
+// See how task 1 with highest priority always gets executed first.
+// 2 second periodic activation
 TASK(Task1)
 {
-	cout << "Task1 - " << systick_get_ms() << nxpl::endl;
-	display_update();
+	cout << "Task1 - " << NNxt::getTick() << "\n";
+	cout.flush(true);
 	TerminateTask();
 }
 
-// 4 second activation
+// 4 second periodic activation
 TASK(Task2)
 {
-	cout << "Task2 - " << systick_get_ms() << nxpl::endl;
-	display_update();
+	cout << "Task2 - " << NNxt::getTick() << "\n";
+	cout.flush(true);
 	TerminateTask();
 }
 
-// 6 second activation
+// 6 second periodic activation
 TASK(Task3)
 {
-	cout << "Task3 - " << systick_get_ms() << nxpl::endl;
-	display_update();
+	cout << "Task3 - " << NNxt::getTick() << "\n";
+	cout.flush(true);
 	TerminateTask();
 
 }

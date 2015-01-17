@@ -27,7 +27,7 @@ CPU ATMEL_AT91SAM7S256
   TASK Task1
   {
     AUTOSTART = FALSE;
-    PRIORITY = 3;
+    PRIORITY = 3; /* Highest priority */
     ACTIVATION = 1;
     SCHEDULE = FULL;
     STACKSIZE = 512;
