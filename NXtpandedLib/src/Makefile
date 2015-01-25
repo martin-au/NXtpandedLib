@@ -38,7 +38,7 @@ NXTPANDEDLIB_SOURCES = $(addprefix $(NXTPANDEDLIB_ROOT)/src/, \
 		NPairBox.cpp \
 		NCom.cpp \
 		NComSingle.cpp \
-		Motorcontroller.cpp \
+		NMotorcontroller.cpp \
 		NGenericPixelMatrix.cpp \
 		NLine.cpp \
 		NRectangle.cpp \
